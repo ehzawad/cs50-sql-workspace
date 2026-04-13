@@ -101,6 +101,7 @@ These are scaffold-only problems. CS50 expects you to create the folders yoursel
 - `your.harvard`: `cs50/pset5/your.harvard/`
   - check: `check50 cs50/problems/2024/sql/harvard`
   - submit: `submit50 cs50/problems/2024/sql/harvard`
+  - note: the local folder keeps the `your.` prefix, but the checker slug does not
 
 ## PSet 6
 

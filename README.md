@@ -33,6 +33,7 @@ What each tool does:
 - `./bin/cs50-sql`: opens a local SQLite database with `.headers on` and `.mode box`
 - `./bin/mysql`: starts a local MySQL 8 server in Docker and opens the MySQL client
 - `./bin/psql`: starts a local PostgreSQL server in Docker and opens `psql`
+- `./bin/mysql-stop`, `./bin/psql-stop`: stop the local database containers
 - `./bin/java`, `./bin/javac`: local JDK wrappers for the Java-based pset
 - `./bin/check50`, `./bin/submit50`: wrappers around a local Python virtualenv install
 - `./bin/python`, `./bin/pip`: wrappers around the same local Python virtualenv
@@ -57,4 +58,5 @@ What each tool does:
 
 - `sqlite3` was set up locally because installing the Debian package would require your system password.
 - MySQL and PostgreSQL are provided via Docker so the week 6 material works without touching system packages.
+- `./bin/mysql` and `./bin/psql` require Docker to be installed and running.
 - On a fresh machine, the recovery path is `./bin/bootstrap-workspace` and then `./bin/doctor`.

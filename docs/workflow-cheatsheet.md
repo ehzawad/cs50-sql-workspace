@@ -306,6 +306,8 @@ Reopen either later with:
 ./bin/psql
 ```
 
+Docker must be installed and running for the week 6 database wrappers.
+
 ## 5. No-Cheat Guardrails
 
 Use the workspace like this:

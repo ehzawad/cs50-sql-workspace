@@ -1,0 +1,486 @@
+<!DOCTYPE html><html lang="en-us"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+
+        <meta property="og:image" content="https://prod-discovery.edx-cdn.org/cdn-cgi/image/width=378,height=auto,quality=85,format=webp/media/course/image/3e45c431-10df-423e-9f03-fb98b713cd4a-2397c9098976.png">
+
+        <meta property="og:title" content="Players - CS50's Introduction to Databases with SQL">
+
+        <link href="../../../favicon.ico?1775509000" rel="icon">
+
+        <!-- https://fonts.google.com/specimen/PT+Sans?query=PT+Sans&selection.family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700 -->
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+
+        <!-- https://getbootstrap.com/docs/ -->
+        <script src="../../../assets/jquery/dist/jquery.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap/dist/js/bootstrap.bundle.min.js?1775509000"></script>
+
+        <!-- https://bootstrap-table.com/docs/getting-started/introduction/ -->
+        <link href="../../../assets/bootstrap-table/dist/bootstrap-table.min.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/bootstrap-table/dist/bootstrap-table.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile.min.js?1775509000"></script>
+
+        <!-- https://fontawesome.com/how-to-use/on-the-web/referencing-icons/basic-use -->
+        
+        <link crossorigin="anonymous" href="https://kit.fontawesome.com/a6e66aa089.css" rel="stylesheet">
+        
+
+        <!-- https://moment.github.io/luxon/ -->
+        <script src="../../../assets/luxon/build/global/luxon.min.js?1775509000"></script>
+
+        <!-- http://docs.mathjax.org/ -->
+        <!-- http://docs.mathjax.org/en/latest/options/output/chtml.html?highlight=displayAlign#the-configuration-block -->
+        <!-- https://docs.mathjax.org/en/latest/output/fonts.html -->
+        <script>
+            MathJax = {
+                loader: {
+                    paths: {
+                        'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+                    }
+                },
+                output: {
+                    displayAlign: 'left'
+                }
+            };
+        </script>
+        <script src="../../../assets/mathjax/tex-mml-chtml.js?1775509000"></script>
+
+        <!-- https://github.com/verlok/vanilla-lazyload -->
+        <script src="../../../assets/vanilla-lazyload/dist/lazyload.min.js?1775509000"></script>
+
+        <!-- https://iframe-resizer.com/ -->
+        <script src="../../../assets/@iframe-resizer/parent/index.umd.js?1775509000"></script>
+
+        <!-- https://github.com/scratchblocks/scratchblocks/releases -->
+        <script src="../../../assets/scratchblocks.min.js?1775509000"></script>
+
+        <!-- https://mermaid-js.github.io/ -->
+        <script src="../../../assets/mermaid/dist/mermaid.min.js?1775509000"></script>
+
+        <!-- https://github.com/twitter/twemoji -->
+        <script src="../../../assets/@twemoji/api/dist/twemoji.min.js?1775509000"></script>
+
+        
+
+        <link href="../../../assets/page.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/jekyll-theme-cs50.js?1775509000"></script>
+
+        <script>
+            window.CS50 = {
+                local: {"day":"numeric","hour":"numeric","minute":"numeric","month":"long","timeZoneName":"short","weekday":"long","year":"numeric"},
+                locale: "en",
+                tz: "Etc/Zulu"
+            };
+        </script>
+
+        <title>Players - CS50's Introduction to Databases with SQL</title>
+
+
+    <meta property="og:description" content="The 1901 Boston Americans (now Red Sox) Team Problem to Solve If you’re not familiar, baseball is a popular sport in which two teams of 9 players take turns...">
+</head>
+
+    <body class="invisible">
+
+        <div class="alert fixed-top mb-0 rounded-0" data-alert="success dismissible" data-hash="0129a290f1b935ef2af9c47f24376fe8" id="alert" role="alert">
+            <button aria-label="Close" class="btn-close d-none" data-bs-dismiss="alert" type="button"></button><p>Interested in <a href="../../../#how-to-take-this-course">a verified certificate or transfer credit and accreditation</a>?</p>
+</div>
+        
+
+        <div class="container-fluid">
+
+            <div class="row">
+
+                <aside class="col-lg">
+ 
+                    <header><h1 data-id="cs50s-introduction-to-databases-with-sql"><a href="../../..">CS50’s Introduction to Databases with SQL</a></h1>
+
+<p>OpenCourseWare</p>
+
+<p><a class="pr-1 small" href="https://cs50.harvard.edu/donate">Donate<i aria-hidden="true" class="fas fa-external-link-alt ps-2"></i></a></p>
+
+<p class="small"><a href="https://carterzenke.me">Carter Zenke</a><br>
+<a href="mailto:carter@cs50.harvard.edu">carter@cs50.harvard.edu</a>
+<br>
+<a class="mr-1" href="https://github.com/carterzenke"><i aria-hidden="true" class="fab fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/carterzenke/"><i aria-hidden="true" class="fab fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a></p>
+
+<p class="small"><a href="https://cs.harvard.edu/malan/">David J. Malan</a>
+<br>
+<a href="mailto:malan@harvard.edu">malan@harvard.edu</a>
+<br>
+<a class="mr-1" href="https://www.facebook.com/dmalan"><i aria-hidden="true" class="fa-brands fa-facebook-f" title="Facebook"></i><span class="sr-only">Facebook</span></a>
+<a class="mr-1" href="https://github.com/dmalan"><i aria-hidden="true" class="fa-brands fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.instagram.com/davidjmalan/"><i aria-hidden="true" class="fa-brands fa-instagram" title="Instagram"></i><span class="sr-only">Instagram</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/malan/"><i aria-hidden="true" class="fa-brands fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a>
+<a class="mr-1" href="https://www.reddit.com/user/davidjmalan"><i aria-hidden="true" class="fa-brands fa-reddit-alien" title="Reddit"></i><span class="sr-only">Reddit</span></a>
+<a class="mr-1" href="https://www.threads.net/@davidjmalan"><i aria-hidden="true" class="fa-brands fa-threads" title="Threads"></i><span class="sr-only">Threads</span></a>
+<a class="mr-1" href="https://twitter.com/davidjmalan"><i aria-hidden="true" class="fa-brands fa-twitter" title="Twitter"></i><span class="sr-only">Twitter</span></a></p></header>
+
+                    
+
+                    <button aria-controls="nav" aria-expanded="false" class="btn btn-sm collapsed d-lg-none" data-bs-target="aside > nav" data-bs-toggle="collapse">
+                        Menu
+                    </button>
+
+                    <nav class="collapse d-lg-block" id="nav"><hr>
+
+<ul>
+  <li data-marker="*"><a href="https://cs50.harvard.edu/x/puzzles/"><i class="fas fa-puzzle-piece pe-2"></i>CS50x Puzzle Day</a></li>
+  <li data-marker="*"><a href="../../../zoom/"><i class="fa-solid fa-video me-2"></i>Zoom Meetings</a></li>
+</ul>
+
+<!-- Tools -->
+<hr class="small">
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.ai/"><i class="fa-solid fa-duck pe-2 text-decoration-none"></i>CS50.ai</a></li>
+  <li data-marker="*">
+<a href="https://cs50.edx.org/ed"><i class="fa-solid fa-comment-question pe-2 text-decoration-none"></i>Ed Discussion</a> for Q&amp;A</li>
+  <li data-marker="*"><a href="https://cs50.dev/"><i class="fa-solid fa-laptop pe-2 text-decoration-none"></i>Visual Studio Code</a></li>
+</ul>
+
+<!-- Highlights -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="../../../new/">What’s new for 2024?</a></li>
+</ul>
+
+<!-- Course Nav -->
+<hr>
+
+<ol start="0">
+  <li><a href="../../../weeks/0/">Querying</a></li>
+  <li><a href="../../../weeks/1/">Relating</a></li>
+  <li><a href="../../../weeks/2/">Designing</a></li>
+  <li><a href="../../../weeks/3/">Writing</a></li>
+  <li><a href="../../../weeks/4/">Viewing</a></li>
+  <li><a href="../../../weeks/5/">Optimizing</a></li>
+  <li><a href="../../../weeks/6/">Scaling</a></li>
+</ol>
+
+<hr>
+
+<!-- Final project spec, seminars, shorts -->
+<ul>
+  <li data-marker="*"><a href="../../../project/">Final Project</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*">
+  </li><li data-marker="*">
+</li></ul>
+
+<!-- Items that might usually appear in an academic syllabus -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../honesty/">Academic Honesty</a></li>
+  <li data-marker="*"><a href="../../../certificate/">CS50 Certificate</a></li>
+  <li data-marker="*"><a href="../../../faqs/">FAQs</a></li>
+  <li data-marker="*"><a href="https://cs50.me/cs50sql">Gradebook</a></li>
+  <li data-marker="*"><a href="../../../staff/">Staff</a></li>
+  <li data-marker="*">
+</li></ul>
+
+<!-- Where to watch or take the class course -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://apps.apple.com/us/app/cs50/id1631064453">Apple TV</a></li>
+  <li data-marker="*"><a href="https://cs50.edx.org/sql">edX</a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/watch?v=WXk7yDqsKxs">freeCodeCamp</a></li>
+  <li data-marker="*"><a href="https://play.google.com/store/apps/details?id=edu.harvard.cs50.googletv">Google TV</a></li>
+  <li data-marker="*"><a href="https://web.dce.harvard.edu/extension/csci/e/151">Harvard Extension School</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*"><a href="https://web.dce.harvard.edu/summer/csci/s/151">Harvard Summer School</a></li>
+  <li data-marker="*"><a href="https://channelstore.roku.com/details/e338f60adfb133abc19eac2da9e5c505:40cee2a1909355bc4496086c8fa4a86f/cs50">Roku <span class="badge ms-2 p-1 text-bg-warning">new</span></a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/playlist?list=PLhQjrBD2T382v1MBjNOhPu9SiJ1fsD4C0">YouTube</a></li>
+</ul>
+
+<!-- Manual page, style guide, other docs -->
+
+<!-- Status Page -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.statuspage.io/">Status Page</a></li>
+</ul>
+
+<!-- Communities -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../communities/"><strong>Communities</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://bsky.app/profile/cs50.harvard.edu">Bluesky</a></li>
+  <li data-marker="*" class="small"><a href="https://www.clubhouse.com/club/cs50">Clubhouse</a></li>
+  <li data-marker="*" class="small">
+<a href="https://discord.gg/cs50">Discord</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/ed">Ed</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://www.facebook.com/groups/cs50/">Facebook Group</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.facebook.com/cs50/">Facebook Page</a></li>
+  <li data-marker="*" class="small"><a href="https://github.com/cs50">GitHub</a></li>
+  <li data-marker="*" class="small">
+<a href="https://gitter.im/cs50/x">Gitter</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://instagram.com/cs50">Instagram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/groups/7437240/">LinkedIn Group</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/school/CS50/">LinkedIn Page</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.medium.com/">Medium</a></li>
+  <li data-marker="*" class="small"><a href="https://www.quora.com/topic/CS50">Quora</a></li>
+  <li data-marker="*" class="small">
+<a href="https://www.reddit.com/r/cs50/">Reddit</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/slack">Slack</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.snapchat.com/add/cs50">Snapchat</a></li>
+  <li data-marker="*" class="small"><a href="https://soundcloud.com/cs50">SoundCloud</a></li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.stackexchange.com/">Stack Exchange</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://t.me/cs50x">Telegram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.tiktok.com/@cs50">TikTok</a></li>
+  <li data-marker="*" class="small"><a href="https://www.threads.net/@cs50">Threads</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/cs50">X Account</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/i/communities/1722308663522594923">X Community</a></li>
+  <li data-marker="*" class="small"><a href="https://www.youtube.com/subscription_center?add_user=cs50tv">YouTube</a></li>
+</ul>
+
+<!-- Courses -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../courses/"><strong>Courses</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/x">CS50x</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/games">CS50 2D</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/ai">CS50 AI</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/business">CS50 Business</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/cybersecurity">CS50 Cybersecurity</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/law">CS50 for Lawyers</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/python">CS50 Python</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/r">CS50 R</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/scratch">CS50 Scratch</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/sql">CS50 SQL</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/web">CS50 Web</a></li>
+</ul>
+
+<!-- Harvard Shop -->
+<hr>
+
+<p><a href="https://cs50.harvardshop.com/"><img src="https://cs50.harvard.edu/x/2023/assets/shop.png" alt="Harvard Shop"></a></p>
+
+<!-- Legal -->
+<hr>
+
+<p><a href="../../../license/" class="small"><i class="fab fa-creative-commons me-1"></i>License</a></p></nav>
+
+                    <footer></footer>
+
+                </aside>
+
+                <main class="col-lg">
+
+                    <h1 id="players">Players</h1>
+
+<p><img src="red_sox.jpeg" alt="1901 Boston Americans Team"><br>
+<em>The 1901 Boston Americans (now Red Sox) Team</em></p>
+
+<h2 id="problem-to-solve">Problem to Solve</h2>
+
+<p>If you’re not familiar, baseball is a popular sport in which two teams of 9 players take turns batting (hitting a ball) and fielding (catching and throwing hit balls). Points (“runs”) are scored when a hitting team’s player hits a ball and eventually touches all bases before the fielding team’s players have the chance to get them “out.” Baseball is arguably most popular in the United States and Canada, where the <a href="https://en.wikipedia.org/wiki/Major_League_Baseball">MLB (Major League Baseball)</a> has served as the professional association for players since 1876.</p>
+
+<p>In a database called <code class="language-plaintext highlighter-rouge">players.db</code>, using a table called <code class="language-plaintext highlighter-rouge">players</code>, answer questions about MLB players who’ve played from 1871 to 2023.</p>
+
+<h2 id="demo">Demo</h2>
+
+<script async="" data-autoplay="1" data-cols="100" data-loop="1" data-rows="12" id="asciicast-Qs5djD08aoD3XriXDqYQoB1V2" src="https://asciinema.org/a/Qs5djD08aoD3XriXDqYQoB1V2.js"></script>
+
+<h2 id="distribution-code">Distribution Code</h2>
+
+<p>For this problem, you’ll need to download <code class="language-plaintext highlighter-rouge">players.db</code>, along with several <code class="language-plaintext highlighter-rouge">.sql</code> files in which you’ll write your queries.</p>
+
+<details><summary>Download the distribution code</summary><p>Log into <a href="https://cs50.dev/">cs50.dev</a>, click on your terminal window, and execute <code class="language-plaintext highlighter-rouge">cd</code> by itself. You should find that your terminal window’s prompt resembles the below:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$
+</code></pre></div></div>
+
+<p>Next execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://cdn.cs50.net/sql/2024/x/psets/0/players.zip
+</code></pre></div></div>
+
+<p>in order to download a ZIP called <code class="language-plaintext highlighter-rouge">players.zip</code> into your codespace.</p>
+
+<p>Then execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip players.zip
+</code></pre></div></div>
+
+<p>to create a folder called <code class="language-plaintext highlighter-rouge">players</code>. You no longer need the ZIP file, so you can execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm players.zip
+</code></pre></div></div>
+
+<p>and respond with “y” followed by Enter at the prompt to remove the ZIP file you downloaded.</p>
+
+<p>Now type</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd players
+</code></pre></div></div>
+
+<p>followed by Enter to move yourself into (i.e., open) that directory. Your prompt should now resemble the below.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>players/ $
+</code></pre></div></div>
+
+<p>If all was successful, you should execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ls
+</code></pre></div></div>
+
+<p>and see a database named <code class="language-plaintext highlighter-rouge">players.db</code> alongside several <code class="language-plaintext highlighter-rouge">.sql</code> files. Executing <code class="language-plaintext highlighter-rouge">sqlite3 players.db</code> should open the database in <code class="language-plaintext highlighter-rouge">sqlite3</code>, via which you’ll execute SQL queries. If not, retrace your steps and see if you can determine where you went wrong!</p></details>
+
+<h2 id="schema">Schema</h2>
+
+<p>In <code class="language-plaintext highlighter-rouge">players.db</code> you’ll find a single table, <code class="language-plaintext highlighter-rouge">players</code>. In the <code class="language-plaintext highlighter-rouge">players</code> table, you’ll find the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which uniquely identifies each row (player) in the table</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">first_name</code>, which is the first name of the player</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">last_name</code>, which is the last name of the player</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">bats</code>, which is the side (<code class="language-plaintext highlighter-rouge">R</code> for right or <code class="language-plaintext highlighter-rouge">L</code> for left) the player bats on</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">throws</code>, which is the hand (<code class="language-plaintext highlighter-rouge">R</code> for right or <code class="language-plaintext highlighter-rouge">L</code> for left) the player throws with</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">weight</code>, which is the player’s weight in pounds</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">height</code>, which is the player’s height in inches</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">debut</code>, which is the date (expressed as <code class="language-plaintext highlighter-rouge">YYYY-MM-DD</code>) the player began their career in the MLB</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">final_game</code>, which is the date (expressed as <code class="language-plaintext highlighter-rouge">YYYY-MM-DD</code>) the player played their last game in the MLB</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_year</code>, which is the year the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_month</code>, which is the month (expressed as an integer) the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_day</code>, which is the day the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_city</code>, which is the city in which the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_state</code>, which is the state in which the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_country</code>, which is the country in which the player was born</li>
+</ul>
+
+<h2 id="specification">Specification</h2>
+
+<ol>
+  <li>In <code class="language-plaintext highlighter-rouge">1.sql</code>, write a SQL query to find the hometown (including city, state, and country) of Jackie Robinson.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">2.sql</code>, write a SQL query to find the side (e.g., right or left) Babe Ruth hit.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">3.sql</code>, write a SQL query to find the ids of rows for which a value in the column <code class="language-plaintext highlighter-rouge">debut</code> is missing.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">4.sql</code>, write a SQL query to find the first and last names of players who were <em>not</em> born in the United States. Sort the results alphabetically by first name, then by last name.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">5.sql</code>, write a SQL query to return the first and last names of all right-handed batters. Sort the results alphabetically by first name, then by last name.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">6.sql</code>, write a SQL query to return the first name, last name, and debut date of players born in Pittsburgh, Pennsylvania (PA). Sort the results first by debut date—from most recent to oldest—then alphabetically by first name, followed by last name.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">7.sql</code>, write a SQL query to count the number of players who bat (or batted) right-handed and throw (or threw) left-handed, <em>or vice versa</em>.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">8.sql</code>, write a SQL query to find the average height and weight, rounded to two decimal places, of baseball players who debuted on or after January 1st, 2000. Return the columns with the name “Average Height” and “Average Weight”, respectively.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">9.sql</code>, write a SQL query to find the players who played their final game in the MLB in 2022. Sort the results alphabetically by first name, then by last name.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">10.sql</code>, write SQL query to answer a question of your choice. This query should:
+    <ul>
+      <li data-marker="*">Make use of <code class="language-plaintext highlighter-rouge">AS</code> to rename a column</li>
+      <li data-marker="*">Involve at least condition, using <code class="language-plaintext highlighter-rouge">WHERE</code>
+</li>
+      <li data-marker="*">Sort by at least one column using <code class="language-plaintext highlighter-rouge">ORDER BY</code>
+</li>
+    </ul>
+  </li>
+</ol>
+
+<details><summary>Feeling more comfortable?</summary><p>You can optionally attempt the below queries, which may require some advanced knowledge!</p>
+
+<ol>
+  <li>Write a single SQL query to list the first and last names of all players of above average height, sorted tallest to shortest, then by first and last name.</li>
+</ol></details>
+
+<h2 id="usage">Usage</h2>
+
+<p>To test your queries as you write them in your <code class="language-plaintext highlighter-rouge">.sql</code> files, you can query the database by running</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.read FILENAME
+</code></pre></div></div>
+
+<p>where <code class="language-plaintext highlighter-rouge">FILENAME</code> is the name of the file containing your SQL query. For example,</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.read 1.sql
+</code></pre></div></div>
+
+<p>You can also run</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cat FILENAME | sqlite3 players.db &gt; output.txt
+</code></pre></div></div>
+
+<p>to redirect the output of the query to a text file called <code class="language-plaintext highlighter-rouge">output.txt</code>. (This can be useful for checking how many rows are returned by your query!)</p>
+
+<h2 id="how-to-test">How to Test</h2>
+
+<p>While <code class="language-plaintext highlighter-rouge">check50</code> is available for this problem, you’re encouraged to instead test your code on your own for each of the following. If you’re using the <code class="language-plaintext highlighter-rouge">players.db</code> database provided in this problem’s distribution, you should find that…</p>
+
+<ul>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">1.sql</code> results in a table with 3 columns and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">2.sql</code> results in a table with 1 column and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">3.sql</code> results in a table with 1 column and 213 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">4.sql</code> results in a table with 2 columns and 2814 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">5.sql</code> results in a table with 2 columns and 12878 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">6.sql</code> results in a table with 3 columns and 134 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">7.sql</code> results in a table with 1 columns and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">8.sql</code> results in a table with 2 columns and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">9.sql</code> results in a table with 2 columns and 516 rows.</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">10.sql</code> is up to you!</p>
+
+<p>Note that row counts do not include header rows that only show column names.</p>
+
+<h3 id="correctness">Correctness</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>check50 cs50/problems/2024/sql/players
+</code></pre></div></div>
+
+<details><summary>Is <code>check50</code> running into an error?</summary><p>Be sure that your queries are returning the correct number of rows per the above.  If your query is returning a different number of rows, it may cause <code class="language-plaintext highlighter-rouge">check50</code> to time out and produce an error.  You can temporarily comment out your lines in that sql file in order to let <code class="language-plaintext highlighter-rouge">check50</code> test all of the others.</p></details>
+
+<h2 id="how-to-submit">How to Submit</h2>
+
+<p>In your terminal, execute the below to submit your work.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>submit50 cs50/problems/2024/sql/players
+</code></pre></div></div>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+
+<p>Data retrieved and modified from <a href="https://github.com/chadwickbureau/baseballdatabank/tree/master">github.com/chadwickbureau/baseballdatabank/tree/master</a>, licensed under the <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+
+
+                </main>
+
+            </div>
+
+        </div>
+
+        
+ 
+        <script src="../../../assets/page.js?1775509000"></script>
+
+    
+
+
+</body></html>

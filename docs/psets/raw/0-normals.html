@@ -1,0 +1,486 @@
+<!DOCTYPE html><html lang="en-us"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+
+        <meta property="og:image" content="https://prod-discovery.edx-cdn.org/cdn-cgi/image/width=378,height=auto,quality=85,format=webp/media/course/image/3e45c431-10df-423e-9f03-fb98b713cd4a-2397c9098976.png">
+
+        <meta property="og:title" content="Normals - CS50's Introduction to Databases with SQL">
+
+        <link href="../../../favicon.ico?1775509000" rel="icon">
+
+        <!-- https://fonts.google.com/specimen/PT+Sans?query=PT+Sans&selection.family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700 -->
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+
+        <!-- https://getbootstrap.com/docs/ -->
+        <script src="../../../assets/jquery/dist/jquery.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap/dist/js/bootstrap.bundle.min.js?1775509000"></script>
+
+        <!-- https://bootstrap-table.com/docs/getting-started/introduction/ -->
+        <link href="../../../assets/bootstrap-table/dist/bootstrap-table.min.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/bootstrap-table/dist/bootstrap-table.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile.min.js?1775509000"></script>
+
+        <!-- https://fontawesome.com/how-to-use/on-the-web/referencing-icons/basic-use -->
+        
+        <link crossorigin="anonymous" href="https://kit.fontawesome.com/a6e66aa089.css" rel="stylesheet">
+        
+
+        <!-- https://moment.github.io/luxon/ -->
+        <script src="../../../assets/luxon/build/global/luxon.min.js?1775509000"></script>
+
+        <!-- http://docs.mathjax.org/ -->
+        <!-- http://docs.mathjax.org/en/latest/options/output/chtml.html?highlight=displayAlign#the-configuration-block -->
+        <!-- https://docs.mathjax.org/en/latest/output/fonts.html -->
+        <script>
+            MathJax = {
+                loader: {
+                    paths: {
+                        'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+                    }
+                },
+                output: {
+                    displayAlign: 'left'
+                }
+            };
+        </script>
+        <script src="../../../assets/mathjax/tex-mml-chtml.js?1775509000"></script>
+
+        <!-- https://github.com/verlok/vanilla-lazyload -->
+        <script src="../../../assets/vanilla-lazyload/dist/lazyload.min.js?1775509000"></script>
+
+        <!-- https://iframe-resizer.com/ -->
+        <script src="../../../assets/@iframe-resizer/parent/index.umd.js?1775509000"></script>
+
+        <!-- https://github.com/scratchblocks/scratchblocks/releases -->
+        <script src="../../../assets/scratchblocks.min.js?1775509000"></script>
+
+        <!-- https://mermaid-js.github.io/ -->
+        <script src="../../../assets/mermaid/dist/mermaid.min.js?1775509000"></script>
+
+        <!-- https://github.com/twitter/twemoji -->
+        <script src="../../../assets/@twemoji/api/dist/twemoji.min.js?1775509000"></script>
+
+        
+
+        <link href="../../../assets/page.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/jekyll-theme-cs50.js?1775509000"></script>
+
+        <script>
+            window.CS50 = {
+                local: {"day":"numeric","hour":"numeric","minute":"numeric","month":"long","timeZoneName":"short","weekday":"long","year":"numeric"},
+                locale: "en",
+                tz: "Etc/Zulu"
+            };
+        </script>
+
+        <title>Normals - CS50's Introduction to Databases with SQL</title>
+
+
+    <meta property="og:description" content="On the heels of a new annual heat record set in 2022 — the latest in a string of record-setting years — average ocean surface temperatures around the globe...">
+</head>
+
+    <body class="invisible">
+
+        <div class="alert fixed-top mb-0 rounded-0" data-alert="success dismissible" data-hash="0129a290f1b935ef2af9c47f24376fe8" id="alert" role="alert">
+            <button aria-label="Close" class="btn-close d-none" data-bs-dismiss="alert" type="button"></button><p>Interested in <a href="../../../#how-to-take-this-course">a verified certificate or transfer credit and accreditation</a>?</p>
+</div>
+        
+
+        <div class="container-fluid">
+
+            <div class="row">
+
+                <aside class="col-lg">
+ 
+                    <header><h1 data-id="cs50s-introduction-to-databases-with-sql"><a href="../../..">CS50’s Introduction to Databases with SQL</a></h1>
+
+<p>OpenCourseWare</p>
+
+<p><a class="pr-1 small" href="https://cs50.harvard.edu/donate">Donate<i aria-hidden="true" class="fas fa-external-link-alt ps-2"></i></a></p>
+
+<p class="small"><a href="https://carterzenke.me">Carter Zenke</a><br>
+<a href="mailto:carter@cs50.harvard.edu">carter@cs50.harvard.edu</a>
+<br>
+<a class="mr-1" href="https://github.com/carterzenke"><i aria-hidden="true" class="fab fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/carterzenke/"><i aria-hidden="true" class="fab fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a></p>
+
+<p class="small"><a href="https://cs.harvard.edu/malan/">David J. Malan</a>
+<br>
+<a href="mailto:malan@harvard.edu">malan@harvard.edu</a>
+<br>
+<a class="mr-1" href="https://www.facebook.com/dmalan"><i aria-hidden="true" class="fa-brands fa-facebook-f" title="Facebook"></i><span class="sr-only">Facebook</span></a>
+<a class="mr-1" href="https://github.com/dmalan"><i aria-hidden="true" class="fa-brands fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.instagram.com/davidjmalan/"><i aria-hidden="true" class="fa-brands fa-instagram" title="Instagram"></i><span class="sr-only">Instagram</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/malan/"><i aria-hidden="true" class="fa-brands fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a>
+<a class="mr-1" href="https://www.reddit.com/user/davidjmalan"><i aria-hidden="true" class="fa-brands fa-reddit-alien" title="Reddit"></i><span class="sr-only">Reddit</span></a>
+<a class="mr-1" href="https://www.threads.net/@davidjmalan"><i aria-hidden="true" class="fa-brands fa-threads" title="Threads"></i><span class="sr-only">Threads</span></a>
+<a class="mr-1" href="https://twitter.com/davidjmalan"><i aria-hidden="true" class="fa-brands fa-twitter" title="Twitter"></i><span class="sr-only">Twitter</span></a></p></header>
+
+                    
+
+                    <button aria-controls="nav" aria-expanded="false" class="btn btn-sm collapsed d-lg-none" data-bs-target="aside > nav" data-bs-toggle="collapse">
+                        Menu
+                    </button>
+
+                    <nav class="collapse d-lg-block" id="nav"><hr>
+
+<ul>
+  <li data-marker="*"><a href="https://cs50.harvard.edu/x/puzzles/"><i class="fas fa-puzzle-piece pe-2"></i>CS50x Puzzle Day</a></li>
+  <li data-marker="*"><a href="../../../zoom/"><i class="fa-solid fa-video me-2"></i>Zoom Meetings</a></li>
+</ul>
+
+<!-- Tools -->
+<hr class="small">
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.ai/"><i class="fa-solid fa-duck pe-2 text-decoration-none"></i>CS50.ai</a></li>
+  <li data-marker="*">
+<a href="https://cs50.edx.org/ed"><i class="fa-solid fa-comment-question pe-2 text-decoration-none"></i>Ed Discussion</a> for Q&amp;A</li>
+  <li data-marker="*"><a href="https://cs50.dev/"><i class="fa-solid fa-laptop pe-2 text-decoration-none"></i>Visual Studio Code</a></li>
+</ul>
+
+<!-- Highlights -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="../../../new/">What’s new for 2024?</a></li>
+</ul>
+
+<!-- Course Nav -->
+<hr>
+
+<ol start="0">
+  <li><a href="../../../weeks/0/">Querying</a></li>
+  <li><a href="../../../weeks/1/">Relating</a></li>
+  <li><a href="../../../weeks/2/">Designing</a></li>
+  <li><a href="../../../weeks/3/">Writing</a></li>
+  <li><a href="../../../weeks/4/">Viewing</a></li>
+  <li><a href="../../../weeks/5/">Optimizing</a></li>
+  <li><a href="../../../weeks/6/">Scaling</a></li>
+</ol>
+
+<hr>
+
+<!-- Final project spec, seminars, shorts -->
+<ul>
+  <li data-marker="*"><a href="../../../project/">Final Project</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*">
+  </li><li data-marker="*">
+</li></ul>
+
+<!-- Items that might usually appear in an academic syllabus -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../honesty/">Academic Honesty</a></li>
+  <li data-marker="*"><a href="../../../certificate/">CS50 Certificate</a></li>
+  <li data-marker="*"><a href="../../../faqs/">FAQs</a></li>
+  <li data-marker="*"><a href="https://cs50.me/cs50sql">Gradebook</a></li>
+  <li data-marker="*"><a href="../../../staff/">Staff</a></li>
+  <li data-marker="*">
+</li></ul>
+
+<!-- Where to watch or take the class course -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://apps.apple.com/us/app/cs50/id1631064453">Apple TV</a></li>
+  <li data-marker="*"><a href="https://cs50.edx.org/sql">edX</a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/watch?v=WXk7yDqsKxs">freeCodeCamp</a></li>
+  <li data-marker="*"><a href="https://play.google.com/store/apps/details?id=edu.harvard.cs50.googletv">Google TV</a></li>
+  <li data-marker="*"><a href="https://web.dce.harvard.edu/extension/csci/e/151">Harvard Extension School</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*"><a href="https://web.dce.harvard.edu/summer/csci/s/151">Harvard Summer School</a></li>
+  <li data-marker="*"><a href="https://channelstore.roku.com/details/e338f60adfb133abc19eac2da9e5c505:40cee2a1909355bc4496086c8fa4a86f/cs50">Roku <span class="badge ms-2 p-1 text-bg-warning">new</span></a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/playlist?list=PLhQjrBD2T382v1MBjNOhPu9SiJ1fsD4C0">YouTube</a></li>
+</ul>
+
+<!-- Manual page, style guide, other docs -->
+
+<!-- Status Page -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.statuspage.io/">Status Page</a></li>
+</ul>
+
+<!-- Communities -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../communities/"><strong>Communities</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://bsky.app/profile/cs50.harvard.edu">Bluesky</a></li>
+  <li data-marker="*" class="small"><a href="https://www.clubhouse.com/club/cs50">Clubhouse</a></li>
+  <li data-marker="*" class="small">
+<a href="https://discord.gg/cs50">Discord</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/ed">Ed</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://www.facebook.com/groups/cs50/">Facebook Group</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.facebook.com/cs50/">Facebook Page</a></li>
+  <li data-marker="*" class="small"><a href="https://github.com/cs50">GitHub</a></li>
+  <li data-marker="*" class="small">
+<a href="https://gitter.im/cs50/x">Gitter</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://instagram.com/cs50">Instagram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/groups/7437240/">LinkedIn Group</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/school/CS50/">LinkedIn Page</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.medium.com/">Medium</a></li>
+  <li data-marker="*" class="small"><a href="https://www.quora.com/topic/CS50">Quora</a></li>
+  <li data-marker="*" class="small">
+<a href="https://www.reddit.com/r/cs50/">Reddit</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/slack">Slack</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.snapchat.com/add/cs50">Snapchat</a></li>
+  <li data-marker="*" class="small"><a href="https://soundcloud.com/cs50">SoundCloud</a></li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.stackexchange.com/">Stack Exchange</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://t.me/cs50x">Telegram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.tiktok.com/@cs50">TikTok</a></li>
+  <li data-marker="*" class="small"><a href="https://www.threads.net/@cs50">Threads</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/cs50">X Account</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/i/communities/1722308663522594923">X Community</a></li>
+  <li data-marker="*" class="small"><a href="https://www.youtube.com/subscription_center?add_user=cs50tv">YouTube</a></li>
+</ul>
+
+<!-- Courses -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../courses/"><strong>Courses</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/x">CS50x</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/games">CS50 2D</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/ai">CS50 AI</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/business">CS50 Business</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/cybersecurity">CS50 Cybersecurity</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/law">CS50 for Lawyers</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/python">CS50 Python</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/r">CS50 R</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/scratch">CS50 Scratch</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/sql">CS50 SQL</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/web">CS50 Web</a></li>
+</ul>
+
+<!-- Harvard Shop -->
+<hr>
+
+<p><a href="https://cs50.harvardshop.com/"><img src="https://cs50.harvard.edu/x/2023/assets/shop.png" alt="Harvard Shop"></a></p>
+
+<!-- Legal -->
+<hr>
+
+<p><a href="../../../license/" class="small"><i class="fab fa-creative-commons me-1"></i>License</a></p></nav>
+
+                    <footer></footer>
+
+                </aside>
+
+                <main class="col-lg">
+
+                    <h1 id="normals">Normals</h1>
+
+<blockquote>
+  <p>On the heels of a new annual heat record set in 2022 — the latest in a string of record-setting years — average ocean surface temperatures around the globe have spiked since early March. Excluding polar regions, they are about two-tenths of a degree Celsius warmer than scientists have ever observed at this time of year via satellite data.</p>
+
+  <p><a href="https://www.washingtonpost.com/climate-environment/2023/04/28/ocean-temperatures-heat-record-surge-climate/"><em>The Washington Post</em></a>, April 28, 2023</p>
+</blockquote>
+
+<h2 id="problem-to-solve">Problem to Solve</h2>
+
+<p>How do we know whether ocean temperatures are lower or higher than “normal”? What’s a “normal” temperature? Turns out that scientists have developed a metric called a “<a href="https://www.noaa.gov/explainers/understanding-climate-normals">Climate Normal</a>.” A Climate Normal characterizes aspects of earth’s <a href="https://en.wikipedia.org/wiki/Climate">climate</a>—its long-term weather—over a span of 30 years. One important metric is ocean temperature.</p>
+
+<p>In a database called <code class="language-plaintext highlighter-rouge">normals.db</code>, using a table called <code class="language-plaintext highlighter-rouge">normals</code>, explore some of the most recent Climate Normal data to understand what makes a normal ocean temperature around the world.</p>
+
+<h2 id="demo">Demo</h2>
+
+<script async="" data-autoplay="1" data-cols="100" data-loop="1" data-rows="12" id="asciicast-VEoEGh09pvBRpLrUxJe02XOii" src="https://asciinema.org/a/VEoEGh09pvBRpLrUxJe02XOii.js"></script>
+
+<h2 id="distribution-code">Distribution Code</h2>
+
+<p>For this problem, you’ll need to download <code class="language-plaintext highlighter-rouge">normals.db</code>, along with several <code class="language-plaintext highlighter-rouge">.sql</code> files in which you’ll write your queries.</p>
+
+<details><summary>Download the distribution code</summary><p>Log into <a href="https://cs50.dev/">cs50.dev</a>, click on your terminal window, and execute <code class="language-plaintext highlighter-rouge">cd</code> by itself. You should find that your terminal window’s prompt resembles the below:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$
+</code></pre></div></div>
+
+<p>Next execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://cdn.cs50.net/sql/2024/x/psets/0/normals.zip
+</code></pre></div></div>
+
+<p>in order to download a ZIP called <code class="language-plaintext highlighter-rouge">normals.zip</code> into your codespace.</p>
+
+<p>Then execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip normals.zip
+</code></pre></div></div>
+
+<p>to create a folder called <code class="language-plaintext highlighter-rouge">normals</code>. You no longer need the ZIP file, so you can execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm normals.zip
+</code></pre></div></div>
+
+<p>and respond with “y” followed by Enter at the prompt to remove the ZIP file you downloaded.</p>
+
+<p>Now type</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd normals
+</code></pre></div></div>
+
+<p>followed by Enter to move yourself into (i.e., open) that directory. Your prompt should now resemble the below.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>normals/ $
+</code></pre></div></div>
+
+<p>If all was successful, you should execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ls
+</code></pre></div></div>
+
+<p>and see a database named <code class="language-plaintext highlighter-rouge">normals.db</code> alongside several <code class="language-plaintext highlighter-rouge">.sql</code> files. Executing <code class="language-plaintext highlighter-rouge">sqlite3 normals.db</code> should open the database in <code class="language-plaintext highlighter-rouge">sqlite3</code>, via which you’ll execute SQL queries. If not, retrace your steps and see if you can determine where you went wrong!</p></details>
+
+<h2 id="schema">Schema</h2>
+
+<p>The data in <code class="language-plaintext highlighter-rouge">normals.db</code> can be visualized as shown:</p>
+
+<p><img src="normals.jpg" alt="Climate Normals Figure"></p>
+
+<p>Notice that the earth is divided into a grid of <a href="https://en.wikipedia.org/wiki/Geographic_coordinate_system">coordinates</a>—points that can identify most any location on earth. Each coordinate is a combination of <a href="https://en.wikipedia.org/wiki/Latitude">latitude</a> and <a href="https://en.wikipedia.org/wiki/Longitude">longitude</a>. And notice how each coordinate over an ocean has some normal ocean surface temperature associated with it!</p>
+
+<p>In <code class="language-plaintext highlighter-rouge">normals.db</code> you’ll find a single table of coordinates, <code class="language-plaintext highlighter-rouge">normals</code>. In the <code class="language-plaintext highlighter-rouge">normals</code> table, you’ll find the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which uniquely identifies each row (coordinate) in the table</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">latitude</code>, which is the degree of latitude (expressed in decimal format) for the coordinate</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">longitude</code>, which is the degree of longitude (expressed in decimal format) for the coordinate</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">0m</code>, which is the normal ocean surface temperature (i.e., the normal temperature at 0 meters of depth), in degrees Celsius, at the coordinate</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">5m</code>, which is the normal ocean temperature at 5 meters of depth, in degrees Celsius, at the coordinate</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">10m</code>, which is the normal ocean temperature at 10 meters of depth, in degrees Celsius, at the coordinate</li>
+</ul>
+
+<p>And observations continue until <code class="language-plaintext highlighter-rouge">5500m</code>, or 5500 meters of depth, for some coordinates!</p>
+
+<div class="alert" data-alert="info" role="alert"><p>Since <code class="language-plaintext highlighter-rouge">normals</code> is a wide table, if you want to preview the contents, consider <code class="language-plaintext highlighter-rouge">SELECT</code>ing only the <code class="language-plaintext highlighter-rouge">latitude</code>, <code class="language-plaintext highlighter-rouge">longitude</code>, and a few depth columns.</p></div>
+
+<h2 id="specification">Specification</h2>
+
+<p>For each of the following questions, you should write a single SQL query that outputs the results specified by each problem. Your response must take the form of a single SQL query. You <strong>should not</strong> assume anything about the <code class="language-plaintext highlighter-rouge">id</code>s of any particular observations: your queries should be accurate even if the <code class="language-plaintext highlighter-rouge">id</code> of any particular observation were different. Finally, each query should return only the data necessary to answer the question.</p>
+
+<ol>
+  <li>In <code class="language-plaintext highlighter-rouge">1.sql</code>, write a SQL query to find the normal ocean surface temperature in the Gulf of Maine, off the coast of Massachusetts. To find this temperature, look at the data associated with <a href="https://earth.google.com/web/search/42.5,-69.5/@42.53059612,-70.06085518,-25.91667934a,332193.98637213d,35y,-61.00844387h,46.13637382t,0r/data=Ck4aJBIeGQAAAAAAQEVAIQAAAAAAYFHAKgo0Mi41LC02OS41GAIgASImCiQJ14PWOBzcRUARa3Ou0sBqREAZo3t-queTUMAhTWNBzMAfUsA">42.5° of latitude and -69.5° of longitude</a>.
+    <ul>
+      <li data-marker="*">Recall that you can find the normal ocean surface temperature in the <code class="language-plaintext highlighter-rouge">0m</code> column, which stands for 0 meters of depth!</li>
+    </ul>
+  </li>
+  <li>In <code class="language-plaintext highlighter-rouge">2.sql</code>, write a SQL query to find the normal temperature of the deepest sensor near the Gulf of Maine, at the same coordinate above.
+    <ul>
+      <li data-marker="*">The deepest sensor records temperatures at 225 meters of depth, so you can find this data in the <code class="language-plaintext highlighter-rouge">225m</code> column.</li>
+    </ul>
+  </li>
+  <li>In <code class="language-plaintext highlighter-rouge">3.sql</code>, choose a location of your own and write a SQL query to find the normal temperature at 0 meters, 100 meters, and 200 meters. You might find <a href="https://earth.google.com">Google Earth</a> helpful if you’d like to find some coordinates to use!</li>
+  <li>In <code class="language-plaintext highlighter-rouge">4.sql</code>, write a SQL query to find the lowest normal ocean surface temperature.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">5.sql</code>, write a SQL query to find the highest normal ocean surface temperature.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">6.sql</code>, write a SQL query to return all normal ocean temperatures at 50m of depth, as well as their respective degrees of latitude and longitude, within the <a href="https://en.wikipedia.org/wiki/Arabian_Sea">Arabian Sea</a>. Include latitude, longitude, and temperature columns. For simplicity, assume the Arabian Sea is encased in the following four coordinates:
+    <ul>
+      <li data-marker="*">20° of latitude, 55° of longitude</li>
+      <li data-marker="*">20° of latitude, 75° of longitude</li>
+      <li data-marker="*">0° of latitude, 55° degrees of longitude</li>
+      <li data-marker="*">0° of latitude, 75° degrees of longitude</li>
+    </ul>
+  </li>
+  <li>In <code class="language-plaintext highlighter-rouge">7.sql</code>, write a SQL query to find the average ocean surface temperature, rounded to two decimal places, along the <a href="https://en.wikipedia.org/wiki/Equator">equator</a>. Call the resulting column “Average Equator Ocean Surface Temperature”.
+    <ul>
+      <li data-marker="*">The equator’s ocean surface temperatures can be found at all longitudes between the latitudes -0.5° and 0.5°, inclusive.</li>
+    </ul>
+  </li>
+  <li>In <code class="language-plaintext highlighter-rouge">8.sql</code>, write a SQL query to find the 10 locations with the lowest normal ocean surface temperature, sorted coldest to warmest. If two locations have the same normal ocean surface temperature, sort by latitude, smallest to largest. Include latitude, longitude, and surface temperature columns.</li>
+  <li>In <code class="language-plaintext highlighter-rouge">9.sql</code>, write a SQL query to find the 10 locations with the highest normal ocean surface temperature, sorted warmest to coldest. If two locations have the same normal ocean surface temperature, sort by latitude, smallest to largest. Include latitude, longitude, and surface temperature columns.</li>
+  <li>There are 180 whole degrees of latitude. In <code class="language-plaintext highlighter-rouge">10.sql</code>, write a SQL query to determine how many points of latitude we have at least one data point for. (Why might we not have data points for all latitudes?)</li>
+</ol>
+
+<h2 id="usage">Usage</h2>
+
+<p>To test your queries as you write them in your <code class="language-plaintext highlighter-rouge">.sql</code> files, you can query the database by running</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.read FILENAME
+</code></pre></div></div>
+
+<p>where <code class="language-plaintext highlighter-rouge">FILENAME</code> is the name of the file containing your SQL query. For example,</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.read 1.sql
+</code></pre></div></div>
+
+<p>You can also run</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cat FILENAME | sqlite3 normals.db &gt; output.txt
+</code></pre></div></div>
+
+<p>to redirect the output of the query to a text file called <code class="language-plaintext highlighter-rouge">output.txt</code>. (This can be useful for checking how many rows are returned by your query!)</p>
+
+<h2 id="how-to-test">How to Test</h2>
+
+<p>While <code class="language-plaintext highlighter-rouge">check50</code> is available for this problem, you’re encouraged to instead test your code on your own for each of the following. If you’re using the <code class="language-plaintext highlighter-rouge">normals.db</code> database provided in this problem’s distribution, you should find that…</p>
+
+<ul>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">1.sql</code> results in a table with 1 column and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">2.sql</code> results in a table with 1 column and 1 row.</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">3.sql</code> is up to you!</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">4.sql</code> results in a table with 1 column and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">5.sql</code> results in a table with 1 column and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">6.sql</code> results in a table with 3 columns and 383 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">7.sql</code> results in a table with 1 column and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">8.sql</code> results in a table with 3 columns and 10 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">9.sql</code> results in a table with 3 columns and 10 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">10.sql</code> results in a table with 1 column and 1 row.</li>
+</ul>
+
+<p>Note that row counts do not include header rows that only show column names.</p>
+
+<h3 id="correctness">Correctness</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>check50 cs50/problems/2024/sql/normals
+</code></pre></div></div>
+
+<h2 id="how-to-submit">How to Submit</h2>
+
+<p>In your terminal, execute the below to submit your work.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>submit50 cs50/problems/2024/sql/normals
+</code></pre></div></div>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+
+<p>Data retrieved from the <a href="https://www.ncei.noaa.gov/access/world-ocean-atlas-2023/bin/woa23.pl">World Ocean Atlas 2023</a>, publicly available from the <a href="https://www.noaa.gov/">National Oceanic and Atmospheric Administration (NOAA)</a>.</p>
+
+
+                </main>
+
+            </div>
+
+        </div>
+
+        
+ 
+        <script src="../../../assets/page.js?1775509000"></script>
+
+    
+
+
+</body></html>

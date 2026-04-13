@@ -88,6 +88,14 @@ EOF
     unzip -oq "$ROOT/downloads/psets/dont-panic-python.zip" -d "$ROOT/cs50/pset6"
     unzip -oq "$ROOT/downloads/psets/dont-panic-java.zip" -d "$ROOT/cs50/pset6"
 
+    for p in atl connect donuts; do
+        mkdir -p "$ROOT/cs50/pset2/$p"
+        [[ -f "$ROOT/cs50/pset2/$p/schema.sql" ]] || : > "$ROOT/cs50/pset2/$p/schema.sql"
+    done
+
+    mkdir -p "$ROOT/cs50/pset6/sentimental-connect"
+    [[ -f "$ROOT/cs50/pset6/sentimental-connect/schema.sql" ]] || : > "$ROOT/cs50/pset6/sentimental-connect/schema.sql"
+
     mkdir -p "$ROOT/cs50/pset6/dont-panic"
     ln -sfn harvard "$ROOT/cs50/pset5/your.harvard"
     ln -sfn ../dont-panic-python "$ROOT/cs50/pset6/dont-panic/python"
@@ -101,6 +109,10 @@ download_pset_pages() {
         local_name="$(echo "$url" | sed 's#https://cs50.harvard.edu/sql/psets/##; s#/$##; s#/#-#g')"
         wget -nc -O "$ROOT/docs/psets/raw/${local_name}.html" "$url"
     done <<'EOF'
+https://cs50.harvard.edu/sql/psets/0/cyberchase/
+https://cs50.harvard.edu/sql/psets/0/views/
+https://cs50.harvard.edu/sql/psets/0/normals/
+https://cs50.harvard.edu/sql/psets/0/players/
 https://cs50.harvard.edu/sql/psets/1/packages/
 https://cs50.harvard.edu/sql/psets/1/dese/
 https://cs50.harvard.edu/sql/psets/1/moneyball/
