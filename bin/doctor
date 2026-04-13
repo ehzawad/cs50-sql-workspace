@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+PASS_COUNT=0
+FAIL_COUNT=0
+
+pass() {
+    PASS_COUNT=$((PASS_COUNT + 1))
+    printf '[ok] %s\n' "$1"
+}
+
+fail() {
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+    printf '[fail] %s\n' "$1" >&2
+}
+
+check_cmd() {
+    local cmd="$1"
+    if command -v "$cmd" >/dev/null 2>&1; then
+        pass "command available: $cmd"
+    else
+        fail "missing required command: $cmd"
+    fi
+}
+
+check_file() {
+    local path="$1"
+    local label="$2"
+    if [[ -e "$path" ]]; then
+        pass "$label"
+    else
+        fail "$label missing at $path"
+    fi
+}
+
+check_exec() {
+    local path="$1"
+    local label="$2"
+    if [[ -x "$path" ]]; then
+        pass "$label"
+    else
+        fail "$label missing or not executable at $path"
+    fi
+}
+
+run_check() {
+    local label="$1"
+    shift
+    if "$@" >/dev/null 2>&1; then
+        pass "$label"
+    else
+        fail "$label"
+    fi
+}
+
+echo "CS50 SQL doctor"
+echo "root: $ROOT"
+echo
+
+for cmd in bash python3 wget unzip tar docker; do
+    check_cmd "$cmd"
+done
+
+check_exec "$ROOT/bin/sqlite3" "sqlite wrapper"
+check_exec "$ROOT/bin/cs50-sql" "cs50-sql wrapper"
+check_exec "$ROOT/bin/mysql" "mysql wrapper"
+check_exec "$ROOT/bin/psql" "psql wrapper"
+check_exec "$ROOT/bin/python" "python wrapper"
+check_exec "$ROOT/bin/pip" "pip wrapper"
+check_exec "$ROOT/bin/java" "java wrapper"
+check_exec "$ROOT/bin/javac" "javac wrapper"
+check_exec "$ROOT/bin/check50" "check50 wrapper"
+check_exec "$ROOT/bin/submit50" "submit50 wrapper"
+check_exec "$ROOT/bin/bootstrap-workspace" "bootstrap script"
+check_exec "$ROOT/bin/verify-lecture-commands" "lecture verification script"
+
+check_exec "$ROOT/vendor/sqlite-tools/sqlite3" "local sqlite3 binary"
+check_exec "$ROOT/vendor/jdk/bin/java" "local java binary"
+check_exec "$ROOT/.venv-cs50/bin/python" "local python binary"
+check_file "$ROOT/docs/week0/raw/lecture0-notes.html" "week 0 notes mirror"
+check_file "$ROOT/docs/week6/raw/lecture6-transcript.txt" "week 6 transcript mirror"
+check_file "$ROOT/cs50/pset6/dont-panic/java/Hack.java" "java pset starter"
+check_file "$ROOT/cs50/pset6/dont-panic/python/hack.py" "python pset starter"
+
+run_check "sqlite responds" "$ROOT/bin/sqlite3" -version
+run_check "course python responds" "$ROOT/bin/python" --version
+run_check "course pip responds" "$ROOT/bin/pip" --version
+run_check "java responds" "$ROOT/bin/java" -version
+run_check "javac responds" "$ROOT/bin/javac" -version
+run_check "cs50 import works" "$ROOT/bin/python" -c 'import cs50'
+run_check "check50 responds" "$ROOT/bin/check50" --help
+run_check "submit50 responds" "$ROOT/bin/submit50" --help
+run_check "mysql container can answer SELECT 1" "$ROOT/bin/mysql" -e 'SELECT 1;'
+run_check "postgres container can answer SELECT 1" "$ROOT/bin/psql" -d postgres -c 'SELECT 1;'
+
+echo
+printf 'summary: %d ok, %d failed\n' "$PASS_COUNT" "$FAIL_COUNT"
+
+if [[ "$FAIL_COUNT" -gt 0 ]]; then
+    echo "Run ./bin/bootstrap-workspace if the missing pieces are local generated assets." >&2
+    exit 1
+fi

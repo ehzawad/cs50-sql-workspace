@@ -25,7 +25,9 @@ Useful index files:
 Useful tools:
 
 ```bash
+./bin/doctor
 ./bin/cs50-sql --list
+./bin/python --version
 ./bin/mysql
 ./bin/psql
 ./bin/check50 --help
@@ -85,6 +87,7 @@ Week 5:
 Week 6:
 
 ```bash
+./bin/python --version
 ./bin/mysql
 ./bin/psql
 ```
@@ -226,7 +229,7 @@ For `dont-panic/python`:
 
 ```bash
 cd /home/synesis/sql/cs50/pset6/dont-panic/python
-python3 hack.py
+/home/synesis/sql/bin/python hack.py
 ```
 
 Reset the database if needed:

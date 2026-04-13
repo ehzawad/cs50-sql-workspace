@@ -1,10 +1,14 @@
 .venv-cs50/
 __pycache__/
 .DS_Store
+.idea/
+.vscode/
 *.pyc
 *.class
 *.log
 *.tmp
+*.db-shm
+*.db-wal
 tmp/
 downloads/
 data/

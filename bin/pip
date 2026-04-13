@@ -2,10 +2,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TOOL="$ROOT/.venv-cs50/bin/check50"
+TOOL="$ROOT/.venv-cs50/bin/pip"
 
 if [[ ! -x "$TOOL" ]]; then
-    echo "check50 is not installed yet." >&2
+    echo "Local pip environment not found at $TOOL" >&2
     echo "Run ./bin/bootstrap-workspace from $ROOT to rebuild the local course environment." >&2
     exit 1
 fi

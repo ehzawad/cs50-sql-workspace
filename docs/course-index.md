@@ -11,6 +11,8 @@ This workspace is set up around the official CS50 SQL materials:
 From `/home/synesis/sql`:
 
 ```bash
+./bin/bootstrap-workspace
+./bin/doctor
 ./bin/cs50-sql --list
 ./bin/cs50-sql week0
 ./bin/mysql
@@ -30,6 +32,8 @@ Local helper tools:
 - `./bin/psql`: starts a local PostgreSQL Docker container and drops you into it
 - `./bin/check50`: wrapper for the course checker
 - `./bin/submit50`: wrapper for submission
+- `./bin/python`, `./bin/pip`: wrappers for the local Python environment
+- `./bin/doctor`: local readiness check
 
 ## Lecture Guides
 

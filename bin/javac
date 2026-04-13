@@ -6,6 +6,7 @@ JAVAC="$ROOT/vendor/jdk/bin/javac"
 
 if [[ ! -x "$JAVAC" ]]; then
     echo "Local JDK not found at $JAVAC" >&2
+    echo "Run ./bin/bootstrap-workspace from $ROOT to download the ignored toolchain assets." >&2
     exit 1
 fi
 

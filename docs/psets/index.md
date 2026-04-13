@@ -26,6 +26,7 @@ cd /home/synesis/sql
 Java helper toolchain:
 
 ```bash
+./bin/python --version
 ./bin/javac
 ./bin/java
 ```
@@ -33,6 +34,7 @@ Java helper toolchain:
 Course tools:
 
 ```bash
+./bin/doctor
 ./bin/check50 --help
 ./bin/submit50 --help
 ```
@@ -114,9 +116,12 @@ These are scaffold-only problems. CS50 expects you to create the folders yoursel
   - check: `check50 cs50/problems/2024/sql/sentimental/dont-panic/java`
   - submit: `submit50 cs50/problems/2024/sql/sentimental/dont-panic/java`
 
-If your shell does not have a system `javac`, use the local wrappers:
+If you want to stay inside the local course toolchain, use the wrappers:
 
 ```bash
+cd /home/synesis/sql/cs50/pset6/dont-panic/python
+/home/synesis/sql/bin/python hack.py
+
 cd /home/synesis/sql/cs50/pset6/dont-panic/java
 /home/synesis/sql/bin/javac Hack.java
 /home/synesis/sql/bin/java -cp .:sqlite-jdbc-3.43.0.0.jar Hack

@@ -6,6 +6,11 @@ CONTAINER_NAME="cs50-sql-mysql"
 MYSQL_IMAGE="${CS50_SQL_MYSQL_IMAGE:-mysql:8}"
 DATA_DIR="$ROOT/data/mysql"
 
+if ! command -v docker >/dev/null 2>&1; then
+    echo "docker is required for the local MySQL setup." >&2
+    exit 1
+fi
+
 mkdir -p "$DATA_DIR"
 
 if docker ps --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
