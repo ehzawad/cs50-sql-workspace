@@ -59,4 +59,5 @@ What each tool does:
 - `sqlite3` was set up locally because installing the Debian package would require your system password.
 - MySQL and PostgreSQL are provided via Docker so the week 6 material works without touching system packages.
 - `./bin/mysql` and `./bin/psql` require Docker to be installed and running.
+- MySQL and PostgreSQL passwords default to `crimson` but can be overridden with `CS50_SQL_MYSQL_ROOT_PASSWORD` and `CS50_SQL_POSTGRES_PASSWORD`.
 - On a fresh machine, the recovery path is `./bin/bootstrap-workspace` and then `./bin/doctor`.

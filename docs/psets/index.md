@@ -46,6 +46,8 @@ Course tools:
 - `normals`: `cs50/pset0/normals/`
 - `players`: `cs50/pset0/players/`
 
+PSet 0 does not use the same check50/submit50 flow as the later SQL psets, so only the local folders are listed here.
+
 ## PSet 1
 
 - `packages`: `cs50/pset1/packages/`

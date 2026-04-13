@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONTAINER_NAME="cs50-sql-mysql"
 MYSQL_IMAGE="${CS50_SQL_MYSQL_IMAGE:-mysql:8}"
+MYSQL_ROOT_PASSWORD="${CS50_SQL_MYSQL_ROOT_PASSWORD:-crimson}"
 DATA_DIR="$ROOT/data/mysql"
 
 if ! command -v docker >/dev/null 2>&1; then
@@ -32,11 +33,11 @@ docker run \
 
 # Wait until the server is accepting connections.
 for _ in $(seq 1 60); do
-    if docker exec "$CONTAINER_NAME" mysqladmin ping -uroot -pcrimson --silent >/dev/null 2>&1; then
+    if docker exec "$CONTAINER_NAME" mysqladmin ping -uroot -p"$MYSQL_ROOT_PASSWORD" --silent >/dev/null 2>&1; then
         exit 0
     fi
     if docker exec "$CONTAINER_NAME" mysqladmin ping -uroot --silent >/dev/null 2>&1; then
-        docker exec "$CONTAINER_NAME" mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'crimson'; FLUSH PRIVILEGES;" >/dev/null 2>&1 || true
+        docker exec "$CONTAINER_NAME" mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}'; FLUSH PRIVILEGES;" >/dev/null 2>&1 || true
         exit 0
     fi
     sleep 1

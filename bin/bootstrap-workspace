@@ -2,12 +2,42 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SQLITE_TOOLS_URL="${CS50_SQL_SQLITE_TOOLS_URL:-https://www.sqlite.org/2026/sqlite-tools-linux-x64-3530000.zip}"
+JDK_URL="${CS50_SQL_JDK_URL:-https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse}"
+
+fetch_if_missing_or_empty() {
+    local url="$1"
+    local out="$2"
+    if [[ -s "$out" ]]; then
+        return 0
+    fi
+    wget -O "$out" "$url"
+}
+
+fetch_zip() {
+    local url="$1"
+    local out="$2"
+    if [[ -f "$out" ]] && unzip -tq "$out" >/dev/null 2>&1; then
+        return 0
+    fi
+    wget -O "$out" "$url"
+    unzip -tq "$out" >/dev/null
+}
+
+fetch_tgz() {
+    local url="$1"
+    local out="$2"
+    if [[ -f "$out" ]] && tar -tzf "$out" >/dev/null 2>&1; then
+        return 0
+    fi
+    wget -O "$out" "$url"
+    tar -tzf "$out" >/dev/null
+}
 
 download_sqlite_tools() {
     mkdir -p "$ROOT/downloads" "$ROOT/vendor/sqlite-tools"
-    local url="https://www.sqlite.org/2026/sqlite-tools-linux-x64-3530000.zip"
     local zip="$ROOT/downloads/sqlite-tools-linux-x64-3530000.zip"
-    wget -nc -O "$zip" "$url"
+    fetch_zip "$SQLITE_TOOLS_URL" "$zip"
     unzip -oq "$zip" -d "$ROOT/vendor/sqlite-tools.tmp"
     find "$ROOT/vendor/sqlite-tools.tmp" -maxdepth 2 -type f | while read -r f; do
         mv "$f" "$ROOT/vendor/sqlite-tools/"
@@ -19,7 +49,7 @@ download_sqlite_tools() {
 download_jdk() {
     mkdir -p "$ROOT/downloads" "$ROOT/vendor/jdk"
     local tarball="$ROOT/downloads/temurin-21-jdk.tar.gz"
-    wget -nc -O "$tarball" "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse"
+    fetch_tgz "$JDK_URL" "$tarball"
     tar -xzf "$tarball" -C "$ROOT/vendor/jdk" --strip-components=1
 }
 
@@ -34,10 +64,10 @@ download_lecture_assets() {
     mkdir -p "$ROOT/downloads/lectures"
     for w in 0 1 2 3 4 5 6; do
         mkdir -p "$ROOT/docs/week${w}/raw" "$ROOT/cs50/week${w}"
-        wget -nc -O "$ROOT/docs/week${w}/raw/lecture${w}-notes.html" "https://cs50.harvard.edu/sql/notes/${w}/"
-        wget -nc -O "$ROOT/docs/week${w}/raw/lecture${w}-transcript.txt" "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.txt"
-        wget -nc -O "$ROOT/docs/week${w}/raw/lecture${w}-subtitles.srt" "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.srt"
-        wget -nc -O "$ROOT/downloads/lectures/src${w}.zip" "https://cdn.cs50.net/sql/2023/x/lectures/${w}/src${w}.zip"
+        fetch_if_missing_or_empty "https://cs50.harvard.edu/sql/notes/${w}/" "$ROOT/docs/week${w}/raw/lecture${w}-notes.html"
+        fetch_if_missing_or_empty "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.txt" "$ROOT/docs/week${w}/raw/lecture${w}-transcript.txt"
+        fetch_if_missing_or_empty "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.srt" "$ROOT/docs/week${w}/raw/lecture${w}-subtitles.srt"
+        fetch_zip "https://cdn.cs50.net/sql/2023/x/lectures/${w}/src${w}.zip" "$ROOT/downloads/lectures/src${w}.zip"
         unzip -oq "$ROOT/downloads/lectures/src${w}.zip" -d "$ROOT/cs50/week${w}"
     done
 }
@@ -47,7 +77,7 @@ download_pset_assets() {
 
     while read -r rel; do
         [[ -z "$rel" ]] && continue
-        wget -nc -O "$ROOT/downloads/psets/$(basename "$rel")" "https://cdn.cs50.net/sql/2024/x/psets/${rel}"
+        fetch_zip "https://cdn.cs50.net/sql/2024/x/psets/${rel}" "$ROOT/downloads/psets/$(basename "$rel")"
     done <<'EOF'
 0/cyberchase.zip
 0/views.zip
@@ -88,6 +118,7 @@ EOF
     unzip -oq "$ROOT/downloads/psets/dont-panic-python.zip" -d "$ROOT/cs50/pset6"
     unzip -oq "$ROOT/downloads/psets/dont-panic-java.zip" -d "$ROOT/cs50/pset6"
 
+    # PSet 2 is design-from-scratch, so bootstrap only guarantees blank schema scaffolds.
     for p in atl connect donuts; do
         mkdir -p "$ROOT/cs50/pset2/$p"
         [[ -f "$ROOT/cs50/pset2/$p/schema.sql" ]] || : > "$ROOT/cs50/pset2/$p/schema.sql"
@@ -107,7 +138,7 @@ download_pset_pages() {
     while read -r url; do
         [[ -z "$url" ]] && continue
         local_name="$(echo "$url" | sed 's#https://cs50.harvard.edu/sql/psets/##; s#/$##; s#/#-#g')"
-        wget -nc -O "$ROOT/docs/psets/raw/${local_name}.html" "$url"
+        fetch_if_missing_or_empty "$url" "$ROOT/docs/psets/raw/${local_name}.html"
     done <<'EOF'
 https://cs50.harvard.edu/sql/psets/0/cyberchase/
 https://cs50.harvard.edu/sql/psets/0/views/

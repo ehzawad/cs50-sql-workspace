@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONTAINER_NAME="cs50-sql-mysql"
+MYSQL_ROOT_PASSWORD="${CS50_SQL_MYSQL_ROOT_PASSWORD:-crimson}"
 
 "$ROOT/bin/mysql-start"
 
@@ -11,4 +12,4 @@ if [[ -t 0 && -t 1 ]]; then
     exec_args=(-it)
 fi
 
-exec docker exec "${exec_args[@]}" "$CONTAINER_NAME" mysql -uroot -pcrimson "$@"
+exec docker exec "${exec_args[@]}" "$CONTAINER_NAME" mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$@"
