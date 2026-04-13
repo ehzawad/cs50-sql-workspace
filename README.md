@@ -5,6 +5,7 @@ This workspace is now prepared for the full CS50 SQL course: lecture materials, 
 ## Start Here
 
 - Fresh clone or missing generated assets: `./bin/bootstrap-workspace`
+- macOS quick start: `docs/macos-quickstart.md`
 - Sanity-check the environment: `./bin/doctor`
 - Course index: `docs/course-index.md`
 - Problem set index: `docs/psets/index.md`
@@ -29,7 +30,7 @@ From `/home/synesis/sql`:
 
 What each tool does:
 
-- `./bin/sqlite3`: local SQLite CLI from the official SQLite release
+- `./bin/sqlite3`: prefers the repo-local SQLite CLI and falls back to system `sqlite3` when needed
 - `./bin/cs50-sql`: opens a local SQLite database with `.headers on` and `.mode box`
 - `./bin/mysql`: starts a local MySQL 8 server in Docker and opens the MySQL client
 - `./bin/psql`: starts a local PostgreSQL server in Docker and opens `psql`
@@ -61,3 +62,4 @@ What each tool does:
 - `./bin/mysql` and `./bin/psql` require Docker to be installed and running.
 - MySQL and PostgreSQL passwords default to `crimson` but can be overridden with `CS50_SQL_MYSQL_ROOT_PASSWORD` and `CS50_SQL_POSTGRES_PASSWORD`.
 - On a fresh machine, the recovery path is `./bin/bootstrap-workspace` and then `./bin/doctor`.
+- On macOS, bootstrap uses the system `sqlite3` if available and downloads a platform-matching JDK.

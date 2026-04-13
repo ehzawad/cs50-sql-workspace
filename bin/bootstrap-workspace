@@ -2,8 +2,42 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+OS_NAME="$(uname -s)"
+ARCH_NAME="$(uname -m)"
+
+case "$OS_NAME" in
+    Linux) JDK_OS="linux" ;;
+    Darwin) JDK_OS="mac" ;;
+    *)
+        echo "Unsupported operating system: $OS_NAME" >&2
+        exit 1
+        ;;
+esac
+
+case "$ARCH_NAME" in
+    x86_64|amd64) JDK_ARCH="x64" ;;
+    arm64|aarch64) JDK_ARCH="aarch64" ;;
+    *)
+        echo "Unsupported architecture: $ARCH_NAME" >&2
+        exit 1
+        ;;
+esac
+
 SQLITE_TOOLS_URL="${CS50_SQL_SQLITE_TOOLS_URL:-https://www.sqlite.org/2026/sqlite-tools-linux-x64-3530000.zip}"
-JDK_URL="${CS50_SQL_JDK_URL:-https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse}"
+JDK_URL="${CS50_SQL_JDK_URL:-https://api.adoptium.net/v3/binary/latest/21/ga/${JDK_OS}/${JDK_ARCH}/jdk/hotspot/normal/eclipse}"
+
+fetch_url() {
+    local url="$1"
+    local out="$2"
+    if command -v wget >/dev/null 2>&1; then
+        wget -O "$out" "$url"
+    elif command -v curl >/dev/null 2>&1; then
+        curl -L --fail --output "$out" "$url"
+    else
+        echo "Neither wget nor curl is available for downloading $url" >&2
+        exit 1
+    fi
+}
 
 fetch_if_missing_or_empty() {
     local url="$1"
@@ -11,7 +45,7 @@ fetch_if_missing_or_empty() {
     if [[ -s "$out" ]]; then
         return 0
     fi
-    wget -O "$out" "$url"
+    fetch_url "$url" "$out"
 }
 
 fetch_zip() {
@@ -20,7 +54,7 @@ fetch_zip() {
     if [[ -f "$out" ]] && unzip -tq "$out" >/dev/null 2>&1; then
         return 0
     fi
-    wget -O "$out" "$url"
+    fetch_url "$url" "$out"
     unzip -tq "$out" >/dev/null
 }
 
@@ -30,11 +64,20 @@ fetch_tgz() {
     if [[ -f "$out" ]] && tar -tzf "$out" >/dev/null 2>&1; then
         return 0
     fi
-    wget -O "$out" "$url"
+    fetch_url "$url" "$out"
     tar -tzf "$out" >/dev/null
 }
 
 download_sqlite_tools() {
+    if [[ "$OS_NAME" == "Darwin" ]]; then
+        if command -v sqlite3 >/dev/null 2>&1; then
+            echo "Using system sqlite3 on macOS."
+            return 0
+        fi
+        echo "sqlite3 was not found on macOS. Install it with Homebrew: brew install sqlite" >&2
+        exit 1
+    fi
+
     mkdir -p "$ROOT/downloads" "$ROOT/vendor/sqlite-tools"
     local zip="$ROOT/downloads/sqlite-tools-linux-x64-3530000.zip"
     fetch_zip "$SQLITE_TOOLS_URL" "$zip"
@@ -48,7 +91,7 @@ download_sqlite_tools() {
 
 download_jdk() {
     mkdir -p "$ROOT/downloads" "$ROOT/vendor/jdk"
-    local tarball="$ROOT/downloads/temurin-21-jdk.tar.gz"
+    local tarball="$ROOT/downloads/temurin-21-jdk-${JDK_OS}-${JDK_ARCH}.tar.gz"
     fetch_tgz "$JDK_URL" "$tarball"
     tar -xzf "$tarball" -C "$ROOT/vendor/jdk" --strip-components=1
 }

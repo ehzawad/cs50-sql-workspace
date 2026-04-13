@@ -59,9 +59,17 @@ echo "CS50 SQL doctor"
 echo "root: $ROOT"
 echo
 
-for cmd in bash python3 wget unzip tar docker; do
+for cmd in bash python3 unzip tar docker; do
     check_cmd "$cmd"
 done
+
+if command -v wget >/dev/null 2>&1; then
+    pass "download helper available: wget"
+elif command -v curl >/dev/null 2>&1; then
+    pass "download helper available: curl"
+else
+    fail "missing required download helper: wget or curl"
+fi
 
 check_exec "$ROOT/bin/sqlite3" "sqlite wrapper"
 check_exec "$ROOT/bin/cs50-sql" "cs50-sql wrapper"
@@ -76,7 +84,13 @@ check_exec "$ROOT/bin/submit50" "submit50 wrapper"
 check_exec "$ROOT/bin/bootstrap-workspace" "bootstrap script"
 check_exec "$ROOT/bin/verify-lecture-commands" "lecture verification script"
 
-check_exec "$ROOT/vendor/sqlite-tools/sqlite3" "local sqlite3 binary"
+if [[ -x "$ROOT/vendor/sqlite-tools/sqlite3" ]]; then
+    pass "local sqlite3 binary"
+elif command -v sqlite3 >/dev/null 2>&1; then
+    pass "system sqlite3 binary"
+else
+    fail "sqlite3 binary missing locally and on PATH"
+fi
 check_exec "$ROOT/vendor/jdk/bin/java" "local java binary"
 check_exec "$ROOT/.venv-cs50/bin/python" "local python binary"
 check_file "$ROOT/docs/week0/raw/lecture0-notes.html" "week 0 notes mirror"

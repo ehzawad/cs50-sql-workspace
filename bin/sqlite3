@@ -4,10 +4,14 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TOOL="$ROOT/vendor/sqlite-tools/sqlite3"
 
-if [[ ! -x "$TOOL" ]]; then
-    echo "Local sqlite3 not found at $TOOL" >&2
-    echo "Run ./bin/bootstrap-workspace from $ROOT to download the ignored toolchain assets." >&2
-    exit 1
+if [[ -x "$TOOL" ]]; then
+    exec "$TOOL" "$@"
 fi
 
-exec "$TOOL" "$@"
+if command -v sqlite3 >/dev/null 2>&1; then
+    exec sqlite3 "$@"
+fi
+
+echo "sqlite3 was not found in $TOOL and no system sqlite3 is available." >&2
+echo "Run ./bin/bootstrap-workspace from $ROOT, or install sqlite3 locally." >&2
+exit 1
