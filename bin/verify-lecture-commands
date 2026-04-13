@@ -204,34 +204,34 @@ for f in "$ROOT"/cs50/week2/src2/schema/schema*.sql; do
     run_sqlite_file "week2 $(basename "$f")" "$f" "$TMPDIR/blank.db" pass
 done
 run_sqlite_statements "week2 alter0.sql" "$TMPDIR/blank.db" pass \
-    '.read "$ROOT/cs50/week2/src2/schema/schema0.sql"' \
-    '.read "$ROOT/cs50/week2/src2/alter/alter0.sql"'
+    ".read $ROOT/cs50/week2/src2/schema/schema0.sql" \
+    ".read $ROOT/cs50/week2/src2/alter/alter0.sql"
 run_sqlite_statements "week2 alter1-3 chain" "$TMPDIR/blank.db" pass \
-    '.read "$ROOT/cs50/week2/src2/schema/schema0.sql"' \
-    '.read "$ROOT/cs50/week2/src2/alter/alter1.sql"' \
-    '.read "$ROOT/cs50/week2/src2/alter/alter2.sql"' \
-    '.read "$ROOT/cs50/week2/src2/alter/alter3.sql"'
+    ".read $ROOT/cs50/week2/src2/schema/schema0.sql" \
+    ".read $ROOT/cs50/week2/src2/alter/alter1.sql" \
+    ".read $ROOT/cs50/week2/src2/alter/alter2.sql" \
+    ".read $ROOT/cs50/week2/src2/alter/alter3.sql"
 
 run_sqlite_statements "week3 insert chain" "$TMPDIR/blank.db" expected-error \
-    '.read "$ROOT/cs50/week3/src3/schemas/insert/schema.sql"' \
-    '.read "$ROOT/cs50/week3/src3/insert/insert0.sql"' \
-    '.read "$ROOT/cs50/week3/src3/insert/insert1.sql"'
+    ".read $ROOT/cs50/week3/src3/schemas/insert/schema.sql" \
+    ".read $ROOT/cs50/week3/src3/insert/insert0.sql" \
+    ".read $ROOT/cs50/week3/src3/insert/insert1.sql"
 run_sqlite_file "week3 import0.sql" "$ROOT/cs50/week3/src3/import/import0/import0.sql" "$TMPDIR/blank.db" pass
 run_sqlite_file "week3 import1.sql" "$ROOT/cs50/week3/src3/import/import1/import1.sql" "$TMPDIR/blank.db" expected-error
 run_sqlite_statements "week3 delete0 chain" "$TMPDIR/blank.db" pass \
-    '.read "$ROOT/cs50/week3/src3/schemas/delete/schema0.sql"' \
-    '.read "$ROOT/cs50/week3/src3/delete/delete0.sql"'
+    ".read $ROOT/cs50/week3/src3/schemas/delete/schema0.sql" \
+    ".read $ROOT/cs50/week3/src3/delete/delete0.sql"
 run_sqlite_statements "week3 delete1 chain" "$TMPDIR/blank.db" pass \
-    '.read "$ROOT/cs50/week3/src3/schemas/delete/schema1.sql"' \
-    '.read "$ROOT/cs50/week3/src3/delete/delete1.sql"'
+    ".read $ROOT/cs50/week3/src3/schemas/delete/schema1.sql" \
+    ".read $ROOT/cs50/week3/src3/delete/delete1.sql"
 run_sqlite_statements "week3 delete2 chain" "$TMPDIR/blank.db" pass \
-    '.read "$ROOT/cs50/week3/src3/schemas/delete/schema2.sql"' \
-    '.read "$ROOT/cs50/week3/src3/delete/delete2.sql"'
+    ".read $ROOT/cs50/week3/src3/schemas/delete/schema2.sql" \
+    ".read $ROOT/cs50/week3/src3/delete/delete2.sql"
 run_sqlite_statements "week3 triggers chain" "$TMPDIR/blank.db" pass \
-    '.read "$ROOT/cs50/week3/src3/schemas/triggers/schema.sql"' \
-    '.read "$ROOT/cs50/week3/src3/triggers/triggers.sql"'
+    ".read $ROOT/cs50/week3/src3/schemas/triggers/schema.sql" \
+    ".read $ROOT/cs50/week3/src3/triggers/triggers.sql"
 run_sqlite_statements "week3 soft_delete.sql" "$ROOT/cs50/week4/src4/mfa.db" pass \
-    '.read "$ROOT/cs50/week3/src3/delete/soft/soft_delete.sql"'
+    ".read $ROOT/cs50/week3/src3/delete/soft/soft_delete.sql"
 
 run_sqlite_file "week4 simplifying.sql" "$ROOT/cs50/week4/src4/simplifying.sql" "$ROOT/cs50/week4/src4/longlist.db" pass
 run_sqlite_file "week4 aggregating.sql" "$ROOT/cs50/week4/src4/aggregating.sql" "$ROOT/cs50/week4/src4/longlist.db" expected-error
