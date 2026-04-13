@@ -1,0 +1,17 @@
+.venv-cs50/
+__pycache__/
+.DS_Store
+*.pyc
+*.class
+*.log
+*.tmp
+tmp/
+downloads/
+data/
+vendor/sqlite-tools/
+vendor/jdk/
+cs50/**/*.db
+cs50/**/*.csv
+cs50/**/*.pdf
+cs50/**/*.jar
+cs50/**/output.txt

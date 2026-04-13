@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CONTAINER_NAME="cs50-sql-mysql"
+
+"$ROOT/bin/mysql-start"
+
+exec_args=(-i)
+if [[ -t 0 && -t 1 ]]; then
+    exec_args=(-it)
+fi
+
+exec docker exec "${exec_args[@]}" "$CONTAINER_NAME" mysql -uroot -pcrimson "$@"

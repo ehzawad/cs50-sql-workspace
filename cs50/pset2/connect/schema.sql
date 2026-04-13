@@ -1,0 +1,6 @@
+-- CS50 SQL PSet 2: Happy to Connect
+-- Official page: https://cs50.harvard.edu/sql/psets/2/connect/
+--
+-- Build and test locally with:
+--   sqlite3 connect.db
+--   .read schema.sql

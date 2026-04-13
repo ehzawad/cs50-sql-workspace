@@ -1,0 +1,6640 @@
+1
+00:00:00,000 --> 00:00:04,900
+[MUSIC PLAYING]
+
+2
+00:00:04,900 --> 00:00:17,650
+
+
+3
+00:00:17,650 --> 00:00:21,730
+CARTER ZENKE: Well, hello, one and all,
+and welcome to CS50's Introduction to
+
+4
+00:00:21,730 --> 00:00:23,530
+Databases with SQL.
+
+5
+00:00:23,530 --> 00:00:25,150
+My name is Carter Zenke.
+
+6
+00:00:25,150 --> 00:00:29,920
+And in this course, you'll learn how to
+represent, how to organize and manage,
+
+7
+00:00:29,920 --> 00:00:32,170
+and how to ask questions of
+the data that's around you
+
+8
+00:00:32,170 --> 00:00:34,370
+in your everyday life.
+
+9
+00:00:34,370 --> 00:00:36,610
+But why learn those skills?
+
+10
+00:00:36,610 --> 00:00:40,520
+Well, you may have heard we're living in
+the information age, where we generate
+
+11
+00:00:40,520 --> 00:00:43,660
+so much information, so much
+data by virtue of interaction
+
+12
+00:00:43,660 --> 00:00:46,730
+with computers and with each
+other over the internet.
+
+13
+00:00:46,730 --> 00:00:50,620
+You might think of, let's say, Google
+keeping track of the sites you click on
+
+14
+00:00:50,620 --> 00:00:52,270
+or the sites you search for.
+
+15
+00:00:52,270 --> 00:00:55,630
+You could think of maybe the smartphone
+in your pocket or the smartwatch
+
+16
+00:00:55,630 --> 00:00:58,760
+on your wrist keeping track
+of health information, emails,
+
+17
+00:00:58,760 --> 00:01:00,740
+text messages, and so on.
+
+18
+00:01:00,740 --> 00:01:02,890
+You might even think
+of YouTube, where you
+
+19
+00:01:02,890 --> 00:01:05,530
+might be watching this same
+video keeping track of all
+
+20
+00:01:05,530 --> 00:01:08,470
+the videos on their platform,
+the creators of those videos,
+
+21
+00:01:08,470 --> 00:01:12,190
+and even the comment you
+might leave on this video.
+
+22
+00:01:12,190 --> 00:01:15,130
+So although, we're living in
+this information age, where
+
+23
+00:01:15,130 --> 00:01:17,770
+there is so much data,
+so much information,
+
+24
+00:01:17,770 --> 00:01:20,200
+we can use these new tools,
+like database and SQL,
+
+25
+00:01:20,200 --> 00:01:23,918
+to interact with that information
+to store it and manage it.
+
+26
+00:01:23,918 --> 00:01:25,960
+And although we're using
+some of these new tools,
+
+27
+00:01:25,960 --> 00:01:29,560
+some of the other concepts we'll
+learn aren't actually so new.
+
+28
+00:01:29,560 --> 00:01:34,690
+So here is a diagram from
+literally a few thousand years ago.
+
+29
+00:01:34,690 --> 00:01:39,400
+And notice how this diagram
+has rows and columns.
+
+30
+00:01:39,400 --> 00:01:43,270
+And this seems to store the
+stipends for workers at a temple
+
+31
+00:01:43,270 --> 00:01:45,170
+some few thousand years ago.
+
+32
+00:01:45,170 --> 00:01:50,200
+So given what you know based on your
+prior knowledge, what kind of name
+
+33
+00:01:50,200 --> 00:01:55,030
+might you give this diagram
+with rows and with columns?
+
+34
+00:01:55,030 --> 00:01:58,120
+What can we give a name to for this?
+
+35
+00:01:58,120 --> 00:02:02,530
+So I'm seeing some ideas of a table,
+perhaps a spreadsheet as well.
+
+36
+00:02:02,530 --> 00:02:05,260
+For our purposes, we'll
+call this a table, where
+
+37
+00:02:05,260 --> 00:02:08,259
+a table stores some set of information.
+
+38
+00:02:08,259 --> 00:02:12,370
+And every row in that
+table stores one item
+
+39
+00:02:12,370 --> 00:02:15,760
+in that set, where every column
+has some piece of information
+
+40
+00:02:15,760 --> 00:02:18,590
+about that item, some
+attribute of that item.
+
+41
+00:02:18,590 --> 00:02:22,540
+So here, for example, we do have
+a table of workers at a temple.
+
+42
+00:02:22,540 --> 00:02:24,790
+Every row is one worker.
+
+43
+00:02:24,790 --> 00:02:29,210
+And every column is their
+stipend for a particular month.
+
+44
+00:02:29,210 --> 00:02:33,010
+So I could take this idea of a
+table, this very ancient idea,
+
+45
+00:02:33,010 --> 00:02:35,660
+and apply it to a more modern context.
+
+46
+00:02:35,660 --> 00:02:38,810
+So let's say I'm a
+librarian, for instance.
+
+47
+00:02:38,810 --> 00:02:41,230
+I want to organize my library.
+
+48
+00:02:41,230 --> 00:02:44,530
+Well, here I have book
+titles and authors.
+
+49
+00:02:44,530 --> 00:02:47,410
+And I could certainly use a
+table to store this information.
+
+50
+00:02:47,410 --> 00:02:51,370
+But how might you propose
+I store this information?
+
+51
+00:02:51,370 --> 00:02:54,640
+What could I do with my
+rows and with my columns
+
+52
+00:02:54,640 --> 00:02:58,300
+if I have book titles and book authors?
+
+53
+00:02:58,300 --> 00:03:03,400
+I see one thing I could do is probably
+organize my titles and my authors
+
+54
+00:03:03,400 --> 00:03:05,178
+next to each other like this.
+
+55
+00:03:05,178 --> 00:03:07,970
+I could take my titles to my authors,
+put them right next together.
+
+56
+00:03:07,970 --> 00:03:10,420
+So I have Song of
+Solomon by Toni Morrison,
+
+57
+00:03:10,420 --> 00:03:12,310
+Goodnight Moon by Margaret Wise Brown.
+
+58
+00:03:12,310 --> 00:03:15,980
+And notice hear how
+each book is one row.
+
+59
+00:03:15,980 --> 00:03:21,640
+But every row has two columns worth two
+pieces of information for each book.
+
+60
+00:03:21,640 --> 00:03:25,970
+I have a title for one column
+and an author for the other.
+
+61
+00:03:25,970 --> 00:03:29,950
+And so together, I have a table of
+books where every column tells me
+
+62
+00:03:29,950 --> 00:03:31,210
+one piece of information.
+
+63
+00:03:31,210 --> 00:03:36,440
+And every row tells me
+one book in this data set.
+
+64
+00:03:36,440 --> 00:03:40,450
+So thankfully, now that we're
+living in this information age,
+
+65
+00:03:40,450 --> 00:03:45,760
+we no longer have to use stone
+tablets or perhaps pencil and paper
+
+66
+00:03:45,760 --> 00:03:47,110
+to store our tables.
+
+67
+00:03:47,110 --> 00:03:51,550
+We have software now like Apple Numbers,
+Google Sheets, and Microsoft Excel.
+
+68
+00:03:51,550 --> 00:03:57,050
+But this isn't a course on Apple
+Numbers or Microsoft Excel or so on.
+
+69
+00:03:57,050 --> 00:04:00,340
+It's actually a course
+on databases and on SQL.
+
+70
+00:04:00,340 --> 00:04:03,970
+So feel free to raise your
+hand if you'd like, but why
+
+71
+00:04:03,970 --> 00:04:07,360
+would we decide to move
+along from these spreadsheet
+
+72
+00:04:07,360 --> 00:04:10,420
+softwares towards a database?
+
+73
+00:04:10,420 --> 00:04:14,620
+What might that database give us
+that a spreadsheet might not give us?
+
+74
+00:04:14,620 --> 00:04:18,339
+So I'm seeing a few ideas here and
+among them are some simplicity,
+
+75
+00:04:18,339 --> 00:04:20,845
+some ability to organize some data.
+
+76
+00:04:20,845 --> 00:04:22,720
+But there are a few
+other ideas which I think
+
+77
+00:04:22,720 --> 00:04:26,740
+about too for why we might move beyond
+spreadsheets and go towards databases.
+
+78
+00:04:26,740 --> 00:04:29,530
+Now one of these is this idea of scale.
+
+79
+00:04:29,530 --> 00:04:32,830
+So let's say you are a
+Google or an Instagram.
+
+80
+00:04:32,830 --> 00:04:35,110
+You're trying to store
+not just tens of thousands
+
+81
+00:04:35,110 --> 00:04:37,150
+of users or hundreds of
+thousands but literally
+
+82
+00:04:37,150 --> 00:04:39,850
+millions of users or billions of users.
+
+83
+00:04:39,850 --> 00:04:43,450
+And with that kind of scale may
+be better served by a database
+
+84
+00:04:43,450 --> 00:04:46,250
+to store that much information.
+
+85
+00:04:46,250 --> 00:04:49,900
+Another reason to move from
+spreadsheets to databases
+
+86
+00:04:49,900 --> 00:04:53,170
+is the idea of being able to
+update data more frequently.
+
+87
+00:04:53,170 --> 00:04:55,180
+Maybe you're a Twitter
+of the world, and you're
+
+88
+00:04:55,180 --> 00:04:58,060
+trying to have others tweet
+multiple times per second.
+
+89
+00:04:58,060 --> 00:05:00,910
+Well, a database can handle
+that kind of capacity
+
+90
+00:05:00,910 --> 00:05:04,060
+much better than a
+spreadsheet could alone.
+
+91
+00:05:04,060 --> 00:05:08,180
+And a third reason to move
+beyond this might be speed.
+
+92
+00:05:08,180 --> 00:05:11,810
+Let's say I'm trying to look up some
+piece of information in my database.
+
+93
+00:05:11,810 --> 00:05:14,320
+Well, I could do that much
+faster with a database
+
+94
+00:05:14,320 --> 00:05:15,670
+than I could with a spreadsheet.
+
+95
+00:05:15,670 --> 00:05:18,400
+You could think of yourself using
+Command-F or Control-F to find
+
+96
+00:05:18,400 --> 00:05:20,260
+a piece of information
+in your spreadsheet,
+
+97
+00:05:20,260 --> 00:05:22,330
+going one by one through the rows.
+
+98
+00:05:22,330 --> 00:05:24,550
+A database gives you
+access to more kinds
+
+99
+00:05:24,550 --> 00:05:28,540
+of algorithms you could use to search
+this data much faster, ultimately.
+
+100
+00:05:28,540 --> 00:05:31,270
+So these three reasons,
+among others, are
+
+101
+00:05:31,270 --> 00:05:36,220
+those might want to move beyond
+spreadsheets and start using databases.
+
+102
+00:05:36,220 --> 00:05:40,437
+Now, it's worth thinking
+first, what is a database?
+
+103
+00:05:40,437 --> 00:05:42,770
+We'll be talking about databases
+throughout this course.
+
+104
+00:05:42,770 --> 00:05:44,530
+So what is a database?
+
+105
+00:05:44,530 --> 00:05:48,430
+Well, a database is simply some
+way to organize your data such
+
+106
+00:05:48,430 --> 00:05:54,070
+that you can actually create data,
+update data, read data, and delete
+
+107
+00:05:54,070 --> 00:05:54,580
+data.
+
+108
+00:05:54,580 --> 00:05:57,760
+And often these our for interactions
+that we'll do with a database--
+
+109
+00:05:57,760 --> 00:06:02,170
+like adding some data, looking at data,
+deleting data, and even updating it
+
+110
+00:06:02,170 --> 00:06:03,550
+along the way.
+
+111
+00:06:03,550 --> 00:06:06,640
+But the database isn't the
+only thing in our picture here.
+
+112
+00:06:06,640 --> 00:06:09,715
+We also have a database
+management system,
+
+113
+00:06:09,715 --> 00:06:13,180
+a way to interact with our database.
+
+114
+00:06:13,180 --> 00:06:17,350
+So you might think of perhaps
+writing a program on your computer.
+
+115
+00:06:17,350 --> 00:06:19,510
+You have some interface
+with to write that program,
+
+116
+00:06:19,510 --> 00:06:21,250
+like VS Code for instance.
+
+117
+00:06:21,250 --> 00:06:23,860
+Or you might think of your own
+desktop on your own computer.
+
+118
+00:06:23,860 --> 00:06:27,340
+You have icons that you interact
+with the underlying operating system.
+
+119
+00:06:27,340 --> 00:06:31,660
+In the same way, we can use this
+software called a database management
+
+120
+00:06:31,660 --> 00:06:35,440
+system, or a DBMS for short, to
+interact with a database perhaps
+
+121
+00:06:35,440 --> 00:06:40,470
+using a graphical interface or
+using a textual language too.
+
+122
+00:06:40,470 --> 00:06:46,025
+Now, there are a few varieties
+of database management softwares.
+
+123
+00:06:46,025 --> 00:06:47,400
+And these are a few of them here.
+
+124
+00:06:47,400 --> 00:06:51,240
+MySQL, Oracle, PostgreSQL, and SQLite.
+
+125
+00:06:51,240 --> 00:06:53,440
+But this is a non-exhaustive list.
+
+126
+00:06:53,440 --> 00:06:57,690
+So let me also ask again, what kinds
+of other database management systems
+
+127
+00:06:57,690 --> 00:07:01,120
+have you perhaps heard of in this case?
+
+128
+00:07:01,120 --> 00:07:05,640
+I'm seeing one for Microsoft
+Access, perhaps, MongoDB.
+
+129
+00:07:05,640 --> 00:07:08,790
+There are other kinds of softwares,
+other companies out there that make
+
+130
+00:07:08,790 --> 00:07:10,900
+these ways to interact with a database.
+
+131
+00:07:10,900 --> 00:07:13,440
+And this is, again,
+a nonexhaustive list.
+
+132
+00:07:13,440 --> 00:07:16,260
+Now, if you are a
+database administrator,
+
+133
+00:07:16,260 --> 00:07:19,410
+or maybe you're somebody who's making
+a choice of which software to use,
+
+134
+00:07:19,410 --> 00:07:21,550
+you have a few trade-offs to consider.
+
+135
+00:07:21,550 --> 00:07:25,320
+Let's say you might think of one being
+proprietary, for instance, costing
+
+136
+00:07:25,320 --> 00:07:26,730
+money to work with.
+
+137
+00:07:26,730 --> 00:07:29,250
+What you get for that
+money is additional support
+
+138
+00:07:29,250 --> 00:07:31,950
+to actually implement your own database.
+
+139
+00:07:31,950 --> 00:07:35,610
+On the other hand, you might have
+open source software or free software
+
+140
+00:07:35,610 --> 00:07:39,210
+to use, stuff like
+PostgreSQL, MySQL, and SQLite.
+
+141
+00:07:39,210 --> 00:07:43,500
+But the downside is you are then
+responsible for actually implementing
+
+142
+00:07:43,500 --> 00:07:45,670
+that database.
+
+143
+00:07:45,670 --> 00:07:48,960
+Another thing to consider
+too is that maybe some
+
+144
+00:07:48,960 --> 00:07:52,350
+are going to be heavier weight
+than others, more fully featured
+
+145
+00:07:52,350 --> 00:07:54,690
+as a consequence but perhaps
+heavier weight requiring
+
+146
+00:07:54,690 --> 00:07:56,520
+more computation to run.
+
+147
+00:07:56,520 --> 00:07:58,830
+You can think of those
+like MySQL or PostgreSQL
+
+148
+00:07:58,830 --> 00:08:02,610
+being a little bit heavier weight
+but being more fully featured,
+
+149
+00:08:02,610 --> 00:08:06,240
+whereas SQLite down below will be a
+little lighter weight, as the name
+
+150
+00:08:06,240 --> 00:08:09,780
+might imply, but allow you
+to do most of the same work
+
+151
+00:08:09,780 --> 00:08:13,330
+that these other softwares
+could allow you to do as well.
+
+152
+00:08:13,330 --> 00:08:16,410
+And in this course, we'll
+actually be using SQLite for you
+
+153
+00:08:16,410 --> 00:08:18,150
+to work with your own databases.
+
+154
+00:08:18,150 --> 00:08:24,400
+But gradually, we'll move on
+to MySQL and PostgreSQL too.
+
+155
+00:08:24,400 --> 00:08:29,180
+So let me go ahead and talk
+about then SQL in this case.
+
+156
+00:08:29,180 --> 00:08:34,030
+You might notice that in each of
+these, MySQL and PostgreSQL and SQLite,
+
+157
+00:08:34,030 --> 00:08:36,789
+each of them have this
+idea of SQL in them.
+
+158
+00:08:36,789 --> 00:08:40,750
+And SQL is that language that we'll
+use to interact with our database.
+
+159
+00:08:40,750 --> 00:08:45,130
+Now, let me ask, what does
+SQL stand for, perhaps?
+
+160
+00:08:45,130 --> 00:08:51,260
+We talk about S-Q-L or SQL,
+but what might SQL stand for?
+
+161
+00:08:51,260 --> 00:08:53,870
+So I'm saying it stands for
+Structured Query Language,
+
+162
+00:08:53,870 --> 00:08:56,787
+which is good if you already know
+this, but not to worry if you don't.
+
+163
+00:08:56,787 --> 00:09:00,200
+So SQL does stand for
+Structured Query Language.
+
+164
+00:09:00,200 --> 00:09:02,790
+As we'll see in this
+course, it is structured.
+
+165
+00:09:02,790 --> 00:09:05,720
+It does have some keywords you can
+use to interact with the database.
+
+166
+00:09:05,720 --> 00:09:08,810
+And it is a query language--
+it can be used to ask
+
+167
+00:09:08,810 --> 00:09:13,110
+questions of data inside a database.
+
+168
+00:09:13,110 --> 00:09:18,440
+We'll see that this is the language we
+can use to create data, to read data,
+
+169
+00:09:18,440 --> 00:09:24,360
+to update data, and delete
+data all with SQL in this case.
+
+170
+00:09:24,360 --> 00:09:28,350
+And our next thing will be to
+talk about this idea of querying.
+
+171
+00:09:28,350 --> 00:09:32,830
+So SQL is a query language,
+but what can we do with SQL?
+
+172
+00:09:32,830 --> 00:09:35,150
+Well, the first thing we
+can do, we'll focus on first
+
+173
+00:09:35,150 --> 00:09:37,310
+in this course is writing queries--
+
+174
+00:09:37,310 --> 00:09:41,270
+trying to ask questions
+of data using SQL.
+
+175
+00:09:41,270 --> 00:09:43,730
+Well, what kinds of
+questions could we ask?
+
+176
+00:09:43,730 --> 00:09:48,320
+Well, you might imagine perhaps working
+at an Instagram or a Facebook trying
+
+177
+00:09:48,320 --> 00:09:51,290
+to work as an engineer to
+figure out what kinds of posts
+
+178
+00:09:51,290 --> 00:09:53,280
+are the most liked on your platform.
+
+179
+00:09:53,280 --> 00:09:57,050
+That's a question you can answer
+with databases and with SQL.
+
+180
+00:09:57,050 --> 00:10:00,500
+You might also think of whether
+your numbers of daily users
+
+181
+00:10:00,500 --> 00:10:03,590
+are growing or shrinking if you
+work at a startup for instance.
+
+182
+00:10:03,590 --> 00:10:07,530
+Even maybe you might be working for some
+a company like Spotify that could ask,
+
+183
+00:10:07,530 --> 00:10:11,570
+how could we play songs that are
+like those a user just played?
+
+184
+00:10:11,570 --> 00:10:17,690
+This too is a question you can
+answer with databases and with SQL.
+
+185
+00:10:17,690 --> 00:10:21,440
+Now today, we'll be focusing
+on this database of books.
+
+186
+00:10:21,440 --> 00:10:24,500
+And in particular, books
+that have been longlisted,
+
+187
+00:10:24,500 --> 00:10:27,528
+quote, unquote, "for the
+International Booker Prize."
+
+188
+00:10:27,528 --> 00:10:29,820
+The International Booker
+Prize, if you're not familiar,
+
+189
+00:10:29,820 --> 00:10:32,570
+is an award given to books
+written around the world
+
+190
+00:10:32,570 --> 00:10:34,250
+by authors from many countries.
+
+191
+00:10:34,250 --> 00:10:38,600
+And it's designed to award books
+of fiction particularly good
+
+192
+00:10:38,600 --> 00:10:39,500
+in some cases.
+
+193
+00:10:39,500 --> 00:10:43,040
+And every year, the
+committee selects 13 books
+
+194
+00:10:43,040 --> 00:10:47,360
+to include on a longlist for
+consideration for this prize.
+
+195
+00:10:47,360 --> 00:10:50,960
+And our database then has
+five years worth of longlists
+
+196
+00:10:50,960 --> 00:10:53,870
+for the International
+Booker Prize inside of it.
+
+197
+00:10:53,870 --> 00:10:55,730
+We could use this
+database, perhaps, if we
+
+198
+00:10:55,730 --> 00:11:00,680
+were a librarian trying to find books
+for our library or even as a book
+
+199
+00:11:00,680 --> 00:11:03,620
+reader, an avid reader myself
+trying to find books to read that I
+
+200
+00:11:03,620 --> 00:11:06,420
+could put on my own shelf overall.
+
+201
+00:11:06,420 --> 00:11:08,550
+So we'll look at this database.
+
+202
+00:11:08,550 --> 00:11:10,580
+But we'll need a few
+tools in our toolkit,
+
+203
+00:11:10,580 --> 00:11:13,650
+metaphorically, to actually
+interact with this database.
+
+204
+00:11:13,650 --> 00:11:17,510
+And one of them is going
+to be Visual Studio Code.
+
+205
+00:11:17,510 --> 00:11:22,460
+Visual Studio code is an IDE, integrated
+development environment, to write code
+
+206
+00:11:22,460 --> 00:11:24,020
+and to edit files with.
+
+207
+00:11:24,020 --> 00:11:27,370
+It's also often called VS Code.
+
+208
+00:11:27,370 --> 00:11:32,700
+Now, in VS Code, we'll also be able to
+use SQLite, this database management
+
+209
+00:11:32,700 --> 00:11:37,600
+system, or a DBMS for short, to
+actually interact with that database.
+
+210
+00:11:37,600 --> 00:11:39,780
+So we'll be using these
+two tools combined
+
+211
+00:11:39,780 --> 00:11:44,100
+to work with the database of longlisted
+books for the International Booker
+
+212
+00:11:44,100 --> 00:11:45,520
+Prize.
+
+213
+00:11:45,520 --> 00:11:49,540
+And although we'll be using it here,
+SQLite is not just used in this course.
+
+214
+00:11:49,540 --> 00:11:51,940
+It's used in a variety of applications.
+
+215
+00:11:51,940 --> 00:11:54,100
+You could think too
+of phone applications,
+
+216
+00:11:54,100 --> 00:11:58,540
+where SQLite is often used on those
+devices have much lower memory.
+
+217
+00:11:58,540 --> 00:12:02,140
+You could think too of it being
+used on desktop applications
+
+218
+00:12:02,140 --> 00:12:05,320
+to simplify the process
+of storing data there too.
+
+219
+00:12:05,320 --> 00:12:07,990
+You could even think of
+it being used on websites
+
+220
+00:12:07,990 --> 00:12:12,890
+to help store information that user
+submits via a form, for example.
+
+221
+00:12:12,890 --> 00:12:15,760
+So we'll jump into using
+SQLite, but keep in mind
+
+222
+00:12:15,760 --> 00:12:18,340
+that not just in this
+course you'll use it,
+
+223
+00:12:18,340 --> 00:12:23,180
+but also, it's used in a variety
+of applications here too.
+
+224
+00:12:23,180 --> 00:12:27,530
+So why don't we just jump right into
+things and start using our environment
+
+225
+00:12:27,530 --> 00:12:28,850
+and start using SQLite?
+
+226
+00:12:28,850 --> 00:12:34,490
+So I'll go over here to my computer
+and will open up, let's say, VS Code.
+
+227
+00:12:34,490 --> 00:12:35,330
+We're here.
+
+228
+00:12:35,330 --> 00:12:37,730
+You can see I have my
+terminal environment.
+
+229
+00:12:37,730 --> 00:12:40,190
+And if you're familiar,
+you can type things like ls
+
+230
+00:12:40,190 --> 00:12:43,110
+to see the files that are
+in your current folder.
+
+231
+00:12:43,110 --> 00:12:44,810
+So I'll type ls right here.
+
+232
+00:12:44,810 --> 00:12:48,800
+And I'll see this database
+called longlist.db.
+
+233
+00:12:48,800 --> 00:12:52,370
+Again, working with books that
+have been longlisted or considered
+
+234
+00:12:52,370 --> 00:12:54,920
+for the International Booker Prize.
+
+235
+00:12:54,920 --> 00:13:00,380
+So if I want to open up this
+file, I can use this command.
+
+236
+00:13:00,380 --> 00:13:04,910
+Then this command is going
+to be called SQLite 3.
+
+237
+00:13:04,910 --> 00:13:09,590
+Or I can take some file that I
+have, like longlist.db, and open
+
+238
+00:13:09,590 --> 00:13:12,680
+it using this program called SQLite 3.
+
+239
+00:13:12,680 --> 00:13:16,700
+Well, it's called SQLite 3 because
+this is the third version of the SQLite
+
+240
+00:13:16,700 --> 00:13:17,870
+software.
+
+241
+00:13:17,870 --> 00:13:20,360
+So let's try this in our terminal.
+
+242
+00:13:20,360 --> 00:13:27,110
+I'll go back over here, and
+I'll say sqlite3 longlist.db.
+
+243
+00:13:27,110 --> 00:13:29,180
+And now, I'll hit Enter.
+
+244
+00:13:29,180 --> 00:13:32,010
+And notice how my
+terminal prompt changes.
+
+245
+00:13:32,010 --> 00:13:33,470
+It's no longer dollar sign.
+
+246
+00:13:33,470 --> 00:13:35,960
+It now says sqlite in front.
+
+247
+00:13:35,960 --> 00:13:39,840
+This means I'm inside of
+my SQLite environment.
+
+248
+00:13:39,840 --> 00:13:42,900
+So to clear things up, let
+me just clear my terminal.
+
+249
+00:13:42,900 --> 00:13:44,780
+I can use Control-L for this.
+
+250
+00:13:44,780 --> 00:13:48,050
+And now I have just that prompt up top.
+
+251
+00:13:48,050 --> 00:13:52,040
+And now a question I want to
+answer in this case first is, what
+
+252
+00:13:52,040 --> 00:13:55,520
+data do I actually have in my database?
+
+253
+00:13:55,520 --> 00:14:00,650
+What data is actually here for me to
+look at and to ask questions about?
+
+254
+00:14:00,650 --> 00:14:04,520
+Now, for this question, I
+can use my very first SQL
+
+255
+00:14:04,520 --> 00:14:07,100
+keyword, which will be called SELECT.
+
+256
+00:14:07,100 --> 00:14:13,370
+So SELECT is a way for me to select some
+rows in a table inside of my database.
+
+257
+00:14:13,370 --> 00:14:15,890
+Using SELECT, I can
+get back certain rows
+
+258
+00:14:15,890 --> 00:14:20,010
+or, in this case, perhaps all of them
+just to get a taste of what's inside.
+
+259
+00:14:20,010 --> 00:14:23,210
+So let's try using SELECT on
+this database to understand
+
+260
+00:14:23,210 --> 00:14:26,550
+what rows we have in our table here.
+
+261
+00:14:26,550 --> 00:14:30,440
+Let me go back to my computer
+and to my SQLite environment.
+
+262
+00:14:30,440 --> 00:14:33,920
+And I will try this
+very first SQL keyword.
+
+263
+00:14:33,920 --> 00:14:35,690
+I'll say SELECT.
+
+264
+00:14:35,690 --> 00:14:39,980
+And I can use this star operator
+here to say select everything.
+
+265
+00:14:39,980 --> 00:14:45,050
+I want every row and every
+column from this table.
+
+266
+00:14:45,050 --> 00:14:49,940
+Now, it's not enough for me to simply
+say select star and end my query.
+
+267
+00:14:49,940 --> 00:14:54,140
+I had to tell SQL which table
+do I want to select rows from.
+
+268
+00:14:54,140 --> 00:14:57,260
+In this case, I know I
+table was called longlist.
+
+269
+00:14:57,260 --> 00:15:02,510
+So I'll say SELECT star from
+"longlist," quote, unquote.
+
+270
+00:15:02,510 --> 00:15:06,440
+And to end my query, I'll say Semicolon.
+
+271
+00:15:06,440 --> 00:15:09,230
+And then finally, I can hit Enter.
+
+272
+00:15:09,230 --> 00:15:11,690
+And notice how I get a lot of data back.
+
+273
+00:15:11,690 --> 00:15:13,285
+This is a lot of data all at once.
+
+274
+00:15:13,285 --> 00:15:15,410
+But it's because my terminal
+is a little bit small,
+
+275
+00:15:15,410 --> 00:15:17,250
+there's a lot of rows and columns here.
+
+276
+00:15:17,250 --> 00:15:20,420
+So I could probably simplify
+this just a little bit.
+
+277
+00:15:20,420 --> 00:15:24,740
+And instead of saying SELECT star, I
+could also select a particular column
+
+278
+00:15:24,740 --> 00:15:26,390
+from my table.
+
+279
+00:15:26,390 --> 00:15:29,360
+I could say, for instance,
+SELECT, let's say,
+
+280
+00:15:29,360 --> 00:15:35,100
+just the title column from my
+database for my table like this.
+
+281
+00:15:35,100 --> 00:15:39,170
+I just know already that there
+is a column called title.
+
+282
+00:15:39,170 --> 00:15:43,370
+So now, I'll try this instead-- not
+select star, but select title instead.
+
+283
+00:15:43,370 --> 00:15:44,390
+I'll hit Enter.
+
+284
+00:15:44,390 --> 00:15:46,640
+And now, this looks a little bit better.
+
+285
+00:15:46,640 --> 00:15:53,970
+I can see the titles inside of
+this table from top to bottom.
+
+286
+00:15:53,970 --> 00:15:58,185
+Now, the neat thing here is I can
+select more than one column too.
+
+287
+00:15:58,185 --> 00:15:59,810
+Let's say I don't want just the title--
+
+288
+00:15:59,810 --> 00:16:02,360
+I want titles and authors in my search.
+
+289
+00:16:02,360 --> 00:16:04,260
+Well, I could do that as well.
+
+290
+00:16:04,260 --> 00:16:05,150
+Let me try this.
+
+291
+00:16:05,150 --> 00:16:09,020
+SELECT not just "title,"
+quote, unquote, but then I'll
+
+292
+00:16:09,020 --> 00:16:12,740
+say comma and some new column to select.
+
+293
+00:16:12,740 --> 00:16:16,700
+I'll select also the
+authors from this table.
+
+294
+00:16:16,700 --> 00:16:20,510
+And I'll select them from
+the longlist table like this.
+
+295
+00:16:20,510 --> 00:16:22,850
+Now I'll hit Semicolon to end my query.
+
+296
+00:16:22,850 --> 00:16:23,960
+Hit Enter.
+
+297
+00:16:23,960 --> 00:16:27,260
+And now I'll see a
+variety of columns here,
+
+298
+00:16:27,260 --> 00:16:31,450
+in particular the title
+and the author column.
+
+299
+00:16:31,450 --> 00:16:34,183
+Now, this is going to be like
+all of my columns so far.
+
+300
+00:16:34,183 --> 00:16:36,600
+And there is a way for me to
+get back just to some of them
+
+301
+00:16:36,600 --> 00:16:37,920
+later on that we'll see.
+
+302
+00:16:37,920 --> 00:16:40,560
+But for now, let's
+ask, what questions do
+
+303
+00:16:40,560 --> 00:16:47,180
+you have on this SQL SELECT statement
+and how we're getting back these rows?
+
+304
+00:16:47,180 --> 00:16:50,712
+SPEAKER: Do I need to use the quotes
+around the words like you are?
+
+305
+00:16:50,712 --> 00:16:52,170
+CARTER ZENKE: Yeah, great question.
+
+306
+00:16:52,170 --> 00:16:55,130
+Do I have to use quotes
+around the words like I am?
+
+307
+00:16:55,130 --> 00:16:59,570
+In general, it's a good practice to use
+these double quotes around your table
+
+308
+00:16:59,570 --> 00:17:01,430
+names and your column names.
+
+309
+00:17:01,430 --> 00:17:03,920
+These are called SQL identifiers.
+
+310
+00:17:03,920 --> 00:17:08,180
+Later on, we'll see we'll also
+have strings in SQL-- strings
+
+311
+00:17:08,180 --> 00:17:10,040
+being collections of
+characters we can use.
+
+312
+00:17:10,040 --> 00:17:12,319
+For those, we'll simply
+single-quote them
+
+313
+00:17:12,319 --> 00:17:16,440
+to note the difference between a
+string and an actual column name.
+
+314
+00:17:16,440 --> 00:17:19,970
+So good style convention here to
+use-- double quotes for column names
+
+315
+00:17:19,970 --> 00:17:23,300
+and single quotes for string names.
+
+316
+00:17:23,300 --> 00:17:25,190
+Other questions too?
+
+317
+00:17:25,190 --> 00:17:25,740
+SPEAKER: OK.
+
+318
+00:17:25,740 --> 00:17:29,990
+I wanted to know, where did we
+take all this information from.
+
+319
+00:17:29,990 --> 00:17:34,340
+Like, this data, I don't
+know this list of books,
+
+320
+00:17:34,340 --> 00:17:36,638
+where did we take all
+this information from?
+
+321
+00:17:36,638 --> 00:17:38,180
+CARTER ZENKE: Yeah, a great question.
+
+322
+00:17:38,180 --> 00:17:39,990
+Where do we take this information from?
+
+323
+00:17:39,990 --> 00:17:42,270
+So some of this data
+is publicly available.
+
+324
+00:17:42,270 --> 00:17:44,690
+In fact, if you look at
+the Booker Prize website,
+
+325
+00:17:44,690 --> 00:17:47,780
+you can find a set of
+longlisted books over the years.
+
+326
+00:17:47,780 --> 00:17:51,650
+In this case, we have
+books from 2018 to 2023.
+
+327
+00:17:51,650 --> 00:17:56,888
+We'll also see later on this table
+has data on the ratings of those books
+
+328
+00:17:56,888 --> 00:17:59,180
+and the number of votes that
+were given to those books.
+
+329
+00:17:59,180 --> 00:18:02,630
+That data is from Goodreads,
+the site that aggregates
+
+330
+00:18:02,630 --> 00:18:06,930
+reviews from people like you, people
+like me who rate books online.
+
+331
+00:18:06,930 --> 00:18:11,380
+So we've taken data from a variety of
+sources and combined it into one here.
+
+332
+00:18:11,380 --> 00:18:14,497
+Let's take one more
+question to from Vinayak.
+
+333
+00:18:14,497 --> 00:18:15,080
+SPEAKER: Yeah.
+
+334
+00:18:15,080 --> 00:18:20,340
+So I wanted to ask regarding the syntax
+of what you used in the terminal.
+
+335
+00:18:20,340 --> 00:18:24,830
+So is the whole SQLite
+3 is case-sensitive
+
+336
+00:18:24,830 --> 00:18:30,020
+because while using the syntax you
+used capital letters, whereas can we
+
+337
+00:18:30,020 --> 00:18:32,568
+use small-case letters as well?
+
+338
+00:18:32,568 --> 00:18:33,860
+CARTER ZENKE: A great question.
+
+339
+00:18:33,860 --> 00:18:36,580
+So here, I used capital
+letters for SQL keywords
+
+340
+00:18:36,580 --> 00:18:39,280
+and lowercase, my table
+names and column names.
+
+341
+00:18:39,280 --> 00:18:40,810
+Do I have to do that?
+
+342
+00:18:40,810 --> 00:18:43,210
+I, in some cases, do, some cases don't.
+
+343
+00:18:43,210 --> 00:18:46,390
+I think I could use lowercase
+for these SQL keywords,
+
+344
+00:18:46,390 --> 00:18:48,860
+but it's not very good
+style, for instance.
+
+345
+00:18:48,860 --> 00:18:52,460
+So let me just show you an example of
+this while I go back to my computer.
+
+346
+00:18:52,460 --> 00:18:57,550
+So the question again was, can I
+use lowercase for SQL keywords?
+
+347
+00:18:57,550 --> 00:19:00,850
+I think I could, but the
+question is, should I?
+
+348
+00:19:00,850 --> 00:19:01,618
+And probably not.
+
+349
+00:19:01,618 --> 00:19:02,410
+So let me try this.
+
+350
+00:19:02,410 --> 00:19:05,445
+I'll say select, let's say, title from--
+
+351
+00:19:05,445 --> 00:19:06,820
+I'm in the habit of uppercase it.
+
+352
+00:19:06,820 --> 00:19:11,650
+So I'll say from in lowercase
+longlist like this Semicolon.
+
+353
+00:19:11,650 --> 00:19:12,610
+Hit Enter.
+
+354
+00:19:12,610 --> 00:19:14,470
+And that still works.
+
+355
+00:19:14,470 --> 00:19:17,110
+But the problem you
+might run into is someone
+
+356
+00:19:17,110 --> 00:19:21,160
+who's reading your query particularly,
+a long one, might want to know,
+
+357
+00:19:21,160 --> 00:19:22,810
+what are the SQL keywords?
+
+358
+00:19:22,810 --> 00:19:26,380
+And what are your column names
+and other identifiers here?
+
+359
+00:19:26,380 --> 00:19:29,410
+By capitalizing your SQL
+keywords, you can make it clear
+
+360
+00:19:29,410 --> 00:19:35,280
+that this is a SQL keyword and
+not some other name overall.
+
+361
+00:19:35,280 --> 00:19:35,880
+OK.
+
+362
+00:19:35,880 --> 00:19:37,020
+So let's keep going.
+
+363
+00:19:37,020 --> 00:19:41,790
+And we saw just a little bit ago that
+we could select "title" from "longlist."
+
+364
+00:19:41,790 --> 00:19:46,350
+And we would get back a whole list of
+titles, literally all the titles that
+
+365
+00:19:46,350 --> 00:19:48,400
+are in this database.
+
+366
+00:19:48,400 --> 00:19:53,100
+But it's often maybe good practice
+for me to not look at all the data.
+
+367
+00:19:53,100 --> 00:19:56,430
+Like, imagine if we had
+millions of rows in this column,
+
+368
+00:19:56,430 --> 00:19:57,990
+but only to give back some.
+
+369
+00:19:57,990 --> 00:20:00,690
+Take a peek of what's
+inside this database.
+
+370
+00:20:00,690 --> 00:20:05,820
+And for that, I could use this other
+SQL keyword, this one called LIMIT.
+
+371
+00:20:05,820 --> 00:20:09,120
+So LIMIT, as its name
+might imply, limits
+
+372
+00:20:09,120 --> 00:20:13,050
+the number of queries or the number
+of rows I get back from my query.
+
+373
+00:20:13,050 --> 00:20:16,200
+I could say LIMIT 3,
+for instance, or LIMIT 5
+
+374
+00:20:16,200 --> 00:20:20,130
+to get back only the top 3 or
+the top 5 rows from my table.
+
+375
+00:20:20,130 --> 00:20:22,500
+And let me ask folks,
+if I wanted to peak
+
+376
+00:20:22,500 --> 00:20:27,890
+in this data set, how many rows
+should I try to limit it to?
+
+377
+00:20:27,890 --> 00:20:30,200
+I could say SELECT
+title from, let's say,
+
+378
+00:20:30,200 --> 00:20:33,960
+longlist, but limit to what number?
+
+379
+00:20:33,960 --> 00:20:35,100
+I'm seeing 10.
+
+380
+00:20:35,100 --> 00:20:36,350
+So let's try 10 first.
+
+381
+00:20:36,350 --> 00:20:38,180
+I'll go back to my computer.
+
+382
+00:20:38,180 --> 00:20:40,610
+I'll come back over here,
+and I'll say, why don't I
+
+383
+00:20:40,610 --> 00:20:45,700
+select "title" from "longlist?"
+
+384
+00:20:45,700 --> 00:20:53,680
+But now, instead of hitting Semicolon,
+I will instead say LIMIT 10 Semicolon.
+
+385
+00:20:53,680 --> 00:20:54,970
+And I'll hit Enter.
+
+386
+00:20:54,970 --> 00:21:00,010
+Now I see only the first
+10 rows in my data set.
+
+387
+00:21:00,010 --> 00:21:03,380
+Handy for peeking in at the
+top of my data set here too.
+
+388
+00:21:03,380 --> 00:21:05,210
+Let me try not just 10 but 5.
+
+389
+00:21:05,210 --> 00:21:13,910
+So I'll say SELECT "title" from
+"longlist" LIMIT 5 Semicolon.
+
+390
+00:21:13,910 --> 00:21:19,375
+This then gives me just the
+top 5 titles in my database.
+
+391
+00:21:19,375 --> 00:21:21,500
+Just in whatever order they
+were added to my table,
+
+392
+00:21:21,500 --> 00:21:25,800
+I'll see them in that order here too.
+
+393
+00:21:25,800 --> 00:21:31,120
+So using LIMIT, we can actually try
+to get back a certain number of rows.
+
+394
+00:21:31,120 --> 00:21:33,745
+But this isn't quite that interesting.
+
+395
+00:21:33,745 --> 00:21:35,370
+It's good for peaking in your data set.
+
+396
+00:21:35,370 --> 00:21:38,200
+I think we've answered that
+question of, what data do we have?
+
+397
+00:21:38,200 --> 00:21:40,950
+But let's say we want to
+make more advanced queries.
+
+398
+00:21:40,950 --> 00:21:44,580
+We want to find the books that were
+nominated in 2023 or perhaps books
+
+399
+00:21:44,580 --> 00:21:45,810
+by a certain author.
+
+400
+00:21:45,810 --> 00:21:50,730
+Well, for that, we could use this next
+SQL keyword, this one called WHERE.
+
+401
+00:21:50,730 --> 00:21:56,880
+So WHERE allows me to get
+back not all rows, but only
+
+402
+00:21:56,880 --> 00:22:00,970
+some rows where some condition is true.
+
+403
+00:22:00,970 --> 00:22:04,500
+So WHERE is often combined
+with other conditions
+
+404
+00:22:04,500 --> 00:22:09,730
+to make sure I only get back some
+rows, where that condition is true.
+
+405
+00:22:09,730 --> 00:22:11,850
+Let's try looking at
+that in SQLite to get
+
+406
+00:22:11,850 --> 00:22:14,170
+a feel for what it can do for us here.
+
+407
+00:22:14,170 --> 00:22:17,550
+So I'll go back to my WHERE.
+
+408
+00:22:17,550 --> 00:22:20,610
+And I will then go back to SQLite here.
+
+409
+00:22:20,610 --> 00:22:23,490
+Hit Control-L to clear my terminal.
+
+410
+00:22:23,490 --> 00:22:25,530
+And I'll then try this query.
+
+411
+00:22:25,530 --> 00:22:28,800
+I'll say SELECT "title."
+
+412
+00:22:28,800 --> 00:22:29,790
+SELECT "title."
+
+413
+00:22:29,790 --> 00:22:32,460
+And why don't we also
+select author along the way?
+
+414
+00:22:32,460 --> 00:22:34,290
+Two columns here.
+
+415
+00:22:34,290 --> 00:22:37,380
+And I'll select them
+from my longlist table.
+
+416
+00:22:37,380 --> 00:22:39,450
+But I don't want all rows.
+
+417
+00:22:39,450 --> 00:22:45,240
+I only want, let's say, those titles and
+authors that were longlisted in 2023.
+
+418
+00:22:45,240 --> 00:22:46,260
+So I'll do this.
+
+419
+00:22:46,260 --> 00:22:53,070
+I'll say WHERE the "year"
+column is equal to 2023.
+
+420
+00:22:53,070 --> 00:22:56,880
+And notice here how 2023
+is not in quotes because it
+
+421
+00:22:56,880 --> 00:22:59,110
+is an actual number, an integer.
+
+422
+00:22:59,110 --> 00:23:02,610
+So I don't need to quote it like I would
+a string some collection of characters
+
+423
+00:23:02,610 --> 00:23:05,710
+or a table or column name.
+
+424
+00:23:05,710 --> 00:23:07,480
+So I'll hit Enter here.
+
+425
+00:23:07,480 --> 00:23:08,370
+And what do I see?
+
+426
+00:23:08,370 --> 00:23:12,870
+Well, I see only those books
+that were nominated in 2023.
+
+427
+00:23:12,870 --> 00:23:14,200
+Let's try this again.
+
+428
+00:23:14,200 --> 00:23:17,130
+I might try not just 2023--
+
+429
+00:23:17,130 --> 00:23:20,520
+I might try 2022 like this.
+
+430
+00:23:20,520 --> 00:23:21,870
+Hit Semicolon.
+
+431
+00:23:21,870 --> 00:23:25,380
+Now, I'll see those
+books nominated in 2022.
+
+432
+00:23:25,380 --> 00:23:26,500
+I could keep going.
+
+433
+00:23:26,500 --> 00:23:28,260
+I could say why not 2022?
+
+434
+00:23:28,260 --> 00:23:29,820
+Why not 2021?
+
+435
+00:23:29,820 --> 00:23:34,450
+Now, I have all those
+books nominated in 2021.
+
+436
+00:23:34,450 --> 00:23:37,040
+So this is handy.
+
+437
+00:23:37,040 --> 00:23:40,930
+We can set things equal to or not
+equal to make some condition here.
+
+438
+00:23:40,930 --> 00:23:42,970
+And we also have others we could use.
+
+439
+00:23:42,970 --> 00:23:44,650
+We saw equals just now.
+
+440
+00:23:44,650 --> 00:23:46,960
+But we similarly have not equals.
+
+441
+00:23:46,960 --> 00:23:50,170
+And we have this kind of
+obscure operator down here.
+
+442
+00:23:50,170 --> 00:23:55,850
+This one being also equivalent to not
+equals as we'll see in just a minute.
+
+443
+00:23:55,850 --> 00:23:58,120
+But let me first ask
+now, what questions do
+
+444
+00:23:58,120 --> 00:24:02,170
+we have on how to use WHERE
+or using SELECT so far?
+
+445
+00:24:02,170 --> 00:24:04,760
+SPEAKER: Why are the subsets of SQL?
+
+446
+00:24:04,760 --> 00:24:06,010
+CARTER ZENKE: A good question.
+
+447
+00:24:06,010 --> 00:24:07,730
+Are there subsets of SQL?
+
+448
+00:24:07,730 --> 00:24:09,160
+So there are.
+
+449
+00:24:09,160 --> 00:24:12,870
+In fact, S-Q-L or SQL
+was defined by the,
+
+450
+00:24:12,870 --> 00:24:15,010
+I believe it's the ANSI,
+like standard corporation.
+
+451
+00:24:15,010 --> 00:24:17,290
+They have a whole set
+of the SQL language
+
+452
+00:24:17,290 --> 00:24:19,370
+that is like the official version of it.
+
+453
+00:24:19,370 --> 00:24:22,240
+You might be able to use
+some subset of that version
+
+454
+00:24:22,240 --> 00:24:24,740
+with the database manager
+system that you actually use.
+
+455
+00:24:24,740 --> 00:24:29,020
+So for SQLite, we're using a subset
+of SQL that works with SQLite.
+
+456
+00:24:29,020 --> 00:24:33,340
+Similarly, if you were using another
+software like PostgreSQL or MySQL,
+
+457
+00:24:33,340 --> 00:24:36,770
+you could use another subset there too.
+
+458
+00:24:36,770 --> 00:24:40,350
+Let's take another question
+from Tayas, perhaps.
+
+459
+00:24:40,350 --> 00:24:45,793
+SPEAKER: Then I want to know that, can
+we add 2022 and 2021 in a terminal?
+
+460
+00:24:45,793 --> 00:24:47,210
+CARTER ZENKE: Yeah, good question.
+
+461
+00:24:47,210 --> 00:24:52,880
+Could I, perhaps, try to
+filter by 2021 and 2022?
+
+462
+00:24:52,880 --> 00:24:53,582
+I could do that.
+
+463
+00:24:53,582 --> 00:24:55,290
+And we'll see that in
+just a moment here.
+
+464
+00:24:55,290 --> 00:24:58,250
+So let's keep going and exploring
+some other options with not equals.
+
+465
+00:24:58,250 --> 00:25:02,090
+And then we'll see how we can
+combine conditions using WHERE too.
+
+466
+00:25:02,090 --> 00:25:05,300
+So let's go back, and
+let's focus first on trying
+
+467
+00:25:05,300 --> 00:25:07,730
+to use these not equal operators.
+
+468
+00:25:07,730 --> 00:25:12,380
+We saw the exclamation point equals and
+this greater than, less than sign put
+
+469
+00:25:12,380 --> 00:25:13,500
+together.
+
+470
+00:25:13,500 --> 00:25:15,180
+So let's try a few of those.
+
+471
+00:25:15,180 --> 00:25:20,070
+Let's say I want to find books that
+are written by a certain author.
+
+472
+00:25:20,070 --> 00:25:21,620
+Well, I could use equals for that.
+
+473
+00:25:21,620 --> 00:25:24,170
+But let's say I also want
+to find books that are not
+
+474
+00:25:24,170 --> 00:25:26,810
+written in the hardcover
+format, like they
+
+475
+00:25:26,810 --> 00:25:28,440
+tend to be more expensive and so on.
+
+476
+00:25:28,440 --> 00:25:30,620
+So I don't want hardcover books.
+
+477
+00:25:30,620 --> 00:25:32,550
+Well, I could try a query like this.
+
+478
+00:25:32,550 --> 00:25:38,090
+I could say SELECT "title" and "format,"
+where format is either hardcover
+
+479
+00:25:38,090 --> 00:25:42,050
+or paperback, FROM my "longlist" table.
+
+480
+00:25:42,050 --> 00:25:49,370
+And now I'll say, WHERE the "format"
+is not equal to hardcover Semicolon.
+
+481
+00:25:49,370 --> 00:25:53,660
+So notice here I'm using
+single quotes for hardcover.
+
+482
+00:25:53,660 --> 00:25:54,960
+This is a string.
+
+483
+00:25:54,960 --> 00:25:57,530
+It's not a table name or a column name.
+
+484
+00:25:57,530 --> 00:25:58,580
+It is just a string.
+
+485
+00:25:58,580 --> 00:26:00,770
+So I'm using single quotes here.
+
+486
+00:26:00,770 --> 00:26:05,000
+Everything else, though, like
+format, longlist, title, et cetera,
+
+487
+00:26:05,000 --> 00:26:08,400
+those are all table
+names or column names.
+
+488
+00:26:08,400 --> 00:26:09,860
+So again, I'll hit Enter.
+
+489
+00:26:09,860 --> 00:26:15,090
+And now I'll see that these are all
+in paperback according to my table.
+
+490
+00:26:15,090 --> 00:26:17,990
+I've omitted those that are hardcover.
+
+491
+00:26:17,990 --> 00:26:21,980
+Well, I could also use in this
+case, the greater than or less
+
+492
+00:26:21,980 --> 00:26:25,230
+than sign put together to
+say not equals as well.
+
+493
+00:26:25,230 --> 00:26:27,200
+Let me just hit the Up
+Arrow on my computer
+
+494
+00:26:27,200 --> 00:26:29,540
+to reveal what I just previously typed.
+
+495
+00:26:29,540 --> 00:26:36,410
+I'll then tab back over and say not
+exclamation point equals, but less than
+
+496
+00:26:36,410 --> 00:26:37,670
+and then greater than.
+
+497
+00:26:37,670 --> 00:26:38,840
+Hit Enter now.
+
+498
+00:26:38,840 --> 00:26:41,150
+And I should see the very same results.
+
+499
+00:26:41,150 --> 00:26:44,270
+But all I did was change this
+operator from exclamation point
+
+500
+00:26:44,270 --> 00:26:47,030
+equals to less than and greater than.
+
+501
+00:26:47,030 --> 00:26:49,250
+It tends to be that the
+exclamation point equals
+
+502
+00:26:49,250 --> 00:26:55,430
+is the more common operator in this
+case, but they do the very same thing.
+
+503
+00:26:55,430 --> 00:26:59,260
+Now, one more keyword I could
+use here that's worth mentioning
+
+504
+00:26:59,260 --> 00:27:01,570
+is this keyword called NOT.
+
+505
+00:27:01,570 --> 00:27:05,950
+So here, I was able to use
+exclamation point equals or the less
+
+506
+00:27:05,950 --> 00:27:08,290
+than or greater than
+sign to say not equals.
+
+507
+00:27:08,290 --> 00:27:12,070
+But I could also negate
+a condition using NOT.
+
+508
+00:27:12,070 --> 00:27:16,150
+So let's try using this one
+in our SQLite terminal too.
+
+509
+00:27:16,150 --> 00:27:17,500
+I'll go back over here.
+
+510
+00:27:17,500 --> 00:27:21,190
+And I'll bring back my SQLite terminal.
+
+511
+00:27:21,190 --> 00:27:27,520
+I'll say let's do not this
+operator here, but instead use NOT.
+
+512
+00:27:27,520 --> 00:27:35,740
+So I might, in front of WHERE, say
+WHERE NOT "format" equals "hardcover."
+
+513
+00:27:35,740 --> 00:27:38,500
+So I have a condition,
+"format" equals "hardcover,"
+
+514
+00:27:38,500 --> 00:27:41,680
+but now I'm going to negate
+it, take the opposite of it
+
+515
+00:27:41,680 --> 00:27:46,600
+and get back the very
+same results here too.
+
+516
+00:27:46,600 --> 00:27:48,060
+OK.
+
+517
+00:27:48,060 --> 00:27:52,050
+So to the question earlier, how
+we can combine these conditionals.
+
+518
+00:27:52,050 --> 00:27:55,000
+So let's try that here in just a minute.
+
+519
+00:27:55,000 --> 00:27:58,770
+So let's say I wanted
+to find the books that
+
+520
+00:27:58,770 --> 00:28:05,370
+were not just written in 2022 or 2023
+alone, but all the books together.
+
+521
+00:28:05,370 --> 00:28:08,040
+Well for this, I could use a
+few other SQL keywords that
+
+522
+00:28:08,040 --> 00:28:11,530
+might be a little familiar to you too.
+
+523
+00:28:11,530 --> 00:28:14,560
+Let's try looking at
+some of these over here.
+
+524
+00:28:14,560 --> 00:28:20,580
+So here, we have these called AND,
+OR, and these parentheses here too.
+
+525
+00:28:20,580 --> 00:28:25,230
+So using AND and OR, I
+can change conditionals.
+
+526
+00:28:25,230 --> 00:28:28,830
+I can put them together to make a
+more complex conditional, a compound
+
+527
+00:28:28,830 --> 00:28:29,880
+condition.
+
+528
+00:28:29,880 --> 00:28:32,760
+And I could also use these
+parentheses to symbolize
+
+529
+00:28:32,760 --> 00:28:35,190
+that this condition
+should come first and then
+
+530
+00:28:35,190 --> 00:28:37,690
+some condition should
+come afterwards as well.
+
+531
+00:28:37,690 --> 00:28:40,780
+So let's try these in SQLite as well.
+
+532
+00:28:40,780 --> 00:28:42,310
+I'll go back to my computer.
+
+533
+00:28:42,310 --> 00:28:47,220
+And again, our goal is to find
+not just books in 2022 or 2023,
+
+534
+00:28:47,220 --> 00:28:51,100
+but books that work across
+those years as well.
+
+535
+00:28:51,100 --> 00:28:53,220
+So I'll, in this case say, SELECT--
+
+536
+00:28:53,220 --> 00:28:59,590
+let's go for a "title" and
+"author" from my "longlist" table.
+
+537
+00:28:59,590 --> 00:29:05,110
+Now, I'll say WHERE the
+"year" is 2022, as we did
+
+538
+00:29:05,110 --> 00:29:10,360
+before, OR perhaps the "year" is 2023.
+
+539
+00:29:10,360 --> 00:29:14,230
+And notice how my query is kind
+of wrapping around my terminal.
+
+540
+00:29:14,230 --> 00:29:19,190
+I could leave it like this, or
+if I backspace just a little bit,
+
+541
+00:29:19,190 --> 00:29:21,320
+I could hit Enter.
+
+542
+00:29:21,320 --> 00:29:25,170
+And now I'm on a new line
+to continue my query.
+
+543
+00:29:25,170 --> 00:29:30,380
+So here, I'll say OR "year" is 2023.
+
+544
+00:29:30,380 --> 00:29:32,340
+And now my query is done.
+
+545
+00:29:32,340 --> 00:29:33,680
+So I'll hit Semicolon.
+
+546
+00:29:33,680 --> 00:29:42,560
+And I should see those books published
+in or nominated in 2022 or 2023.
+
+547
+00:29:42,560 --> 00:29:44,580
+Let's try a few more here.
+
+548
+00:29:44,580 --> 00:29:46,790
+Let's try using our parentheses as well.
+
+549
+00:29:46,790 --> 00:29:49,580
+Maybe I want not just
+these books but also
+
+550
+00:29:49,580 --> 00:29:52,290
+those that are formatted
+in a hardcover format.
+
+551
+00:29:52,290 --> 00:29:53,600
+So I'll say--
+
+552
+00:29:53,600 --> 00:30:00,190
+I'll clear my terminal, Control-L
+again, and SELECT "title" as well as,
+
+553
+00:30:00,190 --> 00:30:05,710
+let's say, "format" from
+my "longlist" table.
+
+554
+00:30:05,710 --> 00:30:09,040
+And now, I'll hit my new
+line to extend my query
+
+555
+00:30:09,040 --> 00:30:10,990
+without wrapping it on my terminal.
+
+556
+00:30:10,990 --> 00:30:11,980
+I'll hit Enter.
+
+557
+00:30:11,980 --> 00:30:20,440
+And I'll say WHERE the "year"
+is 2022 OR the "year" is 2023.
+
+558
+00:30:20,440 --> 00:30:22,210
+That's one condition.
+
+559
+00:30:22,210 --> 00:30:26,170
+And I can denote that with a
+single set of parentheses here.
+
+560
+00:30:26,170 --> 00:30:33,650
+I also want it to be true that
+the "format" is not "hardcover."
+
+561
+00:30:33,650 --> 00:30:36,650
+So now, I'm adding
+another condition in here.
+
+562
+00:30:36,650 --> 00:30:39,050
+Now, I'll say Semicolon, hit Enter.
+
+563
+00:30:39,050 --> 00:30:43,100
+And I'll get back only those books
+that are published in the paperback
+
+564
+00:30:43,100 --> 00:30:49,190
+format in 2022 and 2023.
+
+565
+00:30:49,190 --> 00:30:50,420
+OK.
+
+566
+00:30:50,420 --> 00:30:53,840
+So let me pause again and ask if
+there are any questions so far
+
+567
+00:30:53,840 --> 00:31:00,960
+in how we've been using WHERE and
+SELECT and other conditions as well.
+
+568
+00:31:00,960 --> 00:31:05,120
+SPEAKER: I would like
+to know about the--
+
+569
+00:31:05,120 --> 00:31:10,040
+we can have a list of the top
+titles available in the database.
+
+570
+00:31:10,040 --> 00:31:15,380
+Like you have mentioned, the title,
+author, where we can know about that.
+
+571
+00:31:15,380 --> 00:31:19,418
+What are the titles available in
+the database using command below?
+
+572
+00:31:19,418 --> 00:31:20,210
+CARTER ZENKE: Yeah.
+
+573
+00:31:20,210 --> 00:31:23,420
+So here I've been using these column
+names called "title" and "author."
+
+574
+00:31:23,420 --> 00:31:26,670
+And I think your question is, how
+would I know that I have these columns?
+
+575
+00:31:26,670 --> 00:31:29,520
+Well, as we'll see in
+future times together,
+
+576
+00:31:29,520 --> 00:31:32,600
+I'll be able to actually look at
+the schema of my database, what
+
+577
+00:31:32,600 --> 00:31:33,890
+columns are inside of it.
+
+578
+00:31:33,890 --> 00:31:37,280
+For now, just take it
+on my own word that I
+
+579
+00:31:37,280 --> 00:31:40,430
+knew what was inside the database
+before I actually started querying it.
+
+580
+00:31:40,430 --> 00:31:42,380
+We'll see later on how
+you can take a database
+
+581
+00:31:42,380 --> 00:31:44,630
+and understand the columns
+you have there too.
+
+582
+00:31:44,630 --> 00:31:45,840
+A good question.
+
+583
+00:31:45,840 --> 00:31:48,080
+Let's jump into some more queries then.
+
+584
+00:31:48,080 --> 00:31:49,610
+I'll go back to my computer.
+
+585
+00:31:49,610 --> 00:31:53,580
+And let's see what else we
+could do with these conditions.
+
+586
+00:31:53,580 --> 00:31:57,380
+Well, not only could I try
+to make compound conditions,
+
+587
+00:31:57,380 --> 00:32:02,480
+I could also try to find, let's
+say, which data is missing.
+
+588
+00:32:02,480 --> 00:32:06,860
+So I know in this table, I
+have not just authors of books,
+
+589
+00:32:06,860 --> 00:32:09,620
+but translators of those books.
+
+590
+00:32:09,620 --> 00:32:11,660
+Often, books for the
+International Booker Prize
+
+591
+00:32:11,660 --> 00:32:15,590
+were translated from some
+other language into English--
+
+592
+00:32:15,590 --> 00:32:18,590
+but some weren't or at least
+they didn't have a translator
+
+593
+00:32:18,590 --> 00:32:20,480
+that was separate from the author.
+
+594
+00:32:20,480 --> 00:32:23,570
+So to think about what data
+is missing from our table,
+
+595
+00:32:23,570 --> 00:32:25,880
+we should introduce this new idea--
+
+596
+00:32:25,880 --> 00:32:28,440
+this one called NULL.
+
+597
+00:32:28,440 --> 00:32:29,730
+So I'll walk over here.
+
+598
+00:32:29,730 --> 00:32:33,650
+And we'll see that we have this
+type called NULL, where this
+
+599
+00:32:33,650 --> 00:32:35,480
+means that this value doesn't exist.
+
+600
+00:32:35,480 --> 00:32:37,770
+It's not in our database.
+
+601
+00:32:37,770 --> 00:32:42,290
+We can actually put together a condition
+around this idea of null, something
+
+602
+00:32:42,290 --> 00:32:44,000
+not being there.
+
+603
+00:32:44,000 --> 00:32:47,570
+We could use IS NULL to
+figure out if a value is null.
+
+604
+00:32:47,570 --> 00:32:48,228
+It's not there.
+
+605
+00:32:48,228 --> 00:32:49,520
+It's missing from our database.
+
+606
+00:32:49,520 --> 00:32:54,283
+Or IS IT NULL, meaning
+that it actually is there.
+
+607
+00:32:54,283 --> 00:32:56,450
+So I'll go back to SQLite
+and show you what we could
+
+608
+00:32:56,450 --> 00:32:59,970
+do with some of these concepts here.
+
+609
+00:32:59,970 --> 00:33:01,400
+Let me go back to my terminal.
+
+610
+00:33:01,400 --> 00:33:04,520
+And let's say I do want to
+find those translators that
+
+611
+00:33:04,520 --> 00:33:06,600
+don't exist in my database.
+
+612
+00:33:06,600 --> 00:33:13,400
+Well, I could use SELECT, let's say,
+"title" and "translator" from my
+
+613
+00:33:13,400 --> 00:33:14,450
+"longlist."
+
+614
+00:33:14,450 --> 00:33:18,560
+And I want to make sure that
+these translators are null--
+
+615
+00:33:18,560 --> 00:33:19,920
+they don't exist.
+
+616
+00:33:19,920 --> 00:33:25,250
+So I'll say WHERE "translator"
+IS NULL Semicolon.
+
+617
+00:33:25,250 --> 00:33:26,780
+Now, I'll hit Enter.
+
+618
+00:33:26,780 --> 00:33:28,218
+And I should see two books.
+
+619
+00:33:28,218 --> 00:33:31,010
+Titles are The Perfect Nine and
+the indictment of The Enlightenment
+
+620
+00:33:31,010 --> 00:33:31,927
+of The Greengate Tree.
+
+621
+00:33:31,927 --> 00:33:35,330
+But notice how over here,
+this value is null--
+
+622
+00:33:35,330 --> 00:33:38,070
+it doesn't exist in my table.
+
+623
+00:33:38,070 --> 00:33:43,340
+I could conversely find those books that
+do have translators using IS NOT NULL.
+
+624
+00:33:43,340 --> 00:33:46,050
+And I will try this one again.
+
+625
+00:33:46,050 --> 00:33:53,900
+But in this case, I'll say, WHERE
+"translator" IS NOT NULL Semicolon.
+
+626
+00:33:53,900 --> 00:33:55,670
+And I'll hit Enter.
+
+627
+00:33:55,670 --> 00:33:58,340
+And now, let me just
+zoom out a little bit.
+
+628
+00:33:58,340 --> 00:34:03,470
+I can see that I have both
+titles on the left-hand side
+
+629
+00:34:03,470 --> 00:34:05,780
+and translators on the right-hand side.
+
+630
+00:34:05,780 --> 00:34:08,040
+All of these actually exists.
+
+631
+00:34:08,040 --> 00:34:11,719
+These are books that did have
+translators in this case.
+
+632
+00:34:11,719 --> 00:34:14,810
+So a good way to find data that's
+missing in your table using
+
+633
+00:34:14,810 --> 00:34:17,632
+NULL or IS NOT NULL.
+
+634
+00:34:17,632 --> 00:34:19,840
+So let's come back over here
+and figure out what more
+
+635
+00:34:19,840 --> 00:34:22,510
+we can do with some of these queries.
+
+636
+00:34:22,510 --> 00:34:27,460
+We've kind of exhausted our work
+with some of our conditions,
+
+637
+00:34:27,460 --> 00:34:29,810
+like chaining them together
+and using NULL and so on.
+
+638
+00:34:29,810 --> 00:34:34,540
+But one more thing we could do is
+trying to use this idea of matching
+
+639
+00:34:34,540 --> 00:34:36,889
+some kind of pattern in my database.
+
+640
+00:34:36,889 --> 00:34:40,480
+So maybe I'm a book reader.
+
+641
+00:34:40,480 --> 00:34:44,469
+And I want to find a book with the
+word "love" somewhere in the title.
+
+642
+00:34:44,469 --> 00:34:47,020
+Well, for this, I could
+use another keyword--
+
+643
+00:34:47,020 --> 00:34:49,270
+this one called LIKE.
+
+644
+00:34:49,270 --> 00:34:54,429
+So LIKE is a good keyword to
+use when I want to roughly match
+
+645
+00:34:54,429 --> 00:34:56,710
+some string in my database.
+
+646
+00:34:56,710 --> 00:34:59,140
+Let's say I want to look
+at book titles and find
+
+647
+00:34:59,140 --> 00:35:01,660
+if some word exists in that title.
+
+648
+00:35:01,660 --> 00:35:04,070
+I could use LIKE for that.
+
+649
+00:35:04,070 --> 00:35:06,430
+And LIKE becomes powerful
+when you combine it
+
+650
+00:35:06,430 --> 00:35:10,830
+with these other operators, namely
+this percent sign and this underscore.
+
+651
+00:35:10,830 --> 00:35:15,610
+The percent sign can match any
+character around a string I give it.
+
+652
+00:35:15,610 --> 00:35:18,610
+And the underscore can
+match any single character
+
+653
+00:35:18,610 --> 00:35:20,980
+that I pass in with my string.
+
+654
+00:35:20,980 --> 00:35:23,450
+It's probably best
+shown with an example.
+
+655
+00:35:23,450 --> 00:35:26,260
+So let me show you some
+in my terminal here.
+
+656
+00:35:26,260 --> 00:35:27,310
+I'll walk back.
+
+657
+00:35:27,310 --> 00:35:29,380
+And, again, we'll try
+to find these books that
+
+658
+00:35:29,380 --> 00:35:32,230
+have "love" somewhere in the title.
+
+659
+00:35:32,230 --> 00:35:38,200
+So I'll say in this case, SELECT,
+let's say, "title" from "longlist."
+
+660
+00:35:38,200 --> 00:35:39,880
+But I don't want all titles.
+
+661
+00:35:39,880 --> 00:35:43,940
+I only want those that have
+"love" somewhere in this title.
+
+662
+00:35:43,940 --> 00:35:53,650
+So I'll say WHERE "title" LIKE, let's
+say, percent love percent Semicolon.
+
+663
+00:35:53,650 --> 00:35:57,640
+Now before I run this, let me
+explain what this is doing.
+
+664
+00:35:57,640 --> 00:36:01,600
+I have here a SELECT query
+asking for the "title"
+
+665
+00:36:01,600 --> 00:36:04,600
+column from my "longlist" table.
+
+666
+00:36:04,600 --> 00:36:11,110
+But I'll only get back those rows where
+"title" is LIKE percent love percent.
+
+667
+00:36:11,110 --> 00:36:12,530
+But what does that mean?
+
+668
+00:36:12,530 --> 00:36:16,330
+Well, the percent, remember,
+matches any string of characters.
+
+669
+00:36:16,330 --> 00:36:18,580
+It could match a, b, c, 1, 2, 3.
+
+670
+00:36:18,580 --> 00:36:22,270
+As long as any string of characters
+comes after and has "love,"
+
+671
+00:36:22,270 --> 00:36:25,460
+I could match that value here.
+
+672
+00:36:25,460 --> 00:36:28,045
+Similarly, the percent
+sign after says anything
+
+673
+00:36:28,045 --> 00:36:32,630
+that comes after "love," as long as
+"love" is somewhere in the middle.
+
+674
+00:36:32,630 --> 00:36:36,220
+So anything before, anything
+after, but so long as "love"
+
+675
+00:36:36,220 --> 00:36:38,530
+is just somewhere in
+there, I'll get it back.
+
+676
+00:36:38,530 --> 00:36:42,280
+So let me try that running this
+query then and come back over here.
+
+677
+00:36:42,280 --> 00:36:44,530
+I will hit Enter on my query.
+
+678
+00:36:44,530 --> 00:36:47,050
+And I'll see I get back four books--
+
+679
+00:36:47,050 --> 00:36:51,110
+Love in the Big City, More
+Than I Love My Life and so on.
+
+680
+00:36:51,110 --> 00:36:54,880
+So notice how if I come back over
+here that each of these titles
+
+681
+00:36:54,880 --> 00:36:56,710
+has "love" somewhere in it.
+
+682
+00:36:56,710 --> 00:37:00,130
+For this one, I match
+love up front and then
+
+683
+00:37:00,130 --> 00:37:02,930
+had any string of characters
+coming after it like this.
+
+684
+00:37:02,930 --> 00:37:05,680
+For this one, I had More
+Than I Love My Life.
+
+685
+00:37:05,680 --> 00:37:07,390
+I got some string before it.
+
+686
+00:37:07,390 --> 00:37:12,580
+And then afterwards, any string after
+it, "love" is somewhere in the middle.
+
+687
+00:37:12,580 --> 00:37:14,650
+Let me show you another
+example too, where
+
+688
+00:37:14,650 --> 00:37:17,360
+we use percent in a different way.
+
+689
+00:37:17,360 --> 00:37:19,870
+Let's say I want to find
+only those books that
+
+690
+00:37:19,870 --> 00:37:23,320
+have "The" at the very
+beginning of the title.
+
+691
+00:37:23,320 --> 00:37:24,410
+Let me try this.
+
+692
+00:37:24,410 --> 00:37:30,880
+I'll say a SELECT "title"
+from "longlist" then WHERE,
+
+693
+00:37:30,880 --> 00:37:39,960
+let's say, the "title" is
+LIKE the percent Semicolon.
+
+694
+00:37:39,960 --> 00:37:41,860
+Now, I've changed something up.
+
+695
+00:37:41,860 --> 00:37:47,760
+I have not percent in front and
+behind, but only after the "The."
+
+696
+00:37:47,760 --> 00:37:50,670
+So in this case, I'll
+get back not anything
+
+697
+00:37:50,670 --> 00:37:53,670
+that has "The" the
+title wherever, but now
+
+698
+00:37:53,670 --> 00:37:56,610
+at the very beginning of this string.
+
+699
+00:37:56,610 --> 00:37:59,640
+And I see perhaps a style mistake.
+
+700
+00:37:59,640 --> 00:38:01,950
+Let me ask the audience,
+what style mistake did
+
+701
+00:38:01,950 --> 00:38:05,680
+I just make when I typed in this query?
+
+702
+00:38:05,680 --> 00:38:09,595
+So I'm seeing maybe I used double quotes
+when I should have used single quotes.
+
+703
+00:38:09,595 --> 00:38:11,220
+So let me come back and fix that first.
+
+704
+00:38:11,220 --> 00:38:12,720
+I'll come back over here.
+
+705
+00:38:12,720 --> 00:38:17,760
+And, again, by convention, we tend
+to use single quotes for our strings.
+
+706
+00:38:17,760 --> 00:38:19,800
+So let me fix that right here.
+
+707
+00:38:19,800 --> 00:38:22,230
+And now let me run this query
+to see what we get back.
+
+708
+00:38:22,230 --> 00:38:23,280
+I'll hit Enter.
+
+709
+00:38:23,280 --> 00:38:28,250
+And I'll see only those
+books that begin with "The."
+
+710
+00:38:28,250 --> 00:38:32,800
+Now, let me show this
+query again, though.
+
+711
+00:38:32,800 --> 00:38:34,900
+This was our query here.
+
+712
+00:38:34,900 --> 00:38:39,070
+Knowing what we know
+about the percent sign,
+
+713
+00:38:39,070 --> 00:38:45,010
+what other titles might I accidentally
+get back by running this query?
+
+714
+00:38:45,010 --> 00:38:47,305
+I have "The" percent.
+
+715
+00:38:47,305 --> 00:38:51,250
+But what other words actually
+begin these book titles
+
+716
+00:38:51,250 --> 00:38:53,770
+if I were to run this query here?
+
+717
+00:38:53,770 --> 00:38:57,100
+We saw only those with "The," but if
+I had other book titles, what might
+
+718
+00:38:57,100 --> 00:38:58,620
+I get back?
+
+719
+00:38:58,620 --> 00:39:00,570
+So I might get back
+those book titles that
+
+720
+00:39:00,570 --> 00:39:04,020
+have not just "The" the
+beginning but also, let's say,
+
+721
+00:39:04,020 --> 00:39:06,220
+"There" or "They" or so on.
+
+722
+00:39:06,220 --> 00:39:08,805
+There are many words
+beginning with T-H-E.
+
+723
+00:39:08,805 --> 00:39:10,680
+And if I had the percent
+sign right after it,
+
+724
+00:39:10,680 --> 00:39:15,400
+I might match one of those
+words like Y or R-E or so on.
+
+725
+00:39:15,400 --> 00:39:17,650
+So I didn't have any of those
+titles in this database.
+
+726
+00:39:17,650 --> 00:39:22,910
+But you can imagine a different
+database where I have that kind of data.
+
+727
+00:39:22,910 --> 00:39:24,260
+Let's fix this then.
+
+728
+00:39:24,260 --> 00:39:28,950
+I say, I want to match not just
+"The" but "The" and a space,
+
+729
+00:39:28,950 --> 00:39:31,100
+and match any characters
+after that to make this
+
+730
+00:39:31,100 --> 00:39:35,380
+query better designed in this instance.
+
+731
+00:39:35,380 --> 00:39:36,210
+OK.
+
+732
+00:39:36,210 --> 00:39:38,940
+So let me pause here then
+and ask what questions we
+
+733
+00:39:38,940 --> 00:39:44,180
+have on using percent along with LIKE.
+
+734
+00:39:44,180 --> 00:39:48,138
+SPEAKER: Can we use two percent
+signs between two words?
+
+735
+00:39:48,138 --> 00:39:49,430
+CARTER ZENKE: Yeah, I think so.
+
+736
+00:39:49,430 --> 00:39:52,740
+So let me go back to my terminal here
+and let me try to answer this question.
+
+737
+00:39:52,740 --> 00:39:56,790
+So can we use two percent signs to
+say something's between two words?
+
+738
+00:39:56,790 --> 00:39:57,890
+So let me say this.
+
+739
+00:39:57,890 --> 00:40:06,710
+I'll go with SELECT, let's say,
+"title" from "longlist" WHERE maybe
+
+740
+00:40:06,710 --> 00:40:10,220
+the "title" has something like--
+
+741
+00:40:10,220 --> 00:40:11,630
+maybe it begins with "The."
+
+742
+00:40:11,630 --> 00:40:17,210
+So I'll say WHERE "title" LIKE "The."
+
+743
+00:40:17,210 --> 00:40:20,780
+And then I'll take any set
+of characters afterwards.
+
+744
+00:40:20,780 --> 00:40:23,630
+But I want to have
+"love" also in here too.
+
+745
+00:40:23,630 --> 00:40:25,070
+So I'll say "love."
+
+746
+00:40:25,070 --> 00:40:31,500
+And then I'll take any other characters
+after it, percent again, single quote,
+
+747
+00:40:31,500 --> 00:40:32,880
+Semicolon.
+
+748
+00:40:32,880 --> 00:40:37,410
+Now, I don't know if I have any
+books that actually fit this search.
+
+749
+00:40:37,410 --> 00:40:41,760
+But I could say the percent
+love percent to mean give me
+
+750
+00:40:41,760 --> 00:40:44,730
+back any title that has
+"The" at the beginning
+
+751
+00:40:44,730 --> 00:40:48,510
+then any words or characters then
+"love" then any words or characters
+
+752
+00:40:48,510 --> 00:40:49,680
+after that.
+
+753
+00:40:49,680 --> 00:40:50,490
+I'll hit Enter.
+
+754
+00:40:50,490 --> 00:40:54,310
+And I see I don't have any books
+that fit that kind of description.
+
+755
+00:40:54,310 --> 00:40:58,410
+But if I did, I would see them here
+with "The" at the beginning and "love"
+
+756
+00:40:58,410 --> 00:41:01,700
+somewhere in the title.
+
+757
+00:41:01,700 --> 00:41:02,200
+All right.
+
+758
+00:41:02,200 --> 00:41:03,033
+So let's keep going.
+
+759
+00:41:03,033 --> 00:41:08,010
+Let's focus not just on this percent
+sign, but also on this underscore.
+
+760
+00:41:08,010 --> 00:41:09,330
+So if I want to find--
+
+761
+00:41:09,330 --> 00:41:13,950
+let's say, I don't know what a
+particular character is in my title.
+
+762
+00:41:13,950 --> 00:41:17,580
+I could use this underscore to
+match any particular character.
+
+763
+00:41:17,580 --> 00:41:20,820
+Not any string of characters,
+but any single character too.
+
+764
+00:41:20,820 --> 00:41:23,250
+So let's try this in our terminal.
+
+765
+00:41:23,250 --> 00:41:26,430
+And there is a book,
+this one called a Pyre.
+
+766
+00:41:26,430 --> 00:41:29,160
+And I actually keep
+forgetting how it's spelled.
+
+767
+00:41:29,160 --> 00:41:34,690
+I don't know whether it's P-I-R-E
+or P-Y-R-E. It could be either one,
+
+768
+00:41:34,690 --> 00:41:36,760
+but I want to find it in my database.
+
+769
+00:41:36,760 --> 00:41:37,770
+So let me try this.
+
+770
+00:41:37,770 --> 00:41:44,670
+I'll say SELECT, let's say, "title"
+FROM "longlist," WHERE, in this case,
+
+771
+00:41:44,670 --> 00:41:46,800
+"title" is LIKE--
+
+772
+00:41:46,800 --> 00:41:49,740
+well, I know that it
+starts with a P. And I
+
+773
+00:41:49,740 --> 00:41:54,000
+don't know if this is an I or a Y. But
+I'll at least leave it as an underscore
+
+774
+00:41:54,000 --> 00:41:56,880
+now to say it could
+be any character here.
+
+775
+00:41:56,880 --> 00:42:02,800
+Then I'll say R-E
+single quote, Semicolon.
+
+776
+00:42:02,800 --> 00:42:04,860
+And now I could try hitting Enter.
+
+777
+00:42:04,860 --> 00:42:08,820
+And I'll see I get back
+this title called Pyre.
+
+778
+00:42:08,820 --> 00:42:12,060
+So notice in this case that
+the underscore is matching
+
+779
+00:42:12,060 --> 00:42:14,310
+literally any single character.
+
+780
+00:42:14,310 --> 00:42:20,230
+This could be a Y. It could be an I.
+But in this case, I have this Y here.
+
+781
+00:42:20,230 --> 00:42:20,835
+OK.
+
+782
+00:42:20,835 --> 00:42:21,460
+Let me go back.
+
+783
+00:42:21,460 --> 00:42:23,920
+And let's actually ask in
+this case what questions we
+
+784
+00:42:23,920 --> 00:42:28,077
+have on using LIKE with these
+single underscores if any.
+
+785
+00:42:28,077 --> 00:42:28,660
+SPEAKER: Yeah.
+
+786
+00:42:28,660 --> 00:42:33,230
+So Carter, I wanted to ask you, that
+as you use the underscore sign here,
+
+787
+00:42:33,230 --> 00:42:37,390
+so for multiple characters, can we
+use multiple underscores in order
+
+788
+00:42:37,390 --> 00:42:39,698
+to find something in the database?
+
+789
+00:42:39,698 --> 00:42:40,990
+CARTER ZENKE: A great question.
+
+790
+00:42:40,990 --> 00:42:43,767
+Could we use more than one
+underscore to try to find
+
+791
+00:42:43,767 --> 00:42:45,100
+some characters in our database?
+
+792
+00:42:45,100 --> 00:42:45,975
+You absolutely could.
+
+793
+00:42:45,975 --> 00:42:47,500
+So let me try that myself.
+
+794
+00:42:47,500 --> 00:42:49,630
+I'll go back to my terminal.
+
+795
+00:42:49,630 --> 00:42:52,510
+And let me try to find a book
+title this could work with.
+
+796
+00:42:52,510 --> 00:42:56,380
+I'll say maybe SELECT
+"title" from "longlist"
+
+797
+00:42:56,380 --> 00:42:58,660
+to get back all the books in this table.
+
+798
+00:42:58,660 --> 00:42:59,980
+I'll hit Semicolon.
+
+799
+00:42:59,980 --> 00:43:02,755
+And maybe I will go with--
+
+800
+00:43:02,755 --> 00:43:05,930
+
+
+801
+00:43:05,930 --> 00:43:08,720
+let's try this one called Tyll.
+
+802
+00:43:08,720 --> 00:43:13,760
+Well, maybe I want to just find the
+titles that have a Y or an I in here,
+
+803
+00:43:13,760 --> 00:43:17,693
+but I also don't know if it's one
+L or maybe two L's, for instance.
+
+804
+00:43:17,693 --> 00:43:18,860
+Let me go back and try this.
+
+805
+00:43:18,860 --> 00:43:26,930
+I'll say SELECT, let's say, "title" FROM
+"longlist" WHERE my "title" is LIKE--
+
+806
+00:43:26,930 --> 00:43:31,490
+I know it begins with a T. I
+don't know if this is a Y or an I.
+
+807
+00:43:31,490 --> 00:43:36,110
+And maybe I know that it has maybe
+one or two characters after it.
+
+808
+00:43:36,110 --> 00:43:37,610
+So I'll try this one.
+
+809
+00:43:37,610 --> 00:43:40,820
+Now I have three underscores,
+single underscore.
+
+810
+00:43:40,820 --> 00:43:45,200
+So match any book title that
+has T and then any three
+
+811
+00:43:45,200 --> 00:43:47,000
+individual characters after it.
+
+812
+00:43:47,000 --> 00:43:48,290
+I'll hit Enter.
+
+813
+00:43:48,290 --> 00:43:50,300
+And I'll see I get back Tyll.
+
+814
+00:43:50,300 --> 00:43:56,000
+This is the only title that has T
+and then three characters after it.
+
+815
+00:43:56,000 --> 00:43:57,690
+I could try to get better with this.
+
+816
+00:43:57,690 --> 00:44:00,980
+I could say maybe I'll accept
+five or six characters like that.
+
+817
+00:44:00,980 --> 00:44:02,030
+Hit Enter.
+
+818
+00:44:02,030 --> 00:44:04,497
+And I'll see-- whoops, I
+didn't compute my query here.
+
+819
+00:44:04,497 --> 00:44:06,080
+Let me just try it from the top again.
+
+820
+00:44:06,080 --> 00:44:08,870
+I'll say SELECT "title"
+from "longlist" where
+
+821
+00:44:08,870 --> 00:44:12,770
+title is like, let's say,
+T-Y underscore, underscore,
+
+822
+00:44:12,770 --> 00:44:13,970
+underscore, underscore.
+
+823
+00:44:13,970 --> 00:44:16,790
+Hit Semicolon.
+
+824
+00:44:16,790 --> 00:44:18,250
+And now I get no matches.
+
+825
+00:44:18,250 --> 00:44:22,090
+So there is no book in
+the database that has T-Y
+
+826
+00:44:22,090 --> 00:44:28,140
+and then, let's say, three or four
+underscores for any character after it.
+
+827
+00:44:28,140 --> 00:44:28,830
+OK.
+
+828
+00:44:28,830 --> 00:44:32,910
+So this covers our
+use of LIKE, but let's
+
+829
+00:44:32,910 --> 00:44:35,130
+keep going and building
+more complex conditions
+
+830
+00:44:35,130 --> 00:44:40,440
+to find even more answers to questions
+we have about this data over here.
+
+831
+00:44:40,440 --> 00:44:43,530
+Let me think what we should show next.
+
+832
+00:44:43,530 --> 00:44:44,790
+We've seen LIKE.
+
+833
+00:44:44,790 --> 00:44:46,860
+We've seen some compound conditionals.
+
+834
+00:44:46,860 --> 00:44:51,390
+Well, let's go back to trying to find
+books that are in a certain year.
+
+835
+00:44:51,390 --> 00:44:54,540
+So we saw earlier we
+had this kind of query.
+
+836
+00:44:54,540 --> 00:45:00,810
+We could say SELECT "title" and "year"
+FROM, let's say, our "longlist."
+
+837
+00:45:00,810 --> 00:45:04,380
+Now I can try to find those books
+that are written or nominated
+
+838
+00:45:04,380 --> 00:45:06,990
+in 2022 and 2023.
+
+839
+00:45:06,990 --> 00:45:08,880
+But let's say I want to go further.
+
+840
+00:45:08,880 --> 00:45:15,130
+I want those from 2019 to 2022,
+a span of multiple years here.
+
+841
+00:45:15,130 --> 00:45:18,990
+So I could try it like
+this, WHERE "year" equals--
+
+842
+00:45:18,990 --> 00:45:21,300
+let's go ahead and say 2019--
+
+843
+00:45:21,300 --> 00:45:28,160
+OR "year" is 2020 OR "year" is 2021.
+
+844
+00:45:28,160 --> 00:45:30,380
+And let me make a new line again.
+
+845
+00:45:30,380 --> 00:45:36,190
+OR "year" is 2022 Semicolon.
+
+846
+00:45:36,190 --> 00:45:39,940
+And before I run this query,
+let me ask our audience,
+
+847
+00:45:39,940 --> 00:45:44,910
+what strikes you as being not very
+well designed about this query?
+
+848
+00:45:44,910 --> 00:45:47,560
+What could I be doing better here?
+
+849
+00:45:47,560 --> 00:45:52,650
+So I'm seeing maybe one improvement
+is that I don't need to write out
+
+850
+00:45:52,650 --> 00:45:55,950
+OR "year" is this, OR "year" is that.
+
+851
+00:45:55,950 --> 00:45:57,900
+I could probably do better with this.
+
+852
+00:45:57,900 --> 00:46:00,630
+And let's introduce some
+new keywords for working
+
+853
+00:46:00,630 --> 00:46:04,240
+with ranges in terms of our conditions.
+
+854
+00:46:04,240 --> 00:46:08,460
+So here, we can see some
+new operators to use.
+
+855
+00:46:08,460 --> 00:46:12,450
+We have this greater than
+sign, this less than sign,
+
+856
+00:46:12,450 --> 00:46:15,360
+greater than or equal to,
+and less than or equal to.
+
+857
+00:46:15,360 --> 00:46:19,800
+And we can use these to build
+ranges inside of our queries to say,
+
+858
+00:46:19,800 --> 00:46:24,630
+I want something to be greater than this
+number or less than this number too.
+
+859
+00:46:24,630 --> 00:46:27,180
+And we can combine these
+with AND and our OR
+
+860
+00:46:27,180 --> 00:46:31,440
+we saw before to get back in
+this case some set of rows
+
+861
+00:46:31,440 --> 00:46:34,230
+that match what we intend to find.
+
+862
+00:46:34,230 --> 00:46:36,450
+So let me go back and
+try some of these out.
+
+863
+00:46:36,450 --> 00:46:39,840
+I'll try to improve the
+design of this query.
+
+864
+00:46:39,840 --> 00:46:46,350
+Let me first run it, and we'll
+see we do get back 2019 to 2022.
+
+865
+00:46:46,350 --> 00:46:47,980
+But I could probably do better.
+
+866
+00:46:47,980 --> 00:46:50,760
+So let's try using
+our new operators here
+
+867
+00:46:50,760 --> 00:46:53,370
+that can give us some
+range capabilities.
+
+868
+00:46:53,370 --> 00:46:59,790
+I'll say SELECT "title" and also
+SELECT "year" from "longlist."
+
+869
+00:46:59,790 --> 00:47:07,080
+But now I want those rows where the
+year is greater than or equal to 2019,
+
+870
+00:47:07,080 --> 00:47:13,380
+and the year is less than
+or equal to 2022 Semicolon.
+
+871
+00:47:13,380 --> 00:47:14,950
+I'll hit Enter.
+
+872
+00:47:14,950 --> 00:47:17,110
+Notice I'll get the very same results.
+
+873
+00:47:17,110 --> 00:47:19,020
+So I get all those same rows.
+
+874
+00:47:19,020 --> 00:47:21,700
+But now my query is much smaller.
+
+875
+00:47:21,700 --> 00:47:26,340
+It's making use of these range
+operators I've seen so far.
+
+876
+00:47:26,340 --> 00:47:28,930
+I could even further improve this.
+
+877
+00:47:28,930 --> 00:47:31,380
+I could make this a
+little better designed to.
+
+878
+00:47:31,380 --> 00:47:34,590
+Let me go back to some slides and
+show you we could use these keywords
+
+879
+00:47:34,590 --> 00:47:39,510
+BETWEEN blank AND blank, where
+this can be some condition
+
+880
+00:47:39,510 --> 00:47:41,230
+or some number in this case.
+
+881
+00:47:41,230 --> 00:47:46,320
+I could say between,
+let's say, 2019 AND 2022.
+
+882
+00:47:46,320 --> 00:47:47,740
+This is inclusive.
+
+883
+00:47:47,740 --> 00:47:56,280
+So if I say 2019 AND 2022, I'll get back
+a query that includes 2019 and 2022.
+
+884
+00:47:56,280 --> 00:47:57,900
+So let me try this one.
+
+885
+00:47:57,900 --> 00:47:59,130
+I'll go back over here.
+
+886
+00:47:59,130 --> 00:48:04,170
+And I will now try
+SELECT "title" and "year"
+
+887
+00:48:04,170 --> 00:48:12,370
+from "longlist," WHERE the
+"year" is between 2019 AND 2022.
+
+888
+00:48:12,370 --> 00:48:17,990
+Same results now, which is a different
+way of writing this same query.
+
+889
+00:48:17,990 --> 00:48:21,120
+Now what else can we
+do with these ranges?
+
+890
+00:48:21,120 --> 00:48:26,480
+Well, as we've said before, these books
+actually have some ratings involved.
+
+891
+00:48:26,480 --> 00:48:29,030
+These ratings are
+crowdsourced from Goodreads,
+
+892
+00:48:29,030 --> 00:48:31,400
+a site you can review books online.
+
+893
+00:48:31,400 --> 00:48:35,570
+And I want to find maybe the books
+that have a rating of 4.0 or higher.
+
+894
+00:48:35,570 --> 00:48:41,270
+Well, I could do that now with my ranges
+I could say SELECT "title" and "rating"
+
+895
+00:48:41,270 --> 00:48:43,010
+from my "longlist."
+
+896
+00:48:43,010 --> 00:48:48,920
+And I could say WHERE the "rating"
+is greater than 4.0 Semicolon.
+
+897
+00:48:48,920 --> 00:48:49,940
+I'll hit Enter.
+
+898
+00:48:49,940 --> 00:48:55,100
+And I'll see now only those
+books that have a rating of 4.0
+
+899
+00:48:55,100 --> 00:48:58,660
+or higher like this.
+
+900
+00:48:58,660 --> 00:49:00,970
+I could even combine conditions.
+
+901
+00:49:00,970 --> 00:49:03,510
+So I know that these books
+have a certain rating,
+
+902
+00:49:03,510 --> 00:49:05,730
+but how many votes do they really get?
+
+903
+00:49:05,730 --> 00:49:07,210
+Well, let's take a peek.
+
+904
+00:49:07,210 --> 00:49:08,460
+I'll come back over here.
+
+905
+00:49:08,460 --> 00:49:10,800
+And let me try this one.
+
+906
+00:49:10,800 --> 00:49:13,780
+I could say SELECT "title."
+
+907
+00:49:13,780 --> 00:49:17,120
+Oops, let me clear my terminal
+again so it's back up top.
+
+908
+00:49:17,120 --> 00:49:22,880
+SELECT "title" and
+"rating" and the number of
+
+909
+00:49:22,880 --> 00:49:28,040
+votes that these books got from,
+let's say, our "longlist" table.
+
+910
+00:49:28,040 --> 00:49:34,400
+Now, I want to find those that
+have a rating of greater than 4.0,
+
+911
+00:49:34,400 --> 00:49:38,680
+and, let's say, a number of votes--
+
+912
+00:49:38,680 --> 00:49:41,080
+a number of votes which
+is greater than at least--
+
+913
+00:49:41,080 --> 00:49:43,330
+let's go with 10,000.
+
+914
+00:49:43,330 --> 00:49:46,960
+So at least we know a good number of
+folks actually voted on these books
+
+915
+00:49:46,960 --> 00:49:48,970
+to find the best among them.
+
+916
+00:49:48,970 --> 00:49:49,990
+I'll Enter.
+
+917
+00:49:49,990 --> 00:49:53,620
+And now I'll see we're
+only down to a few books,
+
+918
+00:49:53,620 --> 00:49:58,270
+four in fact, where each one
+has a rating higher than 4.0.
+
+919
+00:49:58,270 --> 00:50:06,490
+And indeed, every vote row has a vote
+total greater than 10,000 in this case.
+
+920
+00:50:06,490 --> 00:50:12,100
+So a good way to try to find the
+top books in our data set here.
+
+921
+00:50:12,100 --> 00:50:13,920
+Let's keep going with these ranges.
+
+922
+00:50:13,920 --> 00:50:17,190
+And let's think about one
+more thing we could do.
+
+923
+00:50:17,190 --> 00:50:20,040
+Maybe I want to find books that
+are less than a certain length.
+
+924
+00:50:20,040 --> 00:50:21,690
+So I'll try that as well.
+
+925
+00:50:21,690 --> 00:50:27,180
+I'll say SELECT, let's say, "title"
+and "pages" from my "longlist."
+
+926
+00:50:27,180 --> 00:50:30,000
+And now I can make a
+condition based on pages.
+
+927
+00:50:30,000 --> 00:50:33,690
+I'll say WHERE "pages" is less than 300.
+
+928
+00:50:33,690 --> 00:50:34,800
+Hit Enter.
+
+929
+00:50:34,800 --> 00:50:37,800
+And now I should see that
+I have all these books that
+
+930
+00:50:37,800 --> 00:50:43,270
+are less than 300 pages long
+when they were first published.
+
+931
+00:50:43,270 --> 00:50:45,330
+So let's pause here
+and ask what questions
+
+932
+00:50:45,330 --> 00:50:49,020
+we have on these range conditions.
+
+933
+00:50:49,020 --> 00:50:55,230
+SPEAKER: I just wanted to check
+if for a proper query in this case
+
+934
+00:50:55,230 --> 00:51:00,240
+to be able to run operations, they
+have to be integers in the database.
+
+935
+00:51:00,240 --> 00:51:04,080
+And my second question is for
+when we're matching a string,
+
+936
+00:51:04,080 --> 00:51:06,203
+is it case-sensitive or not?
+
+937
+00:51:06,203 --> 00:51:07,870
+CARTER ZENKE: Yeah, two great questions.
+
+938
+00:51:07,870 --> 00:51:12,520
+So the first one here is going to be,
+do I have to use integers in this case?
+
+939
+00:51:12,520 --> 00:51:14,310
+And what types, maybe, should I use?
+
+940
+00:51:14,310 --> 00:51:17,850
+And the second one being, could I
+match strings like case insensitively?
+
+941
+00:51:17,850 --> 00:51:20,940
+So for the first one,
+in this case, it'll
+
+942
+00:51:20,940 --> 00:51:23,110
+depend on the design of your database.
+
+943
+00:51:23,110 --> 00:51:25,140
+So we'll see later on
+in the course, how we
+
+944
+00:51:25,140 --> 00:51:27,420
+can choose the types for our columns.
+
+945
+00:51:27,420 --> 00:51:31,260
+And how that might impact the types
+we actually use in our queries.
+
+946
+00:51:31,260 --> 00:51:33,400
+For now, I made this database.
+
+947
+00:51:33,400 --> 00:51:36,750
+So I just know that my
+year column is an integer,
+
+948
+00:51:36,750 --> 00:51:40,020
+my ratings column is a real number
+or a float, if you're familiar,
+
+949
+00:51:40,020 --> 00:51:41,560
+and my votes is an integer.
+
+950
+00:51:41,560 --> 00:51:43,800
+So I just know to use
+those numbers there.
+
+951
+00:51:43,800 --> 00:51:47,460
+To the question of matching
+things case-insensitively,
+
+952
+00:51:47,460 --> 00:51:50,820
+let's actually revisit LIKE just briefly
+here to show you what that can do.
+
+953
+00:51:50,820 --> 00:51:58,160
+So I go back to my terminal, and let's
+say I want to find just a book title.
+
+954
+00:51:58,160 --> 00:51:59,910
+And I want to type it
+in kind of sloppily.
+
+955
+00:51:59,910 --> 00:52:02,118
+I don't want to capitalize
+it like capital books are.
+
+956
+00:52:02,118 --> 00:52:06,750
+So I'll say SELECT let's
+say "title" from "longlist."
+
+957
+00:52:06,750 --> 00:52:10,930
+And maybe, I'll want to
+find that book Pyre again.
+
+958
+00:52:10,930 --> 00:52:17,710
+So I could say WHERE "title" is
+LIKE 'pyre', but all in lowercase.
+
+959
+00:52:17,710 --> 00:52:19,110
+Now I'll hit Enter.
+
+960
+00:52:19,110 --> 00:52:21,540
+And I'll see I do get back Pyre.
+
+961
+00:52:21,540 --> 00:52:27,510
+So even though I said WHERE "title"
+is LIKE lowercase 'pyre', I got back
+
+962
+00:52:27,510 --> 00:52:29,880
+capital Pyre.
+
+963
+00:52:29,880 --> 00:52:35,100
+Now this is in contrast to saying
+WHERE "title" equals lowercase 'pyre'.
+
+964
+00:52:35,100 --> 00:52:36,610
+Let's try that.
+
+965
+00:52:36,610 --> 00:52:37,830
+I'll come back over here.
+
+966
+00:52:37,830 --> 00:52:43,560
+And I'll say again SELECT
+"title" from "longlist,"
+
+967
+00:52:43,560 --> 00:52:52,830
+but now WHERE "title" equals,
+quote, unquote, 'pyre' Semicolon.
+
+968
+00:52:52,830 --> 00:52:53,790
+I'll hit Enter.
+
+969
+00:52:53,790 --> 00:52:55,570
+And now I see no results.
+
+970
+00:52:55,570 --> 00:52:59,010
+So in this case, the equal is
+going to be case-sensitive.
+
+971
+00:52:59,010 --> 00:53:05,320
+Case matters in this case,
+but LIKE is case-insensitive.
+
+972
+00:53:05,320 --> 00:53:06,990
+OK.
+
+973
+00:53:06,990 --> 00:53:09,848
+Why don't we keep going then?
+
+974
+00:53:09,848 --> 00:53:11,640
+And let's take a look
+at a few other things
+
+975
+00:53:11,640 --> 00:53:15,450
+we can do with these SQL
+keywords for querying.
+
+976
+00:53:15,450 --> 00:53:18,240
+Well, earlier, we were
+trying to find a way
+
+977
+00:53:18,240 --> 00:53:21,480
+to find the best books in our data set.
+
+978
+00:53:21,480 --> 00:53:24,810
+And we did that by filtering
+them based on some ranges.
+
+979
+00:53:24,810 --> 00:53:27,210
+But we could probably do
+that a little bit more
+
+980
+00:53:27,210 --> 00:53:33,180
+methodically in this case using a new
+keyword, this one called ORDER BY.
+
+981
+00:53:33,180 --> 00:53:37,980
+So ORDER BY allows us to
+take the results of our query
+
+982
+00:53:37,980 --> 00:53:43,000
+and order them, as it suggests,
+by some column itself.
+
+983
+00:53:43,000 --> 00:53:47,670
+So we could put them in alphabetical
+order or in order by a number of votes
+
+984
+00:53:47,670 --> 00:53:50,340
+or in order by number of ratings.
+
+985
+00:53:50,340 --> 00:53:54,360
+And let's just try an example of this
+to see how ORDER BY works for us.
+
+986
+00:53:54,360 --> 00:53:58,710
+But in the end, we'll see it can
+arrange columns, arrange rows for us
+
+987
+00:53:58,710 --> 00:54:00,430
+in our resulting query.
+
+988
+00:54:00,430 --> 00:54:02,790
+So I'll go back to my computer.
+
+989
+00:54:02,790 --> 00:54:04,830
+And let's try this question here.
+
+990
+00:54:04,830 --> 00:54:09,400
+I want to try to find the
+top 10 books in my table.
+
+991
+00:54:09,400 --> 00:54:16,880
+So I'll say SELECT "title"
+and "rating" from "longlist."
+
+992
+00:54:16,880 --> 00:54:18,080
+Enter.
+
+993
+00:54:18,080 --> 00:54:19,820
+Not only query yet though.
+
+994
+00:54:19,820 --> 00:54:24,640
+Now I'll say ORDER BY the rating.
+
+995
+00:54:24,640 --> 00:54:26,800
+And let's only take the top 10.
+
+996
+00:54:26,800 --> 00:54:31,120
+So I'll say limit 10 in
+this instance Semicolon.
+
+997
+00:54:31,120 --> 00:54:34,330
+So now I've combined some
+of my prior keywords.
+
+998
+00:54:34,330 --> 00:54:35,500
+I'm using SELECT.
+
+999
+00:54:35,500 --> 00:54:36,790
+I'm using ORDER BY.
+
+1000
+00:54:36,790 --> 00:54:38,840
+And I'm still using
+our old friend LIMIT.
+
+1001
+00:54:38,840 --> 00:54:40,690
+So let me hit Enter here.
+
+1002
+00:54:40,690 --> 00:54:46,050
+And I'll get back, well,
+not quite the top 10.
+
+1003
+00:54:46,050 --> 00:54:52,240
+I see rating of 3.05 here
+and rating of 3.42 down here.
+
+1004
+00:54:52,240 --> 00:55:00,000
+So based on this, what do you think
+the default ordering of ORDER BY is?
+
+1005
+00:55:00,000 --> 00:55:02,020
+So you might be from least to greatest.
+
+1006
+00:55:02,020 --> 00:55:05,430
+So we saw here that we have
+rating being pretty small,
+
+1007
+00:55:05,430 --> 00:55:07,140
+but we said ORDER BY our rating.
+
+1008
+00:55:07,140 --> 00:55:10,440
+So it starts from small
+and goes down to large.
+
+1009
+00:55:10,440 --> 00:55:12,420
+So we need to fix this in some way.
+
+1010
+00:55:12,420 --> 00:55:15,240
+And let's introduce a
+new addition to ORDER BY
+
+1011
+00:55:15,240 --> 00:55:18,820
+to have us fix this query overall.
+
+1012
+00:55:18,820 --> 00:55:24,930
+So let me show you that ORDER BY does
+by default sort from least to greatest.
+
+1013
+00:55:24,930 --> 00:55:27,570
+But let's try some addition here.
+
+1014
+00:55:27,570 --> 00:55:31,830
+We have not just ORDER BY
+but ORDER BY some column
+
+1015
+00:55:31,830 --> 00:55:35,530
+and then ascending or descending.
+
+1016
+00:55:35,530 --> 00:55:39,480
+So ascending is the default. It
+means from least to greatest.
+
+1017
+00:55:39,480 --> 00:55:44,260
+Descending, we can specify
+meaning from greatest to smallest.
+
+1018
+00:55:44,260 --> 00:55:47,310
+So let's try using ORDER BY
+but now with this other keyword
+
+1019
+00:55:47,310 --> 00:55:50,520
+called DESC for descending here.
+
+1020
+00:55:50,520 --> 00:55:53,760
+I'll go back to my terminal.
+
+1021
+00:55:53,760 --> 00:55:57,210
+And let's rewrite this
+query to include DESC.
+
+1022
+00:55:57,210 --> 00:56:02,700
+I'll say SELECT "title" and
+"rating" from "longlist."
+
+1023
+00:56:02,700 --> 00:56:04,632
+And let me-- before
+I run this query, let
+
+1024
+00:56:04,632 --> 00:56:06,840
+me just clear my terminal
+so it's back up at the top.
+
+1025
+00:56:06,840 --> 00:56:08,580
+I'll backspace this.
+
+1026
+00:56:08,580 --> 00:56:13,050
+And then a moment here, I'll press
+Control-L. Now I'm back at the top.
+
+1027
+00:56:13,050 --> 00:56:21,847
+I'll say SELECT "title", SELECT "title"
+and "rating" from "longlist" WHERE--
+
+1028
+00:56:21,847 --> 00:56:22,680
+actually, not WHERE.
+
+1029
+00:56:22,680 --> 00:56:23,820
+We're not filtering yet.
+
+1030
+00:56:23,820 --> 00:56:30,082
+I'll say ORDER BY rating but
+not by ascending by default--
+
+1031
+00:56:30,082 --> 00:56:31,290
+going from least to greatest.
+
+1032
+00:56:31,290 --> 00:56:33,010
+I want greatest to least.
+
+1033
+00:56:33,010 --> 00:56:35,370
+So I'll say DESC here.
+
+1034
+00:56:35,370 --> 00:56:38,880
+Now, I can say LIMIT 10 Semicolon.
+
+1035
+00:56:38,880 --> 00:56:39,840
+Hit Enter.
+
+1036
+00:56:39,840 --> 00:56:42,540
+And now I'll see the top 10 books.
+
+1037
+00:56:42,540 --> 00:56:47,160
+Here, I have The Eighth Life coming
+in at 4.52 and The Books of Jacob
+
+1038
+00:56:47,160 --> 00:56:49,680
+coming in at 4.06.
+
+1039
+00:56:49,680 --> 00:56:53,460
+So now we're going from
+greatest to smallest.
+
+1040
+00:56:53,460 --> 00:56:56,880
+Well, I could order by
+not just these ratings,
+
+1041
+00:56:56,880 --> 00:56:59,220
+but also by the number of votes.
+
+1042
+00:56:59,220 --> 00:57:00,900
+It seems there's a tie to break here.
+
+1043
+00:57:00,900 --> 00:57:04,890
+If I look at Still Born and When
+We Cease to Understand the World,
+
+1044
+00:57:04,890 --> 00:57:07,800
+those both have a rating of 4.14.
+
+1045
+00:57:07,800 --> 00:57:12,430
+But presumably, one book has
+maybe more votes than the other.
+
+1046
+00:57:12,430 --> 00:57:18,360
+So I could try to break this tie by
+ordering not just by rating but also
+
+1047
+00:57:18,360 --> 00:57:22,530
+by votes, the number votes this book
+actually received on Good Reads.
+
+1048
+00:57:22,530 --> 00:57:25,290
+So let's try that then
+to break this tie.
+
+1049
+00:57:25,290 --> 00:57:26,730
+I'll come back over here.
+
+1050
+00:57:26,730 --> 00:57:29,490
+And I'll try this query now.
+
+1051
+00:57:29,490 --> 00:57:35,790
+I'll say, again, SELECT "title"
+and "rating" from "longlist."
+
+1052
+00:57:35,790 --> 00:57:41,860
+Now I'll order by, first, the
+rating column in descending order.
+
+1053
+00:57:41,860 --> 00:57:47,100
+But I also want to order by the number
+of votes after I order by rating.
+
+1054
+00:57:47,100 --> 00:57:50,730
+So I'm saying first order
+by rating, but afterwards,
+
+1055
+00:57:50,730 --> 00:57:54,210
+followed by a comma, let's
+order by the number of votes
+
+1056
+00:57:54,210 --> 00:57:58,500
+also in descending order--
+from greatest to smallest.
+
+1057
+00:57:58,500 --> 00:58:01,170
+Now I'll just continue my
+query on the next line.
+
+1058
+00:58:01,170 --> 00:58:04,080
+And I'll say LIMIT 10 Semicolon.
+
+1059
+00:58:04,080 --> 00:58:09,120
+This then gives me, let's
+see, the books but now
+
+1060
+00:58:09,120 --> 00:58:12,970
+they're going to be in the order that
+allows us to see the number of votes.
+
+1061
+00:58:12,970 --> 00:58:14,380
+Let me just actually refine this.
+
+1062
+00:58:14,380 --> 00:58:17,112
+Let me say not just title
+and rating, let's make
+
+1063
+00:58:17,112 --> 00:58:18,570
+sure we can see the votes here too.
+
+1064
+00:58:18,570 --> 00:58:23,580
+So SELECT "title" and "rating"
+and "votes" from "longlist."
+
+1065
+00:58:23,580 --> 00:58:24,810
+Hit Enter on my query.
+
+1066
+00:58:24,810 --> 00:58:27,750
+Now I'll say ORDER BY
+"rating" and "votes."
+
+1067
+00:58:27,750 --> 00:58:29,550
+Then I'll say LIMIT 10.
+
+1068
+00:58:29,550 --> 00:58:32,160
+And here, I'm just getting
+the Up Arrow on my computer.
+
+1069
+00:58:32,160 --> 00:58:33,660
+I'll hit Enter.
+
+1070
+00:58:33,660 --> 00:58:36,150
+And now I'll see the votes included.
+
+1071
+00:58:36,150 --> 00:58:38,070
+So let me show you
+this on the big screen.
+
+1072
+00:58:38,070 --> 00:58:40,440
+Here, we see that the tie is broken.
+
+1073
+00:58:40,440 --> 00:58:42,600
+So when we cease to
+understand the world,
+
+1074
+00:58:42,600 --> 00:58:46,560
+these both have 4.14
+along with Still Born.
+
+1075
+00:58:46,560 --> 00:58:51,540
+But here, this book has more votes
+and so is higher in our order
+
+1076
+00:58:51,540 --> 00:58:55,910
+now that we've ordered
+by multiple columns.
+
+1077
+00:58:55,910 --> 00:58:58,240
+So let me pause here
+and ask what questions
+
+1078
+00:58:58,240 --> 00:59:01,630
+we have on ordering with data.
+
+1079
+00:59:01,630 --> 00:59:07,480
+Ordering by one column or multiple,
+and how we can sort data like this.
+
+1080
+00:59:07,480 --> 00:59:14,355
+SPEAKER: Sir, I want to know that
+can we write rating to 4.93 to 4.9?
+
+1081
+00:59:14,355 --> 00:59:15,730
+CARTER ZENKE: Yeah good question.
+
+1082
+00:59:15,730 --> 00:59:18,580
+I think if I understand you
+correctly, how can we select a rating
+
+1083
+00:59:18,580 --> 00:59:22,820
+or try to find a rating that's like
+equal to 4.92 or things like that.
+
+1084
+00:59:22,820 --> 00:59:23,780
+Let's try that here.
+
+1085
+00:59:23,780 --> 00:59:26,350
+So if I want to find
+a particular rating,
+
+1086
+00:59:26,350 --> 00:59:30,250
+I could simply use my
+WHERE friend from before.
+
+1087
+00:59:30,250 --> 00:59:34,390
+I could say SELECT, let's
+say, "title" and "rating."
+
+1088
+00:59:34,390 --> 00:59:37,750
+And maybe I could try to find
+a particular rating for a book
+
+1089
+00:59:37,750 --> 00:59:39,400
+from longlist.
+
+1090
+00:59:39,400 --> 00:59:46,870
+I could say then WHERE this rating is
+equal to, let's say, 4.932 Semicolon.
+
+1091
+00:59:46,870 --> 00:59:49,160
+If this book exists, it
+will get it back here.
+
+1092
+00:59:49,160 --> 00:59:50,170
+So I'll hit Enter.
+
+1093
+00:59:50,170 --> 00:59:55,810
+And I see there's no book with
+this particular rating, 4.392.
+
+1094
+00:59:55,810 --> 01:00:01,510
+But good question for how to find
+particular ratings for our books here.
+
+1095
+01:00:01,510 --> 01:00:02,380
+OK.
+
+1096
+01:00:02,380 --> 01:00:09,130
+Other questions too on how we've been
+able to sort our data and use ORDER BY?
+
+1097
+01:00:09,130 --> 01:00:13,000
+SPEAKER: Will descend work on a
+string on an alphabetic basis?
+
+1098
+01:00:13,000 --> 01:00:18,098
+Or do we need to have special
+conditions for alphabetic characters?
+
+1099
+01:00:18,098 --> 01:00:19,640
+CARTER ZENKE: Yeah, a great question.
+
+1100
+01:00:19,640 --> 01:00:23,740
+So how could we use ORDER BY with some
+characters or strings or some text
+
+1101
+01:00:23,740 --> 01:00:24,590
+in our database?
+
+1102
+01:00:24,590 --> 01:00:27,790
+Let's try that one out too and
+see how that works with ASC
+
+1103
+01:00:27,790 --> 01:00:30,760
+for ascending and DESC for descending.
+
+1104
+01:00:30,760 --> 01:00:32,350
+So I'll go back to my terminal.
+
+1105
+01:00:32,350 --> 01:00:35,710
+And I'll demonstrate here how
+we can use this for some text.
+
+1106
+01:00:35,710 --> 01:00:40,780
+So let's try to simply sorting our
+books alphabetically for, let's say,
+
+1107
+01:00:40,780 --> 01:00:41,800
+our library.
+
+1108
+01:00:41,800 --> 01:00:46,900
+I'll say SELECT "title"
+from "longlist," Enter.
+
+1109
+01:00:46,900 --> 01:00:50,210
+And I want to order by
+title, just plain and simple.
+
+1110
+01:00:50,210 --> 01:00:51,590
+And then hit Semicolon.
+
+1111
+01:00:51,590 --> 01:00:52,750
+Let's see what happens.
+
+1112
+01:00:52,750 --> 01:00:54,160
+I'll hit Enter.
+
+1113
+01:00:54,160 --> 01:00:57,700
+And now I'll see that
+these books are ordered.
+
+1114
+01:00:57,700 --> 01:00:59,980
+But they seem to be
+ordered alphabetically.
+
+1115
+01:00:59,980 --> 01:01:03,700
+So here, we have some titles
+lower in the alphabet.
+
+1116
+01:01:03,700 --> 01:01:06,320
+And up here, we have titles
+earlier in the alphabet.
+
+1117
+01:01:06,320 --> 01:01:10,780
+So by default ORDER BY seems
+to order alphabetically.
+
+1118
+01:01:10,780 --> 01:01:15,070
+If I change that default, though,
+from ascending to descending,
+
+1119
+01:01:15,070 --> 01:01:16,960
+let's see what happens.
+
+1120
+01:01:16,960 --> 01:01:18,250
+I'll go back over here.
+
+1121
+01:01:18,250 --> 01:01:22,990
+And I'll try the same
+query but now using DESC.
+
+1122
+01:01:22,990 --> 01:01:24,760
+SELECT "title" from "longlist."
+
+1123
+01:01:24,760 --> 01:01:29,110
+ORDER BY "title" now
+in descending order.
+
+1124
+01:01:29,110 --> 01:01:30,400
+Hit Enter.
+
+1125
+01:01:30,400 --> 01:01:34,630
+And now I'll see these titles
+in reverse alphabetical order.
+
+1126
+01:01:34,630 --> 01:01:39,190
+So notice how earlier on, we have
+titles that are lower in the alphabet.
+
+1127
+01:01:39,190 --> 01:01:42,740
+But down below, we have titles that
+are earlier in the alphabet here.
+
+1128
+01:01:42,740 --> 01:01:46,330
+So you can use ORDER
+BY with these texts.
+
+1129
+01:01:46,330 --> 01:01:49,690
+But you then have to specify whether
+you want it in alphabetical order
+
+1130
+01:01:49,690 --> 01:01:53,960
+or in reverse alphabetical order.
+
+1131
+01:01:53,960 --> 01:01:58,700
+OK, so let's show a
+few other concepts here
+
+1132
+01:01:58,700 --> 01:02:01,740
+we can use alongside of these orderings.
+
+1133
+01:02:01,740 --> 01:02:06,080
+One thing we could also do is
+try to find more information
+
+1134
+01:02:06,080 --> 01:02:07,850
+about the ratings of these books.
+
+1135
+01:02:07,850 --> 01:02:10,970
+So let's say I want not
+just to order these books
+
+1136
+01:02:10,970 --> 01:02:15,710
+but try to find the average rating,
+or to try to find the number of books,
+
+1137
+01:02:15,710 --> 01:02:21,080
+or try to find let's say maybe the sum
+of my total votes on each of my books.
+
+1138
+01:02:21,080 --> 01:02:24,860
+Well, for this, we could
+introduce some new concepts,
+
+1139
+01:02:24,860 --> 01:02:29,060
+these ones called SQL's
+aggregate functions.
+
+1140
+01:02:29,060 --> 01:02:35,390
+These allow us to take a whole set of
+rows and return not each of those rows
+
+1141
+01:02:35,390 --> 01:02:36,560
+individually.
+
+1142
+01:02:36,560 --> 01:02:42,290
+But instead, in this case, one number
+based on the values in those rows.
+
+1143
+01:02:42,290 --> 01:02:45,350
+You could imagine trying to
+count the number of rows you have
+
+1144
+01:02:45,350 --> 01:02:47,960
+or take the average
+of the number of rows,
+
+1145
+01:02:47,960 --> 01:02:50,630
+or take the average of let's
+say a rating, for instance.
+
+1146
+01:02:50,630 --> 01:02:52,700
+Finding the minimum rating
+of the maximum rating
+
+1147
+01:02:52,700 --> 01:02:55,190
+or finding the sum of some votes.
+
+1148
+01:02:55,190 --> 01:02:58,230
+And we'll see each of
+these in action here.
+
+1149
+01:02:58,230 --> 01:03:01,460
+Let's go back to our terminal,
+try some of these out.
+
+1150
+01:03:01,460 --> 01:03:05,720
+I will try, in this case
+first trying to find
+
+1151
+01:03:05,720 --> 01:03:08,620
+the average rating from my longlist.
+
+1152
+01:03:08,620 --> 01:03:12,050
+Well, I just from experience,
+and as you now know too,
+
+1153
+01:03:12,050 --> 01:03:14,870
+I can try to find the
+average of some column
+
+1154
+01:03:14,870 --> 01:03:18,390
+by using the AVG aggregate function.
+
+1155
+01:03:18,390 --> 01:03:22,970
+So I'll say SELECT not
+just rating in this case
+
+1156
+01:03:22,970 --> 01:03:27,920
+but select the average
+rating FROM "longlist."
+
+1157
+01:03:27,920 --> 01:03:33,560
+Notice how in this case, I'm using this
+kind of syntax, where I take rating,
+
+1158
+01:03:33,560 --> 01:03:38,330
+my column I want to aggregate or
+to sum up or to average like this.
+
+1159
+01:03:38,330 --> 01:03:41,510
+And I apply the function
+by saying its name
+
+1160
+01:03:41,510 --> 01:03:45,180
+followed by some parentheses
+around that column name.
+
+1161
+01:03:45,180 --> 01:03:47,630
+So this will return to
+me not all of the rating
+
+1162
+01:03:47,630 --> 01:03:52,430
+rows but the average of the
+rating rows in one single cell.
+
+1163
+01:03:52,430 --> 01:03:54,080
+Let me try this.
+
+1164
+01:03:54,080 --> 01:03:56,990
+I'll come back, and I
+will then hit Enter.
+
+1165
+01:03:56,990 --> 01:04:00,440
+And I'll see this is the average rating.
+
+1166
+01:04:00,440 --> 01:04:08,720
+We have 3.7537179471795 is our
+average rating for all of these books.
+
+1167
+01:04:08,720 --> 01:04:11,780
+But of course, this isn't great.
+
+1168
+01:04:11,780 --> 01:04:15,920
+What might I want to do if I was
+going to show this to somebody else?
+
+1169
+01:04:15,920 --> 01:04:20,940
+I could probably improve the
+presentation of this in some way.
+
+1170
+01:04:20,940 --> 01:04:25,640
+So I could probably round
+this result. I have 3.75371,
+
+1171
+01:04:25,640 --> 01:04:28,520
+we can probably stop after
+two decimal points, right?
+
+1172
+01:04:28,520 --> 01:04:30,620
+Just simply like 3.75.
+
+1173
+01:04:30,620 --> 01:04:35,330
+So I could introduce some new keyword
+here, this one around the results.
+
+1174
+01:04:35,330 --> 01:04:37,850
+Let me show you this one in action.
+
+1175
+01:04:37,850 --> 01:04:41,540
+I'll come back, and I'll try
+not just select average rating
+
+1176
+01:04:41,540 --> 01:04:44,370
+but select the rounded average rating.
+
+1177
+01:04:44,370 --> 01:04:51,920
+So I'll say SELECT ROUND and then
+take average of "rating" and round
+
+1178
+01:04:51,920 --> 01:04:58,220
+to 2 decimal points FROM
+"longlist" Semicolon.
+
+1179
+01:04:58,220 --> 01:05:04,910
+So now this query decides to first
+find the average of the rating column.
+
+1180
+01:05:04,910 --> 01:05:10,860
+Then take the result and round
+it using two decimal points.
+
+1181
+01:05:10,860 --> 01:05:14,510
+Notice how round takes two inputs
+or two arguments, the first one
+
+1182
+01:05:14,510 --> 01:05:18,500
+being the rating, the average
+rating, the second one being number
+
+1183
+01:05:18,500 --> 01:05:20,300
+of decimal points to round, 2.
+
+1184
+01:05:20,300 --> 01:05:24,630
+And we complete our query in the way we
+usually do by saying FROM this table.
+
+1185
+01:05:24,630 --> 01:05:26,870
+So let's try this one
+to figure this out.
+
+1186
+01:05:26,870 --> 01:05:27,620
+I'll come back.
+
+1187
+01:05:27,620 --> 01:05:29,120
+And I'll hit Enter.
+
+1188
+01:05:29,120 --> 01:05:33,110
+And now I'll see we do get back 3.75.
+
+1189
+01:05:33,110 --> 01:05:35,720
+But there is still one
+thing to improve here.
+
+1190
+01:05:35,720 --> 01:05:39,590
+When I write this query, I
+see this ugly title name--
+
+1191
+01:05:39,590 --> 01:05:41,990
+ROUND average "rating" comma 2.
+
+1192
+01:05:41,990 --> 01:05:44,775
+I wouldn't send this to my
+boss or somebody else who I
+
+1193
+01:05:44,775 --> 01:05:46,400
+work for or maybe even a friend, right?
+
+1194
+01:05:46,400 --> 01:05:49,170
+I want to make sure it's pretty
+so they can read it correctly.
+
+1195
+01:05:49,170 --> 01:05:53,350
+So what could I do then to
+try to make this prettier?
+
+1196
+01:05:53,350 --> 01:05:55,090
+I could maybe rename this column.
+
+1197
+01:05:55,090 --> 01:05:59,680
+I could try to take this and make
+it not just this ugly mess of SQL
+
+1198
+01:05:59,680 --> 01:06:02,810
+keyword but to give it some
+name I could use instead.
+
+1199
+01:06:02,810 --> 01:06:05,170
+So for this, we'll
+introduce a brand new one--
+
+1200
+01:06:05,170 --> 01:06:07,300
+new brand new keyword called AS.
+
+1201
+01:06:07,300 --> 01:06:09,100
+Let's try this one too.
+
+1202
+01:06:09,100 --> 01:06:19,120
+I'll come back, and I'll say SELECT,
+again, ROUND average "rating" comma 2.
+
+1203
+01:06:19,120 --> 01:06:25,260
+But now, I'll select it AS,
+let's say, average rating.
+
+1204
+01:06:25,260 --> 01:06:27,093
+And now before I actually
+finish this query,
+
+1205
+01:06:27,093 --> 01:06:30,260
+let me try to bring it up to the top
+my terminal so we can see it all in one
+
+1206
+01:06:30,260 --> 01:06:30,830
+go.
+
+1207
+01:06:30,830 --> 01:06:32,150
+I'll backspace this.
+
+1208
+01:06:32,150 --> 01:06:40,450
+And I'll say SELECT the rounded
+version of the average rating rounded
+
+1209
+01:06:40,450 --> 01:06:42,760
+to 2 decimal points AS--
+
+1210
+01:06:42,760 --> 01:06:45,670
+let's call this one "average rating."
+
+1211
+01:06:45,670 --> 01:06:46,780
+Now hit Enter.
+
+1212
+01:06:46,780 --> 01:06:51,370
+And I'll say FROM my
+"longlist" table Semicolon.
+
+1213
+01:06:51,370 --> 01:06:53,830
+Now, I see it's much prettier overall.
+
+1214
+01:06:53,830 --> 01:06:57,010
+I have no longer these
+SQL keywords but instead
+
+1215
+01:06:57,010 --> 01:07:01,120
+just average rating as my column name.
+
+1216
+01:07:01,120 --> 01:07:02,560
+OK.
+
+1217
+01:07:02,560 --> 01:07:04,960
+So let me pause here
+and ask questions then
+
+1218
+01:07:04,960 --> 01:07:12,490
+on using average or using ROUND
+or using AS in these cases.
+
+1219
+01:07:12,490 --> 01:07:16,360
+SPEAKER: I'm wondering, do these
+sorts of commands have a funct--
+
+1220
+01:07:16,360 --> 01:07:21,760
+are these commands encode something like
+data types or just encode something?
+
+1221
+01:07:21,760 --> 01:07:23,998
+Do these commands also have a name?
+
+1222
+01:07:23,998 --> 01:07:24,790
+CARTER ZENKE: Yeah.
+
+1223
+01:07:24,790 --> 01:07:28,630
+And can I ask are you referring
+to the AVG like COUNT like SUM
+
+1224
+01:07:28,630 --> 01:07:29,860
+those kinds of things, or?
+
+1225
+01:07:29,860 --> 01:07:30,550
+Yeah.
+
+1226
+01:07:30,550 --> 01:07:33,140
+So these functions do have a name.
+
+1227
+01:07:33,140 --> 01:07:34,750
+They are called aggregate functions.
+
+1228
+01:07:34,750 --> 01:07:37,850
+And aggregate means to
+combine, to bring together.
+
+1229
+01:07:37,850 --> 01:07:41,410
+So they're called aggregate functions
+because they take some number of rows,
+
+1230
+01:07:41,410 --> 01:07:45,610
+like all my ratings for instance,
+and bring it down to one single cell,
+
+1231
+01:07:45,610 --> 01:07:48,530
+like the average or
+the sum or the count.
+
+1232
+01:07:48,530 --> 01:07:52,030
+So if you look up or read more
+about SQL aggregate functions,
+
+1233
+01:07:52,030 --> 01:07:54,070
+you'll see all of these
+and perhaps some more
+
+1234
+01:07:54,070 --> 01:07:57,750
+depending on the software you're using.
+
+1235
+01:07:57,750 --> 01:07:58,530
+OK.
+
+1236
+01:07:58,530 --> 01:08:02,970
+So let's keep going then and try
+to start counting some other rows
+
+1237
+01:08:02,970 --> 01:08:04,950
+and use our other
+aggregate functions here.
+
+1238
+01:08:04,950 --> 01:08:06,840
+I'll go back to my terminal.
+
+1239
+01:08:06,840 --> 01:08:13,140
+And so far, we've seen average, as
+well as we have seen ROUND and so on.
+
+1240
+01:08:13,140 --> 01:08:18,600
+But why don't I try to find the maximum
+or the minimum rating in my table?
+
+1241
+01:08:18,600 --> 01:08:25,560
+I'll say SELECT, let's say, the MAX
+"rating" FROM my "longlist" Semicolon.
+
+1242
+01:08:25,560 --> 01:08:26,670
+Hit Enter.
+
+1243
+01:08:26,670 --> 01:08:31,529
+Now I see the highest rated
+book had a rating of 4.52.
+
+1244
+01:08:31,529 --> 01:08:33,029
+Well, what about the minimum rating?
+
+1245
+01:08:33,029 --> 01:08:34,200
+I could use MIN here too.
+
+1246
+01:08:34,200 --> 01:08:40,310
+I could say SELECT, let's say, MIN of
+my "rating" column FROM my "longlist"
+
+1247
+01:08:40,310 --> 01:08:41,000
+table.
+
+1248
+01:08:41,000 --> 01:08:42,710
+I'll hit Semicolon.
+
+1249
+01:08:42,710 --> 01:08:44,689
+And I'll see it 3.05.
+
+1250
+01:08:44,689 --> 01:08:48,979
+It is the lowest-rated
+book I have in this set.
+
+1251
+01:08:48,979 --> 01:08:53,029
+Well, as we've seen, let me
+try to view this for you all.
+
+1252
+01:08:53,029 --> 01:08:59,390
+I could say SELECT "title" and
+"votes" FROM my "longlist."
+
+1253
+01:08:59,390 --> 01:09:01,430
+SELECT "title" and "votes"
+from my "longlist."
+
+1254
+01:09:01,430 --> 01:09:06,170
+Here, I have many books with
+many user-generated votes.
+
+1255
+01:09:06,170 --> 01:09:09,740
+Maybe people on the internet
+decided to rate this book out of 5
+
+1256
+01:09:09,740 --> 01:09:15,120
+and maybe Go, Went, Gone got
+about, let's say, 592 votes.
+
+1257
+01:09:15,120 --> 01:09:20,700
+So I'm curious then, how many total
+votes do I have in my data set?
+
+1258
+01:09:20,700 --> 01:09:23,600
+Well, for that, I could use
+the SUM aggregate function.
+
+1259
+01:09:23,600 --> 01:09:27,859
+Try to count up each one of these
+rows and/or turn it back to me
+
+1260
+01:09:27,859 --> 01:09:29,550
+in a single cell.
+
+1261
+01:09:29,550 --> 01:09:30,979
+So I'll use SUM here.
+
+1262
+01:09:30,979 --> 01:09:36,229
+I'll come back and I'll say I want
+to find the sum of my votes column.
+
+1263
+01:09:36,229 --> 01:09:42,890
+I'll say SELECT, let's say,
+the SUM of my "votes" column
+
+1264
+01:09:42,890 --> 01:09:45,510
+FROM my "longlist" table.
+
+1265
+01:09:45,510 --> 01:09:46,729
+And then I'll just Enter--
+
+1266
+01:09:46,729 --> 01:09:47,960
+Semicolon Enter.
+
+1267
+01:09:47,960 --> 01:09:52,670
+And I'll see over 600,000
+people offer to vote
+
+1268
+01:09:52,670 --> 01:09:56,810
+for each of these books that were
+longlisted for the International Booker
+
+1269
+01:09:56,810 --> 01:09:58,620
+Prize.
+
+1270
+01:09:58,620 --> 01:10:00,070
+Now there'd be a few more here.
+
+1271
+01:10:00,070 --> 01:10:03,240
+Let's check out what else we have left
+to do and our aggregate functions.
+
+1272
+01:10:03,240 --> 01:10:08,200
+We could also try to count up just
+the number of books in our data set.
+
+1273
+01:10:08,200 --> 01:10:11,910
+So why don't I try to find
+the number of rows I have?
+
+1274
+01:10:11,910 --> 01:10:14,070
+For that, I could use count.
+
+1275
+01:10:14,070 --> 01:10:17,100
+And often to find the number
+of rows in your data set,
+
+1276
+01:10:17,100 --> 01:10:20,460
+you might use count and star
+as we saw a little earlier.
+
+1277
+01:10:20,460 --> 01:10:25,200
+I could say SELECT COUNT
+star from "longlist"
+
+1278
+01:10:25,200 --> 01:10:30,270
+And this means, again star means
+give me every row and every column.
+
+1279
+01:10:30,270 --> 01:10:32,850
+Give me basically my whole table, right?
+
+1280
+01:10:32,850 --> 01:10:36,750
+And if I say COUNT star, that
+means count up the number of rows
+
+1281
+01:10:36,750 --> 01:10:39,280
+that I have in my database.
+
+1282
+01:10:39,280 --> 01:10:41,550
+So I'll say COUNT star from "longlist."
+
+1283
+01:10:41,550 --> 01:10:45,750
+And I get back 78
+books in this database.
+
+1284
+01:10:45,750 --> 01:10:48,720
+Well, let me try counting up
+the number of translators here.
+
+1285
+01:10:48,720 --> 01:10:54,840
+I'll say SELECT, let's say, COUNT
+of "translators" FROM "longlist"
+
+1286
+01:10:54,840 --> 01:10:55,890
+Semicolon.
+
+1287
+01:10:55,890 --> 01:10:57,300
+Hit Enter.
+
+1288
+01:10:57,300 --> 01:11:00,670
+And now I see 76.
+
+1289
+01:11:00,670 --> 01:11:08,680
+So I have 78 books, but if I count
+translators, I have 76 of them.
+
+1290
+01:11:08,680 --> 01:11:10,870
+So why might that be?
+
+1291
+01:11:10,870 --> 01:11:14,080
+Free to raise your hand
+and try to guess at this.
+
+1292
+01:11:14,080 --> 01:11:19,053
+Why do I have 78 rows
+but 76 translators?
+
+1293
+01:11:19,053 --> 01:11:20,000
+SPEAKER: Hi.
+
+1294
+01:11:20,000 --> 01:11:22,412
+I actually had raised my
+hand for the question.
+
+1295
+01:11:22,412 --> 01:11:23,620
+CARTER ZENKE: Yeah, go ahead.
+
+1296
+01:11:23,620 --> 01:11:26,210
+SPEAKER: Also, I wanted
+to know whether the MAX
+
+1297
+01:11:26,210 --> 01:11:30,020
+and the MIN functions can be used for
+finding the longest or the shortest
+
+1298
+01:11:30,020 --> 01:11:30,710
+string as well?
+
+1299
+01:11:30,710 --> 01:11:32,543
+Or do you have a different
+command for that?
+
+1300
+01:11:32,543 --> 01:11:33,710
+CARTER ZENKE: Good question.
+
+1301
+01:11:33,710 --> 01:11:37,040
+Could we use MAX and MIN to find
+the longest or shortest string?
+
+1302
+01:11:37,040 --> 01:11:38,140
+That's a good question.
+
+1303
+01:11:38,140 --> 01:11:41,570
+So let's actually pause on this counting
+here and try that out real quick.
+
+1304
+01:11:41,570 --> 01:11:43,440
+So I'll come back to my terminal.
+
+1305
+01:11:43,440 --> 01:11:47,480
+And let me try to use MAX and
+MIN with some book titles.
+
+1306
+01:11:47,480 --> 01:11:50,090
+So I'll say Select--
+
+1307
+01:11:50,090 --> 01:11:52,790
+let's select the MAX title.
+
+1308
+01:11:52,790 --> 01:11:57,780
+And at the same time, why don't
+we select the MIN title as well?
+
+1309
+01:11:57,780 --> 01:12:00,920
+And I'll select these
+from my "longlist" table.
+
+1310
+01:12:00,920 --> 01:12:02,370
+I'll hit Semicolon.
+
+1311
+01:12:02,370 --> 01:12:05,110
+And now, let me try this out.
+
+1312
+01:12:05,110 --> 01:12:09,100
+I'll get back Wretchedness
+and A New Name--
+
+1313
+01:12:09,100 --> 01:12:12,570
+Septology VI-VII.
+
+1314
+01:12:12,570 --> 01:12:14,940
+Now, there's a few hypotheses here.
+
+1315
+01:12:14,940 --> 01:12:19,530
+It does seem that our MAX "title"
+is shorter than our MIN "title."
+
+1316
+01:12:19,530 --> 01:12:23,860
+So it's probably not that MAX
+gives us the length of the string,
+
+1317
+01:12:23,860 --> 01:12:25,420
+but what do you notice?
+
+1318
+01:12:25,420 --> 01:12:28,935
+Well, I see MIN is really
+early on in the alphabet.
+
+1319
+01:12:28,935 --> 01:12:34,290
+It has an A here, whereas MAX has
+a W, pretty low in the alphabet.
+
+1320
+01:12:34,290 --> 01:12:37,320
+And I would bet if we
+ordered these book titles,
+
+1321
+01:12:37,320 --> 01:12:43,140
+we would see a new name up at the very
+top and a Wretchedness, the book here,
+
+1322
+01:12:43,140 --> 01:12:44,710
+down at the bottom.
+
+1323
+01:12:44,710 --> 01:12:48,750
+So MAX seems to give us the
+lowest alphabetically, which
+
+1324
+01:12:48,750 --> 01:12:51,630
+is kind of contradictory
+with titles here or strings.
+
+1325
+01:12:51,630 --> 01:12:58,190
+And MIN gives us the earliest in
+the alphabet using this A as well.
+
+1326
+01:12:58,190 --> 01:12:58,940
+OK.
+
+1327
+01:12:58,940 --> 01:12:59,910
+So a good question.
+
+1328
+01:12:59,910 --> 01:13:01,840
+Let's come back to our counting here.
+
+1329
+01:13:01,840 --> 01:13:03,080
+Let's go back to my terminal.
+
+1330
+01:13:03,080 --> 01:13:09,140
+And again, we had, in this case,
+78 rows, but only 76 translators.
+
+1331
+01:13:09,140 --> 01:13:12,710
+So, again, if I did SELECT
+COUNT star from, let's say,
+
+1332
+01:13:12,710 --> 01:13:17,000
+"longlist" then
+Semicolon, I get back 78.
+
+1333
+01:13:17,000 --> 01:13:25,280
+But if I do SELECT COUNT of "translator"
+from "longlist," I get back 76.
+
+1334
+01:13:25,280 --> 01:13:31,640
+And let me ask again, why do we
+have 78 rows but 76 translators?
+
+1335
+01:13:31,640 --> 01:13:34,135
+Feel free to say it.
+
+1336
+01:13:34,135 --> 01:13:39,350
+OK, so I'm seeing maybe we
+have some number of rows, 78.
+
+1337
+01:13:39,350 --> 01:13:43,850
+But for our translators, you remember,
+two of those were null values.
+
+1338
+01:13:43,850 --> 01:13:45,810
+They didn't exist in our table.
+
+1339
+01:13:45,810 --> 01:13:50,640
+So it seems like if we use COUNT
+star, we're counting all the rows.
+
+1340
+01:13:50,640 --> 01:13:54,710
+But if we use COUNT "translator,"
+some column that has null values,
+
+1341
+01:13:54,710 --> 01:13:59,010
+we're only getting back those rows
+or those values that aren't null.
+
+1342
+01:13:59,010 --> 01:14:02,060
+So COUNT, when given a
+column, counts only those that
+
+1343
+01:14:02,060 --> 01:14:06,620
+are not null that exist in our table.
+
+1344
+01:14:06,620 --> 01:14:09,240
+OK, let's look at one more
+example here for counting.
+
+1345
+01:14:09,240 --> 01:14:11,980
+And let's try this.
+
+1346
+01:14:11,980 --> 01:14:16,080
+Let's say I want to find all of
+the publishers in this database.
+
+1347
+01:14:16,080 --> 01:14:22,230
+I'll say SELECT COUNT of
+"publisher" from my "longlist."
+
+1348
+01:14:22,230 --> 01:14:24,390
+And I'll hit Semicolon.
+
+1349
+01:14:24,390 --> 01:14:30,330
+So you might think that I have
+78 publishers in this long list.
+
+1350
+01:14:30,330 --> 01:14:32,190
+But would it be accurate
+if I were to say
+
+1351
+01:14:32,190 --> 01:14:37,160
+I have 78 different
+publishers in this longlist?
+
+1352
+01:14:37,160 --> 01:14:40,080
+Could I say that?
+
+1353
+01:14:40,080 --> 01:14:41,550
+I'm seeing no, right?
+
+1354
+01:14:41,550 --> 01:14:44,280
+I couldn't try to count
+up these publishers
+
+1355
+01:14:44,280 --> 01:14:46,260
+and then say I have 78 different ones.
+
+1356
+01:14:46,260 --> 01:14:49,380
+I might double count the
+publisher along the way.
+
+1357
+01:14:49,380 --> 01:14:51,100
+And let me show you what we mean here.
+
+1358
+01:14:51,100 --> 01:14:52,680
+So I'll go back to my table.
+
+1359
+01:14:52,680 --> 01:14:57,360
+And let me try to select from publishers
+or select the publisher column
+
+1360
+01:14:57,360 --> 01:14:58,530
+from longlist.
+
+1361
+01:14:58,530 --> 01:15:02,100
+I'll select "publisher" from "longlist."
+
+1362
+01:15:02,100 --> 01:15:03,870
+Hit Semicolon.
+
+1363
+01:15:03,870 --> 01:15:06,690
+Oops, and now I see
+something a little odd.
+
+1364
+01:15:06,690 --> 01:15:13,070
+Let me scroll back up and maybe
+ask for a raised hand here.
+
+1365
+01:15:13,070 --> 01:15:19,560
+Why might I get this odd result?
+
+1366
+01:15:19,560 --> 01:15:21,318
+SPEAKER: Because of the quotes?
+
+1367
+01:15:21,318 --> 01:15:22,110
+CARTER ZENKE: Yeah.
+
+1368
+01:15:22,110 --> 01:15:24,360
+So I think I mistyped
+some of my query here.
+
+1369
+01:15:24,360 --> 01:15:28,650
+I said it looks like "pubsliher"
+instead of "publisher."
+
+1370
+01:15:28,650 --> 01:15:31,860
+And in this case, SQL will
+give me what I asked for.
+
+1371
+01:15:31,860 --> 01:15:34,400
+I said SELECT "pubsliher"
+from "longlist."
+
+1372
+01:15:34,400 --> 01:15:35,760
+And says, OK, here it is.
+
+1373
+01:15:35,760 --> 01:15:38,830
+But that column doesn't exist
+so it creates this data for me.
+
+1374
+01:15:38,830 --> 01:15:40,860
+So let me try this again.
+
+1375
+01:15:40,860 --> 01:15:41,520
+I'll go back.
+
+1376
+01:15:41,520 --> 01:15:43,470
+And I'll hopefully type
+this correctly now.
+
+1377
+01:15:43,470 --> 01:15:52,360
+I'll say SELECT, let's say, "publisher,"
+this one, FROM "longlist" Semicolon.
+
+1378
+01:15:52,360 --> 01:15:57,270
+And now I'll see all of the
+publishers that I have in my table.
+
+1379
+01:15:57,270 --> 01:15:58,118
+But what do you see?
+
+1380
+01:15:58,118 --> 01:15:59,160
+Well, some repeat, right?
+
+1381
+01:15:59,160 --> 01:16:02,340
+I have Harvill Secker
+multiple times here.
+
+1382
+01:16:02,340 --> 01:16:06,010
+I have similarly MacLehose
+Press multiple times as well.
+
+1383
+01:16:06,010 --> 01:16:09,120
+So if I count it up,
+these publishers, I would
+
+1384
+01:16:09,120 --> 01:16:12,720
+get each one counted one
+time, which I want to find
+
+1385
+01:16:12,720 --> 01:16:14,760
+the distinct ones the different ones.
+
+1386
+01:16:14,760 --> 01:16:16,800
+I need a new keyword for this.
+
+1387
+01:16:16,800 --> 01:16:20,190
+And for this, we'll use this keyword
+indeed called DISTINCT, trying
+
+1388
+01:16:20,190 --> 01:16:23,650
+to find unique values from our column.
+
+1389
+01:16:23,650 --> 01:16:24,960
+So let's try this.
+
+1390
+01:16:24,960 --> 01:16:30,360
+I'll go back over here and I will
+now select not just publishers,
+
+1391
+01:16:30,360 --> 01:16:32,070
+but distinct publishers.
+
+1392
+01:16:32,070 --> 01:16:39,820
+I'll say SELECT DISTINCT publisher
+from "longlist" Semicolon.
+
+1393
+01:16:39,820 --> 01:16:44,920
+Now, if I scroll through here, I
+should see each publisher in here
+
+1394
+01:16:44,920 --> 01:16:46,750
+only one time.
+
+1395
+01:16:46,750 --> 01:16:49,330
+If they have the same name,
+they've been filtered out.
+
+1396
+01:16:49,330 --> 01:16:52,540
+And now they're only the
+same publisher here too.
+
+1397
+01:16:52,540 --> 01:16:54,850
+So I will then try to
+say SELECT, let's say,
+
+1398
+01:16:54,850 --> 01:17:01,017
+COUNT of "publisher," SELECT
+COUNT of "publisher" from--
+
+1399
+01:17:01,017 --> 01:17:02,850
+COUNT of DISTINCT
+"publisher," for instance.
+
+1400
+01:17:02,850 --> 01:17:15,140
+COUNT distinct publisher-- oh, typo,
+"publisher" FROM "longlist" Semicolon.
+
+1401
+01:17:15,140 --> 01:17:19,700
+And I'll see I have 33
+distinct publishers.
+
+1402
+01:17:19,700 --> 01:17:21,050
+OK.
+
+1403
+01:17:21,050 --> 01:17:24,620
+So this just about brings
+us to the conclusion
+
+1404
+01:17:24,620 --> 01:17:27,080
+of all of these new SQL keywords here.
+
+1405
+01:17:27,080 --> 01:17:30,560
+We've seen so far that we
+have several here to use.
+
+1406
+01:17:30,560 --> 01:17:33,175
+But let's figure out how to
+actually exit this prompt.
+
+1407
+01:17:33,175 --> 01:17:35,300
+So you might it be in your
+SQLite prompt right now.
+
+1408
+01:17:35,300 --> 01:17:39,860
+If you want to leave it, you could
+also use this command, dot quit.
+
+1409
+01:17:39,860 --> 01:17:41,540
+Dot quit is not a SQL keyword.
+
+1410
+01:17:41,540 --> 01:17:44,240
+It's a SQLite keyword
+to leave your terminal
+
+1411
+01:17:44,240 --> 01:17:47,220
+and go back to where you started.
+
+1412
+01:17:47,220 --> 01:17:50,810
+So just to review then,
+what we've seen so far
+
+1413
+01:17:50,810 --> 01:17:53,360
+is how to select data from our table.
+
+1414
+01:17:53,360 --> 01:17:56,870
+We can use select column to
+take some column from our table
+
+1415
+01:17:56,870 --> 01:18:02,060
+and give us back all of those rows
+from that table for that column.
+
+1416
+01:18:02,060 --> 01:18:05,120
+We've seen we can apply some
+aggregate functions to take
+
+1417
+01:18:05,120 --> 01:18:08,310
+maybe the count of our columns
+or the average or so on.
+
+1418
+01:18:08,310 --> 01:18:10,860
+And we can get back not
+just all of our rows,
+
+1419
+01:18:10,860 --> 01:18:16,230
+but only some of them using our WHERE
+clause here along with a condition.
+
+1420
+01:18:16,230 --> 01:18:20,270
+We could have multiple conditions,
+having not just one but perhaps two.
+
+1421
+01:18:20,270 --> 01:18:23,480
+Like, let's say, here,
+condition 0 and condition 1.
+
+1422
+01:18:23,480 --> 01:18:27,110
+And we could also use, we saw
+before, this idea of equals and LIKE
+
+1423
+01:18:27,110 --> 01:18:31,010
+to match some pattern or to make
+something exactly equal over here.
+
+1424
+01:18:31,010 --> 01:18:33,200
+We could, again, use AND and OR.
+
+1425
+01:18:33,200 --> 01:18:35,870
+And we saw later on how
+we could order our data
+
+1426
+01:18:35,870 --> 01:18:41,940
+and use our LIMIT function to get
+back only some number of rows.
+
+1427
+01:18:41,940 --> 01:18:45,530
+Now, this then is our
+interaction to querying.
+
+1428
+01:18:45,530 --> 01:18:48,830
+And so far, we've seen
+this world of books.
+
+1429
+01:18:48,830 --> 01:18:52,310
+And the table we've had so far
+really just has books inside of it.
+
+1430
+01:18:52,310 --> 01:18:57,020
+But next time, what we'll see is how
+to take this world of books and split
+
+1431
+01:18:57,020 --> 01:18:58,260
+into multiple tables.
+
+1432
+01:18:58,260 --> 01:19:02,255
+How do we find information on
+publishers or books or authors too?
+
+1433
+01:19:02,255 --> 01:19:04,130
+And how do we try to
+put that in a table that
+
+1434
+01:19:04,130 --> 01:19:07,380
+can present the relationships among
+all of these different entities?
+
+1435
+01:19:07,380 --> 01:19:10,005
+We'll talk about all that and
+more when we come back next time.
+
+1436
+01:19:10,005 --> 01:19:11,920
+And we'll see you there.
+
+1437
+01:19:11,920 --> 01:19:13,000

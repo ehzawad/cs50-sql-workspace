@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TOOL="$ROOT/.venv-cs50/bin/check50"
+
+if [[ ! -x "$TOOL" ]]; then
+    echo "check50 is not installed yet. Run the workspace setup or install into $ROOT/.venv-cs50." >&2
+    exit 1
+fi
+
+exec "$TOOL" "$@"

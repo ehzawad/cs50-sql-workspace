@@ -1,0 +1,10 @@
+-- CS50 SQL PSet 6: Sentimental Connect
+-- Official page: https://cs50.harvard.edu/sql/psets/6/connect/
+--
+-- Run with the local MySQL wrapper:
+--   ./bin/mysql
+--
+-- Then in MySQL:
+--   CREATE DATABASE IF NOT EXISTS linkedin;
+--   USE linkedin;
+--   SOURCE /workspace/cs50/pset6/sentimental-connect/schema.sql;

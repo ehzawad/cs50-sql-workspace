@@ -1,0 +1,700 @@
+<!DOCTYPE html><html lang="en-us"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+
+        <meta property="og:image" content="https://prod-discovery.edx-cdn.org/cdn-cgi/image/width=378,height=auto,quality=85,format=webp/media/course/image/3e45c431-10df-423e-9f03-fb98b713cd4a-2397c9098976.png">
+
+        <meta property="og:title" content="Moneyball - CS50's Introduction to Databases with SQL">
+
+        <link href="../../../favicon.ico?1775509000" rel="icon">
+
+        <!-- https://fonts.google.com/specimen/PT+Sans?query=PT+Sans&selection.family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700 -->
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+
+        <!-- https://getbootstrap.com/docs/ -->
+        <script src="../../../assets/jquery/dist/jquery.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap/dist/js/bootstrap.bundle.min.js?1775509000"></script>
+
+        <!-- https://bootstrap-table.com/docs/getting-started/introduction/ -->
+        <link href="../../../assets/bootstrap-table/dist/bootstrap-table.min.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/bootstrap-table/dist/bootstrap-table.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile.min.js?1775509000"></script>
+
+        <!-- https://fontawesome.com/how-to-use/on-the-web/referencing-icons/basic-use -->
+        
+        <link crossorigin="anonymous" href="https://kit.fontawesome.com/a6e66aa089.css" rel="stylesheet">
+        
+
+        <!-- https://moment.github.io/luxon/ -->
+        <script src="../../../assets/luxon/build/global/luxon.min.js?1775509000"></script>
+
+        <!-- http://docs.mathjax.org/ -->
+        <!-- http://docs.mathjax.org/en/latest/options/output/chtml.html?highlight=displayAlign#the-configuration-block -->
+        <!-- https://docs.mathjax.org/en/latest/output/fonts.html -->
+        <script>
+            MathJax = {
+                loader: {
+                    paths: {
+                        'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+                    }
+                },
+                output: {
+                    displayAlign: 'left'
+                }
+            };
+        </script>
+        <script src="../../../assets/mathjax/tex-mml-chtml.js?1775509000"></script>
+
+        <!-- https://github.com/verlok/vanilla-lazyload -->
+        <script src="../../../assets/vanilla-lazyload/dist/lazyload.min.js?1775509000"></script>
+
+        <!-- https://iframe-resizer.com/ -->
+        <script src="../../../assets/@iframe-resizer/parent/index.umd.js?1775509000"></script>
+
+        <!-- https://github.com/scratchblocks/scratchblocks/releases -->
+        <script src="../../../assets/scratchblocks.min.js?1775509000"></script>
+
+        <!-- https://mermaid-js.github.io/ -->
+        <script src="../../../assets/mermaid/dist/mermaid.min.js?1775509000"></script>
+
+        <!-- https://github.com/twitter/twemoji -->
+        <script src="../../../assets/@twemoji/api/dist/twemoji.min.js?1775509000"></script>
+
+        
+
+        <link href="../../../assets/page.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/jekyll-theme-cs50.js?1775509000"></script>
+
+        <script>
+            window.CS50 = {
+                local: {"day":"numeric","hour":"numeric","minute":"numeric","month":"long","timeZoneName":"short","weekday":"long","year":"numeric"},
+                locale: "en",
+                tz: "Etc/Zulu"
+            };
+        </script>
+
+        <title>Moneyball - CS50's Introduction to Databases with SQL</title>
+
+
+    <meta property="og:description" content="It’s about getting things down to one number. Using stats the way we read them, we’ll find the value in players that nobody else can see. Peter Brand in...">
+</head>
+
+    <body class="invisible">
+
+        <div class="alert fixed-top mb-0 rounded-0" data-alert="success dismissible" data-hash="0129a290f1b935ef2af9c47f24376fe8" id="alert" role="alert">
+            <button aria-label="Close" class="btn-close d-none" data-bs-dismiss="alert" type="button"></button><p>Interested in <a href="../../../#how-to-take-this-course">a verified certificate or transfer credit and accreditation</a>?</p>
+</div>
+        
+
+        <div class="container-fluid">
+
+            <div class="row">
+
+                <aside class="col-lg">
+ 
+                    <header><h1 data-id="cs50s-introduction-to-databases-with-sql"><a href="../../..">CS50’s Introduction to Databases with SQL</a></h1>
+
+<p>OpenCourseWare</p>
+
+<p><a class="pr-1 small" href="https://cs50.harvard.edu/donate">Donate<i aria-hidden="true" class="fas fa-external-link-alt ps-2"></i></a></p>
+
+<p class="small"><a href="https://carterzenke.me">Carter Zenke</a><br>
+<a href="mailto:carter@cs50.harvard.edu">carter@cs50.harvard.edu</a>
+<br>
+<a class="mr-1" href="https://github.com/carterzenke"><i aria-hidden="true" class="fab fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/carterzenke/"><i aria-hidden="true" class="fab fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a></p>
+
+<p class="small"><a href="https://cs.harvard.edu/malan/">David J. Malan</a>
+<br>
+<a href="mailto:malan@harvard.edu">malan@harvard.edu</a>
+<br>
+<a class="mr-1" href="https://www.facebook.com/dmalan"><i aria-hidden="true" class="fa-brands fa-facebook-f" title="Facebook"></i><span class="sr-only">Facebook</span></a>
+<a class="mr-1" href="https://github.com/dmalan"><i aria-hidden="true" class="fa-brands fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.instagram.com/davidjmalan/"><i aria-hidden="true" class="fa-brands fa-instagram" title="Instagram"></i><span class="sr-only">Instagram</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/malan/"><i aria-hidden="true" class="fa-brands fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a>
+<a class="mr-1" href="https://www.reddit.com/user/davidjmalan"><i aria-hidden="true" class="fa-brands fa-reddit-alien" title="Reddit"></i><span class="sr-only">Reddit</span></a>
+<a class="mr-1" href="https://www.threads.net/@davidjmalan"><i aria-hidden="true" class="fa-brands fa-threads" title="Threads"></i><span class="sr-only">Threads</span></a>
+<a class="mr-1" href="https://twitter.com/davidjmalan"><i aria-hidden="true" class="fa-brands fa-twitter" title="Twitter"></i><span class="sr-only">Twitter</span></a></p></header>
+
+                    
+
+                    <button aria-controls="nav" aria-expanded="false" class="btn btn-sm collapsed d-lg-none" data-bs-target="aside > nav" data-bs-toggle="collapse">
+                        Menu
+                    </button>
+
+                    <nav class="collapse d-lg-block" id="nav"><hr>
+
+<ul>
+  <li data-marker="*"><a href="https://cs50.harvard.edu/x/puzzles/"><i class="fas fa-puzzle-piece pe-2"></i>CS50x Puzzle Day</a></li>
+  <li data-marker="*"><a href="../../../zoom/"><i class="fa-solid fa-video me-2"></i>Zoom Meetings</a></li>
+</ul>
+
+<!-- Tools -->
+<hr class="small">
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.ai/"><i class="fa-solid fa-duck pe-2 text-decoration-none"></i>CS50.ai</a></li>
+  <li data-marker="*">
+<a href="https://cs50.edx.org/ed"><i class="fa-solid fa-comment-question pe-2 text-decoration-none"></i>Ed Discussion</a> for Q&amp;A</li>
+  <li data-marker="*"><a href="https://cs50.dev/"><i class="fa-solid fa-laptop pe-2 text-decoration-none"></i>Visual Studio Code</a></li>
+</ul>
+
+<!-- Highlights -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="../../../new/">What’s new for 2024?</a></li>
+</ul>
+
+<!-- Course Nav -->
+<hr>
+
+<ol start="0">
+  <li><a href="../../../weeks/0/">Querying</a></li>
+  <li><a href="../../../weeks/1/">Relating</a></li>
+  <li><a href="../../../weeks/2/">Designing</a></li>
+  <li><a href="../../../weeks/3/">Writing</a></li>
+  <li><a href="../../../weeks/4/">Viewing</a></li>
+  <li><a href="../../../weeks/5/">Optimizing</a></li>
+  <li><a href="../../../weeks/6/">Scaling</a></li>
+</ol>
+
+<hr>
+
+<!-- Final project spec, seminars, shorts -->
+<ul>
+  <li data-marker="*"><a href="../../../project/">Final Project</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*">
+  </li><li data-marker="*">
+</li></ul>
+
+<!-- Items that might usually appear in an academic syllabus -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../honesty/">Academic Honesty</a></li>
+  <li data-marker="*"><a href="../../../certificate/">CS50 Certificate</a></li>
+  <li data-marker="*"><a href="../../../faqs/">FAQs</a></li>
+  <li data-marker="*"><a href="https://cs50.me/cs50sql">Gradebook</a></li>
+  <li data-marker="*"><a href="../../../staff/">Staff</a></li>
+  <li data-marker="*">
+</li></ul>
+
+<!-- Where to watch or take the class course -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://apps.apple.com/us/app/cs50/id1631064453">Apple TV</a></li>
+  <li data-marker="*"><a href="https://cs50.edx.org/sql">edX</a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/watch?v=WXk7yDqsKxs">freeCodeCamp</a></li>
+  <li data-marker="*"><a href="https://play.google.com/store/apps/details?id=edu.harvard.cs50.googletv">Google TV</a></li>
+  <li data-marker="*"><a href="https://web.dce.harvard.edu/extension/csci/e/151">Harvard Extension School</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*"><a href="https://web.dce.harvard.edu/summer/csci/s/151">Harvard Summer School</a></li>
+  <li data-marker="*"><a href="https://channelstore.roku.com/details/e338f60adfb133abc19eac2da9e5c505:40cee2a1909355bc4496086c8fa4a86f/cs50">Roku <span class="badge ms-2 p-1 text-bg-warning">new</span></a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/playlist?list=PLhQjrBD2T382v1MBjNOhPu9SiJ1fsD4C0">YouTube</a></li>
+</ul>
+
+<!-- Manual page, style guide, other docs -->
+
+<!-- Status Page -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.statuspage.io/">Status Page</a></li>
+</ul>
+
+<!-- Communities -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../communities/"><strong>Communities</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://bsky.app/profile/cs50.harvard.edu">Bluesky</a></li>
+  <li data-marker="*" class="small"><a href="https://www.clubhouse.com/club/cs50">Clubhouse</a></li>
+  <li data-marker="*" class="small">
+<a href="https://discord.gg/cs50">Discord</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/ed">Ed</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://www.facebook.com/groups/cs50/">Facebook Group</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.facebook.com/cs50/">Facebook Page</a></li>
+  <li data-marker="*" class="small"><a href="https://github.com/cs50">GitHub</a></li>
+  <li data-marker="*" class="small">
+<a href="https://gitter.im/cs50/x">Gitter</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://instagram.com/cs50">Instagram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/groups/7437240/">LinkedIn Group</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/school/CS50/">LinkedIn Page</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.medium.com/">Medium</a></li>
+  <li data-marker="*" class="small"><a href="https://www.quora.com/topic/CS50">Quora</a></li>
+  <li data-marker="*" class="small">
+<a href="https://www.reddit.com/r/cs50/">Reddit</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/slack">Slack</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.snapchat.com/add/cs50">Snapchat</a></li>
+  <li data-marker="*" class="small"><a href="https://soundcloud.com/cs50">SoundCloud</a></li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.stackexchange.com/">Stack Exchange</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://t.me/cs50x">Telegram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.tiktok.com/@cs50">TikTok</a></li>
+  <li data-marker="*" class="small"><a href="https://www.threads.net/@cs50">Threads</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/cs50">X Account</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/i/communities/1722308663522594923">X Community</a></li>
+  <li data-marker="*" class="small"><a href="https://www.youtube.com/subscription_center?add_user=cs50tv">YouTube</a></li>
+</ul>
+
+<!-- Courses -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../courses/"><strong>Courses</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/x">CS50x</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/games">CS50 2D</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/ai">CS50 AI</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/business">CS50 Business</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/cybersecurity">CS50 Cybersecurity</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/law">CS50 for Lawyers</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/python">CS50 Python</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/r">CS50 R</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/scratch">CS50 Scratch</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/sql">CS50 SQL</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/web">CS50 Web</a></li>
+</ul>
+
+<!-- Harvard Shop -->
+<hr>
+
+<p><a href="https://cs50.harvardshop.com/"><img src="https://cs50.harvard.edu/x/2023/assets/shop.png" alt="Harvard Shop"></a></p>
+
+<!-- Legal -->
+<hr>
+
+<p><a href="../../../license/" class="small"><i class="fab fa-creative-commons me-1"></i>License</a></p></nav>
+
+                    <footer></footer>
+
+                </aside>
+
+                <main class="col-lg">
+
+                    <h1 id="moneyball">Moneyball</h1>
+
+<blockquote>
+  <p>It’s about getting things down to one number. Using stats the way we read them, we’ll find the value in players that nobody else can see.</p>
+
+  <p>Peter Brand in <a href="https://en.wikipedia.org/wiki/Moneyball_(film)"><em>Moneyball</em></a></p>
+</blockquote>
+
+<h2 id="problem-to-solve">Problem to Solve</h2>
+
+<p>The year is 2001. You’ve been hired to help make the most of the <a href="https://www.mlb.com/athletics">Oakland Athletics</a> baseball team’s dwindling player budget. Each year, teams like the “A’s” hire new baseball players. Unfortunately, you’re low on star players—and on funds. Though, with a bit of SQL and some luck, who says you can’t still create a team that defies expectations?</p>
+
+<p>Given a database called <code class="language-plaintext highlighter-rouge">moneyball.db</code>—one that contains information on players, their performances, and their salaries—help the Oakland Athletics find the value in players others might miss.</p>
+
+<h2 id="demo">Demo</h2>
+
+<script async="" data-autoplay="1" data-cols="100" data-loop="1" data-rows="12" id="asciicast-qk8AdUp3j0ZSVvgQMcAagxBKc" src="https://asciinema.org/a/qk8AdUp3j0ZSVvgQMcAagxBKc.js"></script>
+
+<h2 id="distribution-code">Distribution Code</h2>
+
+<p>For this problem, you’ll need to download <code class="language-plaintext highlighter-rouge">moneyball.db</code>, along with several <code class="language-plaintext highlighter-rouge">.sql</code> files in which you’ll write your queries.</p>
+
+<details><summary>Download the distribution code</summary><p>Log into <a href="https://cs50.dev/">cs50.dev</a>, click on your terminal window, and execute <code class="language-plaintext highlighter-rouge">cd</code> by itself. You should find that your terminal window’s prompt resembles the below:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$
+</code></pre></div></div>
+
+<p>Next execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://cdn.cs50.net/sql/2024/x/psets/1/moneyball.zip
+</code></pre></div></div>
+
+<p>in order to download a ZIP called <code class="language-plaintext highlighter-rouge">moneyball.zip</code> into your codespace.</p>
+
+<p>Then execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip moneyball.zip
+</code></pre></div></div>
+
+<p>to create a folder called <code class="language-plaintext highlighter-rouge">moneyball</code>. You no longer need the ZIP file, so you can execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm moneyball.zip
+</code></pre></div></div>
+
+<p>and respond with “y” followed by Enter at the prompt to remove the ZIP file you downloaded.</p>
+
+<p>Now type</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd moneyball
+</code></pre></div></div>
+
+<p>followed by Enter to move yourself into (i.e., open) that directory. Your prompt should now resemble the below.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>moneyball/ $
+</code></pre></div></div>
+
+<p>If all was successful, you should execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ls
+</code></pre></div></div>
+
+<p>and see a database named <code class="language-plaintext highlighter-rouge">moneyball.db</code> alongside several <code class="language-plaintext highlighter-rouge">.sql</code> files. Executing <code class="language-plaintext highlighter-rouge">sqlite3 moneyball.db</code> should open the database in <code class="language-plaintext highlighter-rouge">sqlite3</code>, via which you’ll execute SQL queries. If not, retrace your steps and see if you can determine where you went wrong!</p></details>
+
+<h2 id="schema">Schema</h2>
+
+<p><code class="language-plaintext highlighter-rouge">moneyball.db</code> represents all of Major League Baseball’s players, teams, salaries, and performances up until 2001. In particular, <code class="language-plaintext highlighter-rouge">moneyball.db</code> represents the following entities:</p>
+
+<ul>
+  <li data-marker="*">A player, which includes anyone who’s played Major League Baseball for any amount of time</li>
+  <li data-marker="*">A team, which includes all teams, past and present, in Major League Baseball</li>
+  <li data-marker="*">A performance, which describes the types of hits a player made for their team in a given year</li>
+  <li data-marker="*">A salary, which is the amount of money a team paid one of their players in a given year</li>
+</ul>
+
+<p>These entities are related per the entity relationship (ER) diagram below:</p>
+
+<pre><code class="language-mermaid">erDiagram
+    Player ||--|{ Salary : earns
+    Player ||--|{ "Performance" : generates
+    Team ||--|{ Salary : "pays"
+    "Performance" }|--|| Team : with
+</code></pre>
+
+<p>Within <code class="language-plaintext highlighter-rouge">moneyball.db</code>, you’ll find several tables that implement the relationships described in the ER diagram above. Click the drop-downs below to learn more about the schema of each individual table.</p>
+
+<details><summary><code>players</code> table</summary><p>The <code class="language-plaintext highlighter-rouge">players</code> table contains the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which is the ID of the player</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">first_name</code>, which is the first name of the player</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">last_name</code>, which is the last name of the player</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">bats</code>, which is the side (“R” for right or “L” for left) the player bats on</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">throws</code>, which is the hand (“R” for right or “L” for left) the player throws with</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">weight</code>, which is the player’s weight in pounds</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">height</code>, which is the player’s height in inches</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">debut</code>, which is the date (expressed as <code class="language-plaintext highlighter-rouge">YYYY-MM-DD</code>) the player began their career in the MLB</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">final_game</code>, which is the date (expressed as <code class="language-plaintext highlighter-rouge">YYYY-MM-DD</code>) the player played their last game in the MLB</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_year</code>, which is the year the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_month</code>, which is the month (expressed as an integer) the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_day</code>, which is the day the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_city</code>, which is the city in which the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_state</code>, which is the state in which the player was born</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">birth_country</code>, which is the country in which the player was born</li>
+</ul></details>
+
+<details><summary><code>teams</code> table</summary><p>The <code class="language-plaintext highlighter-rouge">teams</code> table contains the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which is the ID of each team</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">year</code>, which is the year the team was founded</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">name</code>, which is the name of the team</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">park</code>, which is name of the park at which the team plays (or played)</li>
+</ul></details>
+
+<details><summary><code>performances</code> table</summary><p>The <code class="language-plaintext highlighter-rouge">performances</code> table contains the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which is the ID of the performance</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">player_id</code>, which is the ID of the player who generated the performance</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">team_id</code>, which is the ID of the team for which the player generated the performance</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">year</code>, which is the year in which the player generated the performance</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">G</code>, which is the number of games played by the player, for the given team, in the given year</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">AB</code>, which is the player’s number of “at bats” (i.e., times they went up to bat), for the given team, in the given year</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">H</code>, which is the player’s number of hits, for the given team, in the given year</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">2B</code>, which is the player’s number of doubles (two-base hits), for the given team, in the given year</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">3B</code>, which is the player’s number of triples (three-base hits), for the given team, in the given year</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">HR</code>, which is the player’s number of home runs, for the given team, in the given year</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">RBI</code>, which is the player’s number of “runs batted in” (i.e., runs scored), for the given team, in the given year</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">SB</code>, which is the player’s number of stolen bases, for the given team, in the given year</li>
+</ul></details>
+
+<details><summary><code>salaries</code> table</summary><p>The <code class="language-plaintext highlighter-rouge">salaries</code> table contains the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which is the ID of the salary</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">player_id</code>, which is the ID of the player earning the salary</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">team_id</code>, which is the ID of the team paying the salary</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">year</code>, which is the year during which the salary was paid</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">salary</code>, which is the salary itself in US dollars (not adjusted for inflation)</li>
+</ul></details>
+
+<h2 id="specification">Specification</h2>
+
+<h5 id="1sql"><code class="language-plaintext highlighter-rouge">1.sql</code></h5>
+
+<p>You should start by getting a sense for how average player salaries have changed over time. In <code class="language-plaintext highlighter-rouge">1.sql</code>, write a SQL query to find the average player salary by year.</p>
+
+<ul>
+  <li data-marker="*">Sort by year in descending order.</li>
+  <li data-marker="*">Round the salary to two decimal places and call the column “average salary”.</li>
+  <li data-marker="*">Your query should return a table with two columns, one for year and one for average salary.</li>
+</ul>
+
+<h5 id="2sql"><code class="language-plaintext highlighter-rouge">2.sql</code></h5>
+
+<p>Your general manager (i.e., the person who makes decisions about player contracts) asks you whether the team should trade a current player for <a href="https://en.wikipedia.org/wiki/Cal_Ripken_Jr.">Cal Ripken Jr.</a>, a star player who’s likely nearing his retirement. In <code class="language-plaintext highlighter-rouge">2.sql</code>, write a SQL query to find Cal Ripken Jr.’s salary history.</p>
+
+<ul>
+  <li data-marker="*">Sort by year in descending order.</li>
+  <li data-marker="*">Your query should return a table with two columns, one for year and one for salary.</li>
+</ul>
+
+<h5 id="3sql"><code class="language-plaintext highlighter-rouge">3.sql</code></h5>
+
+<p>Your team is going to need a great home run hitter. Ken Griffey Jr., a long-time <a href="https://en.wikipedia.org/wiki/Silver_Slugger_Award">Silver Slugger</a> and <a href="https://en.wikipedia.org/wiki/Gold_Glove_Award">Gold Glove</a> award winner, might be a good prospect. In <code class="language-plaintext highlighter-rouge">3.sql</code>, write a SQL query to find Ken Griffey Jr.’s home run history.</p>
+
+<ul>
+  <li data-marker="*">Sort by year in descending order.</li>
+  <li data-marker="*">Note that there may be two players with the name “Ken Griffey.” <em>This</em> Ken Griffey was born in 1969.</li>
+  <li data-marker="*">Your query should return a table with two columns, one for year and one for home runs.</li>
+</ul>
+
+<h5 id="4sql"><code class="language-plaintext highlighter-rouge">4.sql</code></h5>
+
+<p>You need to make a recommendation about which players the team should consider hiring. With the team’s dwindling budget, the general manager wants to know which players were paid the lowest salaries in 2001. In <code class="language-plaintext highlighter-rouge">4.sql</code>, write a SQL query to find the 50 players paid the least in 2001.</p>
+
+<ul>
+  <li data-marker="*">Sort players by salary, lowest to highest.</li>
+  <li data-marker="*">If two players have the same salary, sort alphabetically by first name and then by last name.</li>
+  <li data-marker="*">If two players have the same first and last name, sort by player ID.</li>
+  <li data-marker="*">Your query should return three columns, one for players’ first names, one for their last names, and one for their salaries.</li>
+</ul>
+
+<h5 id="5sql"><code class="language-plaintext highlighter-rouge">5.sql</code></h5>
+
+<p>It’s a bit of a slow day in the office. Though Satchel no longer plays, in <code class="language-plaintext highlighter-rouge">5.sql</code>, write a SQL query to find all teams that <a href="https://en.wikipedia.org/wiki/Satchel_Paige">Satchel Paige</a> played for.</p>
+
+<ul>
+  <li data-marker="*">Your query should return a table with a single column, one for the name of the teams.</li>
+</ul>
+
+<h5 id="6sql"><code class="language-plaintext highlighter-rouge">6.sql</code></h5>
+
+<p>Which teams might be the biggest competition for the A’s this year? In <code class="language-plaintext highlighter-rouge">6.sql</code>, write a SQL query to return the top 5 teams, sorted by the total number of hits by players in 2001.</p>
+
+<ul>
+  <li data-marker="*">Call the column representing total hits by players in 2001 “total hits”.</li>
+  <li data-marker="*">Sort by total hits, highest to lowest.</li>
+  <li data-marker="*">Your query should return two columns, one for the teams’ names and one for their total hits in 2001.</li>
+</ul>
+
+<h5 id="7sql"><code class="language-plaintext highlighter-rouge">7.sql</code></h5>
+
+<p>You need to make a recommendation about which player (or players) to <em>avoid</em> recruiting. In <code class="language-plaintext highlighter-rouge">7.sql</code>, write a SQL query to find the name of the player who’s been paid the highest salary, of all time, in Major League Baseball.</p>
+
+<ul>
+  <li data-marker="*">Your query should return a table with two columns, one for the player’s first name and one for their last name.</li>
+</ul>
+
+<h5 id="8sql"><code class="language-plaintext highlighter-rouge">8.sql</code></h5>
+
+<p>How much would the A’s need to pay to get the best home run hitter this past season? In <code class="language-plaintext highlighter-rouge">8.sql</code>, write a SQL query to find the 2001 salary of the player who hit the most home runs in 2001.</p>
+
+<ul>
+  <li data-marker="*">Your query should return a table with one column, the salary of the player.</li>
+</ul>
+
+<h5 id="9sql"><code class="language-plaintext highlighter-rouge">9.sql</code></h5>
+
+<p>What salaries are other teams paying? In <code class="language-plaintext highlighter-rouge">9.sql</code>, write a SQL query to find the 5 lowest paying teams (by average salary) in 2001.</p>
+
+<ul>
+  <li data-marker="*">Round the average salary column to two decimal places and call it “average salary”.</li>
+  <li data-marker="*">Sort the teams by average salary, least to greatest.</li>
+  <li data-marker="*">Your query should return a table with two columns, one for the teams’ names and one for their average salary.</li>
+</ul>
+
+<h5 id="10sql"><code class="language-plaintext highlighter-rouge">10.sql</code></h5>
+
+<p>The general manager has asked you for a report which details each player’s name, their salary for each year they’ve been playing, and their number of home runs for each year they’ve been playing. To be precise, the table should include:</p>
+
+<ul>
+  <li data-marker="*">All player’s first names</li>
+  <li data-marker="*">All player’s last names</li>
+  <li data-marker="*">All player’s salaries</li>
+  <li data-marker="*">All player’s home runs</li>
+  <li data-marker="*">The year in which the player was paid that salary <em>and</em> hit those home runs</li>
+</ul>
+
+<p>In <code class="language-plaintext highlighter-rouge">10.sql</code>, write a query to return just such a table.</p>
+
+<ul>
+  <li data-marker="*">Your query should return a table with five columns, per the above.</li>
+  <li data-marker="*">Order the results, first and foremost, by player’s IDs (least to greatest).</li>
+  <li data-marker="*">Order rows about the same player by year, in descending order.</li>
+  <li data-marker="*">Consider a corner case: suppose a player has multiple salaries or performances for a given year. Order them first by number of home runs, in descending order, followed by salary, in descending order.</li>
+  <li data-marker="*">Be careful to ensure that, for a single row, the salary’s year and the performance’s year match.</li>
+</ul>
+
+<details><summary>Example table</summary><p>To help you visualize what the general manager would like, they gave you an example table:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+------------+-----------+--------+------+----+
+| first_name | last_name | salary | year | HR |
++------------+-----------+--------+------+----+
+| Don        | Aase      | 400000 | 1989 | 0  |
+| Don        | Aase      | 675000 | 1988 | 0  |
+| Don        | Aase      | 625000 | 1987 | 0  |
+| Don        | Aase      | 600000 | 1986 | 0  |
+| Jeff       | Abbott    | 300000 | 2001 | 0  |
+| Jeff       | Abbott    | 255000 | 2000 | 3  |
+| Jeff       | Abbott    | 255000 | 1999 | 2  |
++------------+-----------+--------+------+----+
+</code></pre></div></div>
+
+<p>If all goes well, you might also see two rows like this in your final table:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+-------------+---------------+----------+----+------+
+| first_name  | last_name     | salary   | HR | year |
++-------------+---------------+----------+----+------+
+| Todd        | Zeile         | 3700000  | 9  | 1995 |
+| Todd        | Zeile         | 3700000  | 5  | 1995 |
++-------------+---------------+----------+----+------+
+</code></pre></div></div>
+
+<p>As an aside, based on the schema of the database, why do you think Todd Zeile appears to have two different salaries (and two different HR counts) for the same year?</p></details>
+
+<h5 id="11sql"><code class="language-plaintext highlighter-rouge">11.sql</code></h5>
+
+<p>You need a player that can get hits. Who might be the most underrated? In <code class="language-plaintext highlighter-rouge">11.sql</code>, write a SQL query to find the 10 least expensive players <em>per hit</em> in 2001.</p>
+
+<ul>
+  <li data-marker="*">Your query should return a table with three columns, one for the players’ first names, one of their last names, and one called “dollars per hit”.</li>
+  <li data-marker="*">You can calculate the “dollars per hit” column by dividing a player’s 2001 salary by the number of hits they made in 2001. Recall you can use <code class="language-plaintext highlighter-rouge">AS</code> to rename a column.</li>
+  <li data-marker="*">Dividing a salary by 0 hits will result in a <code class="language-plaintext highlighter-rouge">NULL</code> value. Avoid the issue by filtering out players with 0 hits.</li>
+  <li data-marker="*">Sort the table by the “dollars per hit” column, least to most expensive. If two players have the same “dollars per hit”, order by first name, followed by last name, in alphabetical order.</li>
+  <li data-marker="*">As in <code class="language-plaintext highlighter-rouge">10.sql</code>, ensure that the salary’s year and the performance’s year match.</li>
+  <li data-marker="*">You may assume, for simplicity, that a player will only have one salary and one performance in 2001.</li>
+</ul>
+
+<h5 id="12sql"><code class="language-plaintext highlighter-rouge">12.sql</code></h5>
+
+<p>Hits are great, but so are RBIs! In <code class="language-plaintext highlighter-rouge">12.sql</code>, write a SQL query to find the players among the 10 least expensive players per hit <strong>and</strong> among the 10 least expensive players per RBI in 2001.</p>
+
+<ul>
+  <li data-marker="*">Your query should return a table with two columns, one for the players’ first names and one of their last names.</li>
+  <li data-marker="*">You can calculate a player’s salary per RBI by dividing their 2001 salary by their number of RBIs in 2001.</li>
+  <li data-marker="*">You may assume, for simplicity, that a player will only have one salary and one performance in 2001.</li>
+  <li data-marker="*">Order your results by player ID, least to greatest (or alphabetically by last name, as both are the same in this case!).</li>
+  <li data-marker="*">Keep in mind the lessons you’ve learned in <code class="language-plaintext highlighter-rouge">10.sql</code> and <code class="language-plaintext highlighter-rouge">11.sql</code>!</li>
+</ul>
+
+<h2 id="usage">Usage</h2>
+
+<p>To test your queries as you write them in your <code class="language-plaintext highlighter-rouge">.sql</code> files, you can query the database by running</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.read FILENAME
+</code></pre></div></div>
+
+<p>where <code class="language-plaintext highlighter-rouge">FILENAME</code> is the name of the file containing your SQL query. For example,</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.read 1.sql
+</code></pre></div></div>
+
+<p>You can also run</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cat FILENAME | sqlite3 moneyball.db &gt; output.txt
+</code></pre></div></div>
+
+<p>to redirect the output of the query to a text file called <code class="language-plaintext highlighter-rouge">output.txt</code>. (This can be useful for checking how many rows are returned by your query!)</p>
+
+<h2 id="how-to-test">How to Test</h2>
+
+<p>While <code class="language-plaintext highlighter-rouge">check50</code> is available for this problem, you’re encouraged to instead test your code on your own for each of the following. If you’re using the <code class="language-plaintext highlighter-rouge">moneyball.db</code> database provided in this problem’s distribution, you should find that…</p>
+
+<ul>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">1.sql</code> results in a table with 2 columns and 17 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">2.sql</code> results in a table with 2 columns and 17 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">3.sql</code> results in a table with 2 columns and 13 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">4.sql</code> results in a table with 3 columns and 50 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">5.sql</code> results in a table with 1 column and 3 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">6.sql</code> results in a table with 2 columns and 5 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">7.sql</code> results in a table with 2 columns and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">8.sql</code> results in a table with 1 column and 1 row.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">9.sql</code> results in a table with 2 columns and 5 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">10.sql</code> results in a table with 5 columns and 14,915 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">11.sql</code> results in a table with 3 columns and 10 rows.</li>
+  <li data-marker="*">Executing <code class="language-plaintext highlighter-rouge">12.sql</code> results in a table with 2 columns and 6 rows.</li>
+</ul>
+
+<p>Note that row counts do not include header rows that only show column names.</p>
+
+<h3 id="correctness">Correctness</h3>
+
+<div class="alert" data-alert="info" role="alert"><p>For performance’s sake, <code class="language-plaintext highlighter-rouge">check50</code> uses a smaller database than you’ve downloaded. For that reason, results may not match between the two databases. If your query runs correctly on the database you’ve downloaded, it will also run correctly on <code class="language-plaintext highlighter-rouge">check50</code>’s database! If your query runs incorrectly on <code class="language-plaintext highlighter-rouge">check50</code>’s database, it’s also running incorrectly on your own database.</p></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>check50 cs50/problems/2024/sql/moneyball
+</code></pre></div></div>
+
+<details><summary>Is <code>check50</code> running into an error?</summary><p>Be sure that your queries are returning the correct number of rows per the above.  If your query for <code class="language-plaintext highlighter-rouge">10.sql</code> in particular is returning a different number of rows, it may cause <code class="language-plaintext highlighter-rouge">check50</code> to time out and produce an error.  You can temporarily comment out your lines in <code class="language-plaintext highlighter-rouge">10.sql</code> in order to let <code class="language-plaintext highlighter-rouge">check50</code> test all of the others.</p></details>
+
+<h2 id="how-to-submit">How to Submit</h2>
+
+<p>In your terminal, execute the below to submit your work.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>submit50 cs50/problems/2024/sql/moneyball
+</code></pre></div></div>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+
+<p>Narrative adapted from the book by Michael Lewis, <a href="https://en.wikipedia.org/wiki/Moneyball"><em>Moneyball: The Art of Winning an Unfair Game</em></a>. Data adapted from the <a href="https://sabr.org/lahman-database/">Lahman Baseball Database</a>, licensed under the <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+
+
+                </main>
+
+            </div>
+
+        </div>
+
+        
+ 
+        <script src="../../../assets/page.js?1775509000"></script>
+
+    
+
+
+</body></html>

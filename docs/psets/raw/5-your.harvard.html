@@ -1,0 +1,603 @@
+<!DOCTYPE html><html lang="en-us"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+
+        <meta property="og:image" content="https://prod-discovery.edx-cdn.org/cdn-cgi/image/width=378,height=auto,quality=85,format=webp/media/course/image/3e45c431-10df-423e-9f03-fb98b713cd4a-2397c9098976.png">
+
+        <meta property="og:title" content="your.harvard - CS50's Introduction to Databases with SQL">
+
+        <link href="../../../favicon.ico?1775509000" rel="icon">
+
+        <!-- https://fonts.google.com/specimen/PT+Sans?query=PT+Sans&selection.family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700 -->
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+
+        <!-- https://getbootstrap.com/docs/ -->
+        <script src="../../../assets/jquery/dist/jquery.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap/dist/js/bootstrap.bundle.min.js?1775509000"></script>
+
+        <!-- https://bootstrap-table.com/docs/getting-started/introduction/ -->
+        <link href="../../../assets/bootstrap-table/dist/bootstrap-table.min.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/bootstrap-table/dist/bootstrap-table.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile.min.js?1775509000"></script>
+
+        <!-- https://fontawesome.com/how-to-use/on-the-web/referencing-icons/basic-use -->
+        
+        <link crossorigin="anonymous" href="https://kit.fontawesome.com/a6e66aa089.css" rel="stylesheet">
+        
+
+        <!-- https://moment.github.io/luxon/ -->
+        <script src="../../../assets/luxon/build/global/luxon.min.js?1775509000"></script>
+
+        <!-- http://docs.mathjax.org/ -->
+        <!-- http://docs.mathjax.org/en/latest/options/output/chtml.html?highlight=displayAlign#the-configuration-block -->
+        <!-- https://docs.mathjax.org/en/latest/output/fonts.html -->
+        <script>
+            MathJax = {
+                loader: {
+                    paths: {
+                        'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+                    }
+                },
+                output: {
+                    displayAlign: 'left'
+                }
+            };
+        </script>
+        <script src="../../../assets/mathjax/tex-mml-chtml.js?1775509000"></script>
+
+        <!-- https://github.com/verlok/vanilla-lazyload -->
+        <script src="../../../assets/vanilla-lazyload/dist/lazyload.min.js?1775509000"></script>
+
+        <!-- https://iframe-resizer.com/ -->
+        <script src="../../../assets/@iframe-resizer/parent/index.umd.js?1775509000"></script>
+
+        <!-- https://github.com/scratchblocks/scratchblocks/releases -->
+        <script src="../../../assets/scratchblocks.min.js?1775509000"></script>
+
+        <!-- https://mermaid-js.github.io/ -->
+        <script src="../../../assets/mermaid/dist/mermaid.min.js?1775509000"></script>
+
+        <!-- https://github.com/twitter/twemoji -->
+        <script src="../../../assets/@twemoji/api/dist/twemoji.min.js?1775509000"></script>
+
+        
+
+        <link href="../../../assets/page.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/jekyll-theme-cs50.js?1775509000"></script>
+
+        <script>
+            window.CS50 = {
+                local: {"day":"numeric","hour":"numeric","minute":"numeric","month":"long","timeZoneName":"short","weekday":"long","year":"numeric"},
+                locale: "en",
+                tz: "Etc/Zulu"
+            };
+        </script>
+
+        <title>your.harvard - CS50's Introduction to Databases with SQL</title>
+
+
+    <meta property="og:description" content="The my.harvard logo Problem to Solve If you’re not already familiar, Harvard has a course shopping tool called my.harvard, with which students explore (and...">
+</head>
+
+    <body class="invisible">
+
+        <div class="alert fixed-top mb-0 rounded-0" data-alert="success dismissible" data-hash="0129a290f1b935ef2af9c47f24376fe8" id="alert" role="alert">
+            <button aria-label="Close" class="btn-close d-none" data-bs-dismiss="alert" type="button"></button><p>Interested in <a href="../../../#how-to-take-this-course">a verified certificate or transfer credit and accreditation</a>?</p>
+</div>
+        
+
+        <div class="container-fluid">
+
+            <div class="row">
+
+                <aside class="col-lg">
+ 
+                    <header><h1 data-id="cs50s-introduction-to-databases-with-sql"><a href="../../..">CS50’s Introduction to Databases with SQL</a></h1>
+
+<p>OpenCourseWare</p>
+
+<p><a class="pr-1 small" href="https://cs50.harvard.edu/donate">Donate<i aria-hidden="true" class="fas fa-external-link-alt ps-2"></i></a></p>
+
+<p class="small"><a href="https://carterzenke.me">Carter Zenke</a><br>
+<a href="mailto:carter@cs50.harvard.edu">carter@cs50.harvard.edu</a>
+<br>
+<a class="mr-1" href="https://github.com/carterzenke"><i aria-hidden="true" class="fab fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/carterzenke/"><i aria-hidden="true" class="fab fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a></p>
+
+<p class="small"><a href="https://cs.harvard.edu/malan/">David J. Malan</a>
+<br>
+<a href="mailto:malan@harvard.edu">malan@harvard.edu</a>
+<br>
+<a class="mr-1" href="https://www.facebook.com/dmalan"><i aria-hidden="true" class="fa-brands fa-facebook-f" title="Facebook"></i><span class="sr-only">Facebook</span></a>
+<a class="mr-1" href="https://github.com/dmalan"><i aria-hidden="true" class="fa-brands fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.instagram.com/davidjmalan/"><i aria-hidden="true" class="fa-brands fa-instagram" title="Instagram"></i><span class="sr-only">Instagram</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/malan/"><i aria-hidden="true" class="fa-brands fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a>
+<a class="mr-1" href="https://www.reddit.com/user/davidjmalan"><i aria-hidden="true" class="fa-brands fa-reddit-alien" title="Reddit"></i><span class="sr-only">Reddit</span></a>
+<a class="mr-1" href="https://www.threads.net/@davidjmalan"><i aria-hidden="true" class="fa-brands fa-threads" title="Threads"></i><span class="sr-only">Threads</span></a>
+<a class="mr-1" href="https://twitter.com/davidjmalan"><i aria-hidden="true" class="fa-brands fa-twitter" title="Twitter"></i><span class="sr-only">Twitter</span></a></p></header>
+
+                    
+
+                    <button aria-controls="nav" aria-expanded="false" class="btn btn-sm collapsed d-lg-none" data-bs-target="aside > nav" data-bs-toggle="collapse">
+                        Menu
+                    </button>
+
+                    <nav class="collapse d-lg-block" id="nav"><hr>
+
+<ul>
+  <li data-marker="*"><a href="https://cs50.harvard.edu/x/puzzles/"><i class="fas fa-puzzle-piece pe-2"></i>CS50x Puzzle Day</a></li>
+  <li data-marker="*"><a href="../../../zoom/"><i class="fa-solid fa-video me-2"></i>Zoom Meetings</a></li>
+</ul>
+
+<!-- Tools -->
+<hr class="small">
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.ai/"><i class="fa-solid fa-duck pe-2 text-decoration-none"></i>CS50.ai</a></li>
+  <li data-marker="*">
+<a href="https://cs50.edx.org/ed"><i class="fa-solid fa-comment-question pe-2 text-decoration-none"></i>Ed Discussion</a> for Q&amp;A</li>
+  <li data-marker="*"><a href="https://cs50.dev/"><i class="fa-solid fa-laptop pe-2 text-decoration-none"></i>Visual Studio Code</a></li>
+</ul>
+
+<!-- Highlights -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="../../../new/">What’s new for 2024?</a></li>
+</ul>
+
+<!-- Course Nav -->
+<hr>
+
+<ol start="0">
+  <li><a href="../../../weeks/0/">Querying</a></li>
+  <li><a href="../../../weeks/1/">Relating</a></li>
+  <li><a href="../../../weeks/2/">Designing</a></li>
+  <li><a href="../../../weeks/3/">Writing</a></li>
+  <li><a href="../../../weeks/4/">Viewing</a></li>
+  <li><a href="../../../weeks/5/">Optimizing</a></li>
+  <li><a href="../../../weeks/6/">Scaling</a></li>
+</ol>
+
+<hr>
+
+<!-- Final project spec, seminars, shorts -->
+<ul>
+  <li data-marker="*"><a href="../../../project/">Final Project</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*">
+  </li><li data-marker="*">
+</li></ul>
+
+<!-- Items that might usually appear in an academic syllabus -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../honesty/">Academic Honesty</a></li>
+  <li data-marker="*"><a href="../../../certificate/">CS50 Certificate</a></li>
+  <li data-marker="*"><a href="../../../faqs/">FAQs</a></li>
+  <li data-marker="*"><a href="https://cs50.me/cs50sql">Gradebook</a></li>
+  <li data-marker="*"><a href="../../../staff/">Staff</a></li>
+  <li data-marker="*">
+</li></ul>
+
+<!-- Where to watch or take the class course -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://apps.apple.com/us/app/cs50/id1631064453">Apple TV</a></li>
+  <li data-marker="*"><a href="https://cs50.edx.org/sql">edX</a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/watch?v=WXk7yDqsKxs">freeCodeCamp</a></li>
+  <li data-marker="*"><a href="https://play.google.com/store/apps/details?id=edu.harvard.cs50.googletv">Google TV</a></li>
+  <li data-marker="*"><a href="https://web.dce.harvard.edu/extension/csci/e/151">Harvard Extension School</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*"><a href="https://web.dce.harvard.edu/summer/csci/s/151">Harvard Summer School</a></li>
+  <li data-marker="*"><a href="https://channelstore.roku.com/details/e338f60adfb133abc19eac2da9e5c505:40cee2a1909355bc4496086c8fa4a86f/cs50">Roku <span class="badge ms-2 p-1 text-bg-warning">new</span></a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/playlist?list=PLhQjrBD2T382v1MBjNOhPu9SiJ1fsD4C0">YouTube</a></li>
+</ul>
+
+<!-- Manual page, style guide, other docs -->
+
+<!-- Status Page -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.statuspage.io/">Status Page</a></li>
+</ul>
+
+<!-- Communities -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../communities/"><strong>Communities</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://bsky.app/profile/cs50.harvard.edu">Bluesky</a></li>
+  <li data-marker="*" class="small"><a href="https://www.clubhouse.com/club/cs50">Clubhouse</a></li>
+  <li data-marker="*" class="small">
+<a href="https://discord.gg/cs50">Discord</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/ed">Ed</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://www.facebook.com/groups/cs50/">Facebook Group</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.facebook.com/cs50/">Facebook Page</a></li>
+  <li data-marker="*" class="small"><a href="https://github.com/cs50">GitHub</a></li>
+  <li data-marker="*" class="small">
+<a href="https://gitter.im/cs50/x">Gitter</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://instagram.com/cs50">Instagram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/groups/7437240/">LinkedIn Group</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/school/CS50/">LinkedIn Page</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.medium.com/">Medium</a></li>
+  <li data-marker="*" class="small"><a href="https://www.quora.com/topic/CS50">Quora</a></li>
+  <li data-marker="*" class="small">
+<a href="https://www.reddit.com/r/cs50/">Reddit</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/slack">Slack</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.snapchat.com/add/cs50">Snapchat</a></li>
+  <li data-marker="*" class="small"><a href="https://soundcloud.com/cs50">SoundCloud</a></li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.stackexchange.com/">Stack Exchange</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://t.me/cs50x">Telegram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.tiktok.com/@cs50">TikTok</a></li>
+  <li data-marker="*" class="small"><a href="https://www.threads.net/@cs50">Threads</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/cs50">X Account</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/i/communities/1722308663522594923">X Community</a></li>
+  <li data-marker="*" class="small"><a href="https://www.youtube.com/subscription_center?add_user=cs50tv">YouTube</a></li>
+</ul>
+
+<!-- Courses -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../courses/"><strong>Courses</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/x">CS50x</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/games">CS50 2D</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/ai">CS50 AI</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/business">CS50 Business</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/cybersecurity">CS50 Cybersecurity</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/law">CS50 for Lawyers</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/python">CS50 Python</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/r">CS50 R</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/scratch">CS50 Scratch</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/sql">CS50 SQL</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/web">CS50 Web</a></li>
+</ul>
+
+<!-- Harvard Shop -->
+<hr>
+
+<p><a href="https://cs50.harvardshop.com/"><img src="https://cs50.harvard.edu/x/2023/assets/shop.png" alt="Harvard Shop"></a></p>
+
+<!-- Legal -->
+<hr>
+
+<p><a href="../../../license/" class="small"><i class="fab fa-creative-commons me-1"></i>License</a></p></nav>
+
+                    <footer></footer>
+
+                </aside>
+
+                <main class="col-lg">
+
+                    <h1 id="yourharvard">your.harvard</h1>
+
+<p><img src="my.harvard.png" alt="The my.harvard logo"><br>
+<em>The my.harvard logo</em></p>
+
+<h2 id="problem-to-solve">Problem to Solve</h2>
+
+<p>If you’re not already familiar, Harvard has a course shopping tool called <a href="https://my.harvard.edu/">my.harvard</a>, with which students explore (and ultimately register for!) classes. To keep track of courses, students, and their registrations, my.harvard presumably uses some kind of underlying database. And yet, if you’ve ever used it, you’ll know that my.harvard isn’t especially… quick.</p>
+
+<p>Here’s your chance to make my.harvard just a little bit faster! In this problem, take some Harvard course data and create indexes to speed up typical queries on the database. Keep in mind that indexing every column isn’t always the best solution: you’ll need to consider trade-offs in terms of space and time, ultimately representing Harvard’s courses and students in the most efficient way possible.</p>
+
+<h2 id="demo">Demo</h2>
+
+<script async="" data-autoplay="1" data-cols="100" data-loop="1" data-rows="12" id="asciicast-RGJOJohkj1ar9uNE6qbgS95ky" src="https://asciinema.org/a/RGJOJohkj1ar9uNE6qbgS95ky.js"></script>
+
+<h2 id="distribution-code">Distribution Code</h2>
+
+<p>For this problem, you’ll need to download <code class="language-plaintext highlighter-rouge">harvard.db</code> and an <code class="language-plaintext highlighter-rouge">indexes.sql</code> file in which you’ll write your SQL statements to create your indexes.</p>
+
+<details><summary>Download the distribution code</summary><p>Log into <a href="https://cs50.dev/">cs50.dev</a>, click on your terminal window, and execute <code class="language-plaintext highlighter-rouge">cd</code> by itself. You should find that your terminal window’s prompt resembles the below:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$
+</code></pre></div></div>
+
+<p>Next execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://cdn.cs50.net/sql/2024/x/psets/5/harvard.zip
+</code></pre></div></div>
+
+<p>in order to download a ZIP called <code class="language-plaintext highlighter-rouge">harvard.zip</code> into your codespace.</p>
+
+<p>Then execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip harvard.zip
+</code></pre></div></div>
+
+<p>to create a folder called <code class="language-plaintext highlighter-rouge">harvard</code>. You no longer need the ZIP file, so you can execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm harvard.zip
+</code></pre></div></div>
+
+<p>and respond with “y” followed by Enter at the prompt to remove the ZIP file you downloaded.</p>
+
+<p>Now type</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd harvard
+</code></pre></div></div>
+
+<p>followed by Enter to move yourself into (i.e., open) that directory. Your prompt should now resemble the below.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>harvard/ $
+</code></pre></div></div>
+
+<p>If all was successful, you should execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ls
+</code></pre></div></div>
+
+<p>and see a database named <code class="language-plaintext highlighter-rouge">harvard.db</code> alongside a SQL file named <code class="language-plaintext highlighter-rouge">indexes.sql</code>. If not, retrace your steps and see if you can determine where you went wrong!</p></details>
+
+<h2 id="schema">Schema</h2>
+
+<pre><code class="language-mermaid">erDiagram
+    "Student" }o--|{ "Course" : "enrolls in"
+    "Course" }|--o{ "Requirement" : "satisfies"
+</code></pre>
+
+<p>Within <code class="language-plaintext highlighter-rouge">harvard.db</code>, you’ll find five tables that implement the relationships described in the ER diagram above. Click the drop-downs below to learn more about the schema of each individual table.</p>
+
+<details><summary><code>students</code> table</summary><p>The <code class="language-plaintext highlighter-rouge">students</code> table contains the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which is the student’s ID.</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">name</code>, which is the student’s name.</li>
+</ul></details>
+
+<details><summary><code>courses</code> table</summary><p>The <code class="language-plaintext highlighter-rouge">courses</code> table contains the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which is the courses’s ID.</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">department</code>, which is the department in which the course is taught (e.g., “Computer Science”, “Economics”, “Philosophy”).</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">number</code>, which is the course number (e.g., 50, 12, 330).</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">semester</code>, which is the semester in which the class was taught (e.g., “Spring 2024”, “Fall 2023”).</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">title</code>, which is the title of the course (e.g., “Introduction to Computer Science”).</li>
+</ul></details>
+
+<details><summary><code>enrollments</code> table</summary><p>The <code class="language-plaintext highlighter-rouge">enrollments</code> table contains the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which is the ID to identify the enrollment.</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">student_id</code>, which is the ID of the student enrolled.</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">course_id</code>, which is the ID of the course in which the student is enrolled.</li>
+</ul></details>
+
+<details><summary><code>requirements</code> table</summary><p>The <code class="language-plaintext highlighter-rouge">requirements</code> table contains the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which is the ID of the requirement.</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">name</code>, which is the name of the requirement.</li>
+</ul></details>
+
+<details><summary><code>satisfies</code> table</summary><p>The <code class="language-plaintext highlighter-rouge">satisfies</code> table contains the following columns:</p>
+
+<ul>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">id</code>, which is the ID of the course-requirement pair.</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">course_id</code>, which is the ID of a given course.</li>
+  <li data-marker="*">
+<code class="language-plaintext highlighter-rouge">requirement_id</code>, which is the ID of the requirement which the given course satisfies.</li>
+</ul></details>
+
+<h2 id="specification">Specification</h2>
+
+<p>In <code class="language-plaintext highlighter-rouge">indexes.sql</code>, write a set of SQL statements that create indexes which will speed up typical queries on the <code class="language-plaintext highlighter-rouge">harvard.db</code> database. The number of indexes you create, as well as the columns they include, is entirely up to you. Be sure to balance speed with disk space, only creating indexes you need.</p>
+
+<p>When engineers optimize a database, they often care about the typical queries run on the database. Such queries highlight patterns with which a database is accessed, thus revealing the best columns and tables on which to create indexes. Click the spoiler tag below to see the set of typical <code class="language-plaintext highlighter-rouge">SELECT</code> queries run on <code class="language-plaintext highlighter-rouge">harvard.db</code>.</p>
+
+<details><summary>Typical <code>SELECT</code> queries on <code>harvard.db</code></summary><ul>
+  <li data-marker="*">
+    <p>Find a student’s historical course enrollments, based on their ID:</p>
+
+    <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"title"</span><span class="p">,</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"semester"</span>
+<span class="k">FROM</span> <span class="nv">"enrollments"</span>
+<span class="k">JOIN</span> <span class="nv">"courses"</span> <span class="k">ON</span> <span class="nv">"enrollments"</span><span class="p">.</span><span class="nv">"course_id"</span> <span class="o">=</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"id"</span>
+<span class="k">JOIN</span> <span class="nv">"students"</span> <span class="k">ON</span> <span class="nv">"enrollments"</span><span class="p">.</span><span class="nv">"student_id"</span> <span class="o">=</span> <span class="nv">"students"</span><span class="p">.</span><span class="nv">"id"</span>
+<span class="k">WHERE</span> <span class="nv">"students"</span><span class="p">.</span><span class="nv">"id"</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li data-marker="*">
+    <p>Find all students who enrolled in Computer Science 50 in Fall 2023:</p>
+
+    <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="nv">"id"</span><span class="p">,</span> <span class="nv">"name"</span>
+<span class="k">FROM</span> <span class="nv">"students"</span>
+<span class="k">WHERE</span> <span class="nv">"id"</span> <span class="k">IN</span> <span class="p">(</span>
+    <span class="k">SELECT</span> <span class="nv">"student_id"</span>
+    <span class="k">FROM</span> <span class="nv">"enrollments"</span>
+    <span class="k">WHERE</span> <span class="nv">"course_id"</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="k">SELECT</span> <span class="nv">"id"</span>
+        <span class="k">FROM</span> <span class="nv">"courses"</span>
+        <span class="k">WHERE</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"department"</span> <span class="o">=</span> <span class="s1">'Computer Science'</span>
+        <span class="k">AND</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"number"</span> <span class="o">=</span> <span class="mi">50</span>
+        <span class="k">AND</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"semester"</span> <span class="o">=</span> <span class="s1">'Fall 2023'</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+  <li data-marker="*">
+    <p>Sort courses by most- to least-enrolled in Fall 2023:</p>
+
+    <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"id"</span><span class="p">,</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"department"</span><span class="p">,</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"number"</span><span class="p">,</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"title"</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="nv">"enrollment"</span>
+<span class="k">FROM</span> <span class="nv">"courses"</span>
+<span class="k">JOIN</span> <span class="nv">"enrollments"</span> <span class="k">ON</span> <span class="nv">"enrollments"</span><span class="p">.</span><span class="nv">"course_id"</span> <span class="o">=</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"id"</span>
+<span class="k">WHERE</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"semester"</span> <span class="o">=</span> <span class="s1">'Fall 2023'</span>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"id"</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="nv">"enrollment"</span> <span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li data-marker="*">
+    <p>Find all computer science courses taught in Spring 2024:</p>
+
+    <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"id"</span><span class="p">,</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"department"</span><span class="p">,</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"number"</span><span class="p">,</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"title"</span>
+<span class="k">FROM</span> <span class="nv">"courses"</span>
+<span class="k">WHERE</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"department"</span> <span class="o">=</span> <span class="s1">'Computer Science'</span>
+<span class="k">AND</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"semester"</span> <span class="o">=</span> <span class="s1">'Spring 2024'</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li data-marker="*">
+    <p>Find the requirement satisfied by “Advanced Databases” in Fall 2023:</p>
+
+    <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="nv">"requirements"</span><span class="p">.</span><span class="nv">"name"</span>
+<span class="k">FROM</span> <span class="nv">"requirements"</span>
+<span class="k">WHERE</span> <span class="nv">"requirements"</span><span class="p">.</span><span class="nv">"id"</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="k">SELECT</span> <span class="nv">"requirement_id"</span>
+    <span class="k">FROM</span> <span class="nv">"satisfies"</span>
+    <span class="k">WHERE</span> <span class="nv">"course_id"</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="k">SELECT</span> <span class="nv">"id"</span>
+        <span class="k">FROM</span> <span class="nv">"courses"</span>
+        <span class="k">WHERE</span> <span class="nv">"title"</span> <span class="o">=</span> <span class="s1">'Advanced Databases'</span>
+        <span class="k">AND</span> <span class="nv">"semester"</span> <span class="o">=</span> <span class="s1">'Fall 2023'</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+  <li data-marker="*">
+    <p>Find how many courses in each requirement a student has satisfied:</p>
+
+    <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="nv">"requirements"</span><span class="p">.</span><span class="nv">"name"</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="nv">"courses"</span>
+<span class="k">FROM</span> <span class="nv">"requirements"</span>
+<span class="k">JOIN</span> <span class="nv">"satisfies"</span> <span class="k">ON</span> <span class="nv">"requirements"</span><span class="p">.</span><span class="nv">"id"</span> <span class="o">=</span> <span class="nv">"satisfies"</span><span class="p">.</span><span class="nv">"requirement_id"</span>
+<span class="k">WHERE</span> <span class="nv">"satisfies"</span><span class="p">.</span><span class="nv">"course_id"</span> <span class="k">IN</span> <span class="p">(</span>
+    <span class="k">SELECT</span> <span class="nv">"course_id"</span>
+    <span class="k">FROM</span> <span class="nv">"enrollments"</span>
+    <span class="k">WHERE</span> <span class="nv">"enrollments"</span><span class="p">.</span><span class="nv">"student_id"</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="p">)</span>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="nv">"requirements"</span><span class="p">.</span><span class="nv">"name"</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li data-marker="*">
+    <p>Search for a course by title and semester:</p>
+
+    <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="nv">"department"</span><span class="p">,</span> <span class="nv">"number"</span><span class="p">,</span> <span class="nv">"title"</span>
+<span class="k">FROM</span> <span class="nv">"courses"</span>
+<span class="k">WHERE</span> <span class="nv">"title"</span> <span class="k">LIKE</span> <span class="nv">"History%"</span>
+<span class="k">AND</span> <span class="nv">"semester"</span> <span class="o">=</span> <span class="s1">'Fall 2023'</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+</ul></details>
+
+<p>Be sure to consider the <a href="#advice">Advice</a> section as you get started!</p>
+
+<h2 id="advice">Advice</h2>
+
+<p>In this problem, you’ll take the opposite perspective you did while working on <a href="../snap/">In a Snap</a>: rather than design a query that takes advantage of existing indexes, your task is to design indexes which existing queries can take advantage of.</p>
+
+<details><summary>Use <code>EXPLAIN QUERY PLAN</code> on each <code>SELECT</code> query to assess where best to create indexes</summary><p>Begin by assessing where best to create indexes by understanding the plan for each typical query on my.harvard’s database.</p>
+
+<p>For example, try revealing the plan for the first typical query, as by executing the following:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="n">QUERY</span> <span class="n">PLAN</span>
+<span class="k">SELECT</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"title"</span><span class="p">,</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"semester"</span>
+<span class="k">FROM</span> <span class="nv">"enrollments"</span>
+<span class="k">JOIN</span> <span class="nv">"courses"</span> <span class="k">ON</span> <span class="nv">"enrollments"</span><span class="p">.</span><span class="nv">"course_id"</span> <span class="o">=</span> <span class="nv">"courses"</span><span class="p">.</span><span class="nv">"id"</span>
+<span class="k">JOIN</span> <span class="nv">"students"</span> <span class="k">ON</span> <span class="nv">"enrollments"</span><span class="p">.</span><span class="nv">"student_id"</span> <span class="o">=</span> <span class="nv">"students"</span><span class="p">.</span><span class="nv">"id"</span>
+<span class="k">WHERE</span> <span class="nv">"students"</span><span class="p">.</span><span class="nv">"id"</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>The output of the above is as follows:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>QUERY PLAN
+|--SEARCH students USING INTEGER PRIMARY KEY (rowid=?)
+|--SCAN enrollments
+`--SEARCH courses USING INTEGER PRIMARY KEY (rowid=?)
+</code></pre></div></div>
+
+<p>Notice that, while the database engine is already <code class="language-plaintext highlighter-rouge">SEARCH</code>ing the <code class="language-plaintext highlighter-rouge">students</code> and <code class="language-plaintext highlighter-rouge">courses</code> tables using their primary key indexes, there are still improvements to be made: the database engine is <code class="language-plaintext highlighter-rouge">SCAN</code>ning the <code class="language-plaintext highlighter-rouge">enrollments</code> table without an index. Recall that to <code class="language-plaintext highlighter-rouge">SCAN</code> means that the database engine must search through all rows, one by one—a process that is much slower than searching an index!</p>
+
+<p>Experiment now by creating an index which could turn that <code class="language-plaintext highlighter-rouge">SCAN</code> into a <code class="language-plaintext highlighter-rouge">SEARCH</code> that uses an index. Then, repeat the same process for each of the typical queries on my.harvard’s database until you’ve arrived at a set of indexes which ensure all queries are using indexes to their full potential.</p></details>
+
+<details><summary>Minimize the number of indexes you've created</summary><p>Keep in mind that indexes take up additional space, and that they can slow <code class="language-plaintext highlighter-rouge">INSERT</code>, <code class="language-plaintext highlighter-rouge">UPDATE</code>, and <code class="language-plaintext highlighter-rouge">DELETE</code> queries. Once you’ve arrived at an initial set of indexes, start paring them down until you’ve created the minimum required for each query to use indexes optimally. How to start this process? Consider the following questions:</p>
+
+<ul>
+  <li data-marker="*">Do any of your indexes include the same columns? If so, it’s likely you need only one index on that particular column.</li>
+  <li data-marker="*">Do any of your indexes include columns unused by the given queries? If so, it’s likely you can remove those columns from your indexes.</li>
+  <li data-marker="*">Does removing an index have any impact on each query’s plan? If not, might be best to remove it!</li>
+</ul>
+
+<p>Through the iterative process above, you’ll refine the indexes you’ve chosen to create.</p></details>
+
+<h2 id="usage">Usage</h2>
+
+<p>To load your indexes as you write them in <code class="language-plaintext highlighter-rouge">indexes.sql</code>, you can use</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.read indexes.sql
+</code></pre></div></div>
+
+<p>Keep in mind you can also use</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">INDEX</span> <span class="n">name</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>where <code class="language-plaintext highlighter-rouge">name</code> is the name of your index, to remove an index before creating it anew.</p>
+
+<p>You may want to use <code class="language-plaintext highlighter-rouge">VACUUM</code> to free up disk space after you delete an index!</p>
+
+<h2 id="how-to-test">How to Test</h2>
+
+<p>While <code class="language-plaintext highlighter-rouge">check50</code> is available for this problem, its open-ended nature means there aren’t clear right or wrong answers. Instead, try following the <a href="#advice">advice</a> given and use what you’ve learned from lecture.</p>
+
+<h3 id="correctness">Correctness</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>check50 cs50/problems/2024/sql/harvard
+</code></pre></div></div>
+
+<h2 id="how-to-submit">How to Submit</h2>
+
+<p>In your terminal, execute the below to submit your work.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>submit50 cs50/problems/2024/sql/harvard
+</code></pre></div></div>
+
+
+                </main>
+
+            </div>
+
+        </div>
+
+        
+ 
+        <script src="../../../assets/page.js?1775509000"></script>
+
+    
+
+
+</body></html>

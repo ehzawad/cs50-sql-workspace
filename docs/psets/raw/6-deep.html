@@ -1,0 +1,481 @@
+<!DOCTYPE html><html lang="en-us"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+
+        <meta property="og:image" content="https://prod-discovery.edx-cdn.org/cdn-cgi/image/width=378,height=auto,quality=85,format=webp/media/course/image/3e45c431-10df-423e-9f03-fb98b713cd4a-2397c9098976.png">
+
+        <meta property="og:title" content="From the Deep - CS50's Introduction to Databases with SQL">
+
+        <link href="../../../favicon.ico?1775509000" rel="icon">
+
+        <!-- https://fonts.google.com/specimen/PT+Sans?query=PT+Sans&selection.family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700 -->
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+
+        <!-- https://getbootstrap.com/docs/ -->
+        <script src="../../../assets/jquery/dist/jquery.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap/dist/js/bootstrap.bundle.min.js?1775509000"></script>
+
+        <!-- https://bootstrap-table.com/docs/getting-started/introduction/ -->
+        <link href="../../../assets/bootstrap-table/dist/bootstrap-table.min.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/bootstrap-table/dist/bootstrap-table.min.js?1775509000"></script>
+        <script src="../../../assets/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile.min.js?1775509000"></script>
+
+        <!-- https://fontawesome.com/how-to-use/on-the-web/referencing-icons/basic-use -->
+        
+        <link crossorigin="anonymous" href="https://kit.fontawesome.com/a6e66aa089.css" rel="stylesheet">
+        
+
+        <!-- https://moment.github.io/luxon/ -->
+        <script src="../../../assets/luxon/build/global/luxon.min.js?1775509000"></script>
+
+        <!-- http://docs.mathjax.org/ -->
+        <!-- http://docs.mathjax.org/en/latest/options/output/chtml.html?highlight=displayAlign#the-configuration-block -->
+        <!-- https://docs.mathjax.org/en/latest/output/fonts.html -->
+        <script>
+            MathJax = {
+                loader: {
+                    paths: {
+                        'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+                    }
+                },
+                output: {
+                    displayAlign: 'left'
+                }
+            };
+        </script>
+        <script src="../../../assets/mathjax/tex-mml-chtml.js?1775509000"></script>
+
+        <!-- https://github.com/verlok/vanilla-lazyload -->
+        <script src="../../../assets/vanilla-lazyload/dist/lazyload.min.js?1775509000"></script>
+
+        <!-- https://iframe-resizer.com/ -->
+        <script src="../../../assets/@iframe-resizer/parent/index.umd.js?1775509000"></script>
+
+        <!-- https://github.com/scratchblocks/scratchblocks/releases -->
+        <script src="../../../assets/scratchblocks.min.js?1775509000"></script>
+
+        <!-- https://mermaid-js.github.io/ -->
+        <script src="../../../assets/mermaid/dist/mermaid.min.js?1775509000"></script>
+
+        <!-- https://github.com/twitter/twemoji -->
+        <script src="../../../assets/@twemoji/api/dist/twemoji.min.js?1775509000"></script>
+
+        
+
+        <link href="../../../assets/page.css?1775509000" rel="stylesheet">
+        <script src="../../../assets/jekyll-theme-cs50.js?1775509000"></script>
+
+        <script>
+            window.CS50 = {
+                local: {"day":"numeric","hour":"numeric","minute":"numeric","month":"long","timeZoneName":"short","weekday":"long","year":"numeric"},
+                locale: "en",
+                tz: "Etc/Zulu"
+            };
+        </script>
+
+        <title>From the Deep - CS50's Introduction to Databases with SQL</title>
+
+
+    <meta property="og:description" content="Problem to Solve You are a researcher operating a remote submarine, the AquaByte Explorer, which continuously collects observations from the ocean floor....">
+</head>
+
+    <body class="invisible">
+
+        <div class="alert fixed-top mb-0 rounded-0" data-alert="success dismissible" data-hash="0129a290f1b935ef2af9c47f24376fe8" id="alert" role="alert">
+            <button aria-label="Close" class="btn-close d-none" data-bs-dismiss="alert" type="button"></button><p>Interested in <a href="../../../#how-to-take-this-course">a verified certificate or transfer credit and accreditation</a>?</p>
+</div>
+        
+
+        <div class="container-fluid">
+
+            <div class="row">
+
+                <aside class="col-lg">
+ 
+                    <header><h1 data-id="cs50s-introduction-to-databases-with-sql"><a href="../../..">CS50’s Introduction to Databases with SQL</a></h1>
+
+<p>OpenCourseWare</p>
+
+<p><a class="pr-1 small" href="https://cs50.harvard.edu/donate">Donate<i aria-hidden="true" class="fas fa-external-link-alt ps-2"></i></a></p>
+
+<p class="small"><a href="https://carterzenke.me">Carter Zenke</a><br>
+<a href="mailto:carter@cs50.harvard.edu">carter@cs50.harvard.edu</a>
+<br>
+<a class="mr-1" href="https://github.com/carterzenke"><i aria-hidden="true" class="fab fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/carterzenke/"><i aria-hidden="true" class="fab fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a></p>
+
+<p class="small"><a href="https://cs.harvard.edu/malan/">David J. Malan</a>
+<br>
+<a href="mailto:malan@harvard.edu">malan@harvard.edu</a>
+<br>
+<a class="mr-1" href="https://www.facebook.com/dmalan"><i aria-hidden="true" class="fa-brands fa-facebook-f" title="Facebook"></i><span class="sr-only">Facebook</span></a>
+<a class="mr-1" href="https://github.com/dmalan"><i aria-hidden="true" class="fa-brands fa-github" title="GitHub"></i><span class="sr-only">GitHub</span></a>
+<a class="mr-1" href="https://www.instagram.com/davidjmalan/"><i aria-hidden="true" class="fa-brands fa-instagram" title="Instagram"></i><span class="sr-only">Instagram</span></a>
+<a class="mr-1" href="https://www.linkedin.com/in/malan/"><i aria-hidden="true" class="fa-brands fa-linkedin" title="LinkedIn"></i><span class="sr-only">LinkedIn</span></a>
+<a class="mr-1" href="https://www.reddit.com/user/davidjmalan"><i aria-hidden="true" class="fa-brands fa-reddit-alien" title="Reddit"></i><span class="sr-only">Reddit</span></a>
+<a class="mr-1" href="https://www.threads.net/@davidjmalan"><i aria-hidden="true" class="fa-brands fa-threads" title="Threads"></i><span class="sr-only">Threads</span></a>
+<a class="mr-1" href="https://twitter.com/davidjmalan"><i aria-hidden="true" class="fa-brands fa-twitter" title="Twitter"></i><span class="sr-only">Twitter</span></a></p></header>
+
+                    
+
+                    <button aria-controls="nav" aria-expanded="false" class="btn btn-sm collapsed d-lg-none" data-bs-target="aside > nav" data-bs-toggle="collapse">
+                        Menu
+                    </button>
+
+                    <nav class="collapse d-lg-block" id="nav"><hr>
+
+<ul>
+  <li data-marker="*"><a href="https://cs50.harvard.edu/x/puzzles/"><i class="fas fa-puzzle-piece pe-2"></i>CS50x Puzzle Day</a></li>
+  <li data-marker="*"><a href="../../../zoom/"><i class="fa-solid fa-video me-2"></i>Zoom Meetings</a></li>
+</ul>
+
+<!-- Tools -->
+<hr class="small">
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.ai/"><i class="fa-solid fa-duck pe-2 text-decoration-none"></i>CS50.ai</a></li>
+  <li data-marker="*">
+<a href="https://cs50.edx.org/ed"><i class="fa-solid fa-comment-question pe-2 text-decoration-none"></i>Ed Discussion</a> for Q&amp;A</li>
+  <li data-marker="*"><a href="https://cs50.dev/"><i class="fa-solid fa-laptop pe-2 text-decoration-none"></i>Visual Studio Code</a></li>
+</ul>
+
+<!-- Highlights -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="../../../new/">What’s new for 2024?</a></li>
+</ul>
+
+<!-- Course Nav -->
+<hr>
+
+<ol start="0">
+  <li><a href="../../../weeks/0/">Querying</a></li>
+  <li><a href="../../../weeks/1/">Relating</a></li>
+  <li><a href="../../../weeks/2/">Designing</a></li>
+  <li><a href="../../../weeks/3/">Writing</a></li>
+  <li><a href="../../../weeks/4/">Viewing</a></li>
+  <li><a href="../../../weeks/5/">Optimizing</a></li>
+  <li><a href="../../../weeks/6/">Scaling</a></li>
+</ol>
+
+<hr>
+
+<!-- Final project spec, seminars, shorts -->
+<ul>
+  <li data-marker="*"><a href="../../../project/">Final Project</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*">
+  </li><li data-marker="*">
+</li></ul>
+
+<!-- Items that might usually appear in an academic syllabus -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../honesty/">Academic Honesty</a></li>
+  <li data-marker="*"><a href="../../../certificate/">CS50 Certificate</a></li>
+  <li data-marker="*"><a href="../../../faqs/">FAQs</a></li>
+  <li data-marker="*"><a href="https://cs50.me/cs50sql">Gradebook</a></li>
+  <li data-marker="*"><a href="../../../staff/">Staff</a></li>
+  <li data-marker="*">
+</li></ul>
+
+<!-- Where to watch or take the class course -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://apps.apple.com/us/app/cs50/id1631064453">Apple TV</a></li>
+  <li data-marker="*"><a href="https://cs50.edx.org/sql">edX</a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/watch?v=WXk7yDqsKxs">freeCodeCamp</a></li>
+  <li data-marker="*"><a href="https://play.google.com/store/apps/details?id=edu.harvard.cs50.googletv">Google TV</a></li>
+  <li data-marker="*"><a href="https://web.dce.harvard.edu/extension/csci/e/151">Harvard Extension School</a></li>
+  <li data-marker="*">
+  </li><li data-marker="*"><a href="https://web.dce.harvard.edu/summer/csci/s/151">Harvard Summer School</a></li>
+  <li data-marker="*"><a href="https://channelstore.roku.com/details/e338f60adfb133abc19eac2da9e5c505:40cee2a1909355bc4496086c8fa4a86f/cs50">Roku <span class="badge ms-2 p-1 text-bg-warning">new</span></a></li>
+  <li data-marker="*"><a href="https://www.youtube.com/playlist?list=PLhQjrBD2T382v1MBjNOhPu9SiJ1fsD4C0">YouTube</a></li>
+</ul>
+
+<!-- Manual page, style guide, other docs -->
+
+<!-- Status Page -->
+<hr>
+
+<ul class="small">
+  <li data-marker="*"><a href="https://cs50.statuspage.io/">Status Page</a></li>
+</ul>
+
+<!-- Communities -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../communities/"><strong>Communities</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://bsky.app/profile/cs50.harvard.edu">Bluesky</a></li>
+  <li data-marker="*" class="small"><a href="https://www.clubhouse.com/club/cs50">Clubhouse</a></li>
+  <li data-marker="*" class="small">
+<a href="https://discord.gg/cs50">Discord</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/ed">Ed</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://www.facebook.com/groups/cs50/">Facebook Group</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.facebook.com/cs50/">Facebook Page</a></li>
+  <li data-marker="*" class="small"><a href="https://github.com/cs50">GitHub</a></li>
+  <li data-marker="*" class="small">
+<a href="https://gitter.im/cs50/x">Gitter</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://instagram.com/cs50">Instagram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/groups/7437240/">LinkedIn Group</a></li>
+  <li data-marker="*" class="small"><a href="https://www.linkedin.com/school/CS50/">LinkedIn Page</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.medium.com/">Medium</a></li>
+  <li data-marker="*" class="small"><a href="https://www.quora.com/topic/CS50">Quora</a></li>
+  <li data-marker="*" class="small">
+<a href="https://www.reddit.com/r/cs50/">Reddit</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.edx.org/slack">Slack</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://www.snapchat.com/add/cs50">Snapchat</a></li>
+  <li data-marker="*" class="small"><a href="https://soundcloud.com/cs50">SoundCloud</a></li>
+  <li data-marker="*" class="small">
+<a href="https://cs50.stackexchange.com/">Stack Exchange</a> <span class="badge bg-light ms-1 py-1 rounded-pill text-dark">Q&amp;A</span>
+</li>
+  <li data-marker="*" class="small"><a href="https://t.me/cs50x">Telegram</a></li>
+  <li data-marker="*" class="small"><a href="https://www.tiktok.com/@cs50">TikTok</a></li>
+  <li data-marker="*" class="small"><a href="https://www.threads.net/@cs50">Threads</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/cs50">X Account</a></li>
+  <li data-marker="*" class="small"><a href="https://x.com/i/communities/1722308663522594923">X Community</a></li>
+  <li data-marker="*" class="small"><a href="https://www.youtube.com/subscription_center?add_user=cs50tv">YouTube</a></li>
+</ul>
+
+<!-- Courses -->
+<hr>
+
+<ul>
+  <li data-marker="*"><a href="../../../courses/"><strong>Courses</strong></a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/x">CS50x</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/games">CS50 2D</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/ai">CS50 AI</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/business">CS50 Business</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/cybersecurity">CS50 Cybersecurity</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/law">CS50 for Lawyers</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/python">CS50 Python</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/r">CS50 R</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/scratch">CS50 Scratch</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/sql">CS50 SQL</a></li>
+  <li data-marker="*" class="small"><a href="https://cs50.harvard.edu/web">CS50 Web</a></li>
+</ul>
+
+<!-- Harvard Shop -->
+<hr>
+
+<p><a href="https://cs50.harvardshop.com/"><img src="https://cs50.harvard.edu/x/2023/assets/shop.png" alt="Harvard Shop"></a></p>
+
+<!-- Legal -->
+<hr>
+
+<p><a href="../../../license/" class="small"><i class="fab fa-creative-commons me-1"></i>License</a></p></nav>
+
+                    <footer></footer>
+
+                </aside>
+
+                <main class="col-lg">
+
+                    <h1 id="from-the-deep">From the Deep</h1>
+
+<p><img src="deep.jpg" alt="From the Deep"></p>
+
+<h2 id="problem-to-solve">Problem to Solve</h2>
+
+<p>You are a researcher operating a remote submarine, the AquaByte Explorer, which continuously collects observations from the ocean floor. (AquaByte, though fictional, is a bit like the real <a href="https://schmidtocean.org/technology/robotic-platforms/4500-m-remotely-operated-vehicle-rov/">SuBastion</a>!). AquaByte sends data up from the deep, storing it in a database located across several boats on the surface of the ocean.</p>
+
+<p>In a file called <code class="language-plaintext highlighter-rouge">answers.md</code>, your task is to analyze the trade-offs in a few potential designs for AquaByte’s distributed database system!</p>
+
+<h2 id="distribution-code">Distribution Code</h2>
+
+<p>For this problem, you’ll write your answers in a file called <code class="language-plaintext highlighter-rouge">answers.md</code>.</p>
+
+<details><summary>Download <code>answers.md</code></summary><p>Log into <a href="https://cs50.dev/">cs50.dev</a>, click on your terminal window, and execute <code class="language-plaintext highlighter-rouge">cd</code> by itself. You should find that your terminal window’s prompt resembles the below:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$
+</code></pre></div></div>
+
+<p>Next execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://cdn.cs50.net/sql/2024/x/psets/6/deep.zip
+</code></pre></div></div>
+
+<p>in order to download a ZIP called <code class="language-plaintext highlighter-rouge">deep.zip</code> into your codespace.</p>
+
+<p>Then execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip deep.zip
+</code></pre></div></div>
+
+<p>to create a folder called <code class="language-plaintext highlighter-rouge">deep</code>. You no longer need the ZIP file, so you can execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm deep.zip
+</code></pre></div></div>
+
+<p>and respond with “y” followed by Enter at the prompt to remove the ZIP file you downloaded.</p>
+
+<p>Now type</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd deep
+</code></pre></div></div>
+
+<p>followed by Enter to move yourself into (i.e., open) that directory. Your prompt should now resemble the below.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>deep/ $
+</code></pre></div></div>
+
+<p>If all was successful, you should execute</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ls
+</code></pre></div></div>
+
+<p>and see a file called <code class="language-plaintext highlighter-rouge">answers.md</code>.</p></details>
+
+<h2 id="background">Background</h2>
+
+<p>AquaByte is capable of sending several thousands of observations per minute, often at particular times of day. For instance, AquaByte most actively observes in the evening and early morning hours, when certain fish can be seen with higher frequency.</p>
+
+<p>Each row of data sent to the surface by AquaByte is tagged with a primary key: in this case, the exact timestamp of the observation in the following format: <code class="language-plaintext highlighter-rouge">YYYY-MM-DD HH:MM:SS.SSS</code>. This happens to be ISO8601 format, if you’re curious!</p>
+
+<h2 id="collecting-observations">Collecting Observations</h2>
+
+<p>For simplicity, suppose AquaByte sent the following 6 observations over the course of November 1st, 2023. For the sake of visualization, each observation is denoted by a blue rectangle labeled by its primary key (the timestamp at which the observation was taken).</p>
+
+<p><img src="timestamps.jpg" alt="Timestamps"></p>
+
+<div class="alert" data-alert="secondary" role="alert"><p>As a check for understanding, when did most of AquaByte’s observations occur?</p></div>
+
+<details><summary>Between midnight and 1am on November 1st, 2023</summary><p>That’s right!</p></details>
+
+<details><summary>Between noon and 1pm on November 1st, 2023</summary><p>Not quite.</p></details>
+
+<details><summary>Between 4pm and 5pm on November 1st, 2023</summary><p>Not quite.</p></details>
+
+<h2 id="partitions">Partitions</h2>
+
+<p>AquaByte plans to send its six observations to a network of boats on the surface: Boat A, Boat B, and Boat C. More boats allow AquaByte to send more data than any single boat could store. Yet more boats comes at the cost of more complexity: assuming the data, once stored, shouldn’t be moved, to which boat should AquaByte send each observation? This is, in fact, a problem of <em>partitioning</em> the data.</p>
+
+<h3 id="random-partitioning">Random Partitioning</h3>
+
+<p>One approach is for AquaByte to randomly send its observations to each boat, as per the below. With the questions below, analyze the technical trade-offs of this design decision.</p>
+
+<p><img src="random.jpg" alt="Random Partitioning"></p>
+
+<p>Consider the following two thought questions. Once you have an idea in your head, choose the answer that best corresponds to your thinking by clicking the appropriate dropdown.</p>
+
+<div class="alert" data-alert="secondary" role="alert"><p>Will the observations likely be evenly distributed across all boats, even if AquaByte most commonly collects observations between midnight and 1am? Why or why not?</p></div>
+
+<details><summary>The observations will be evenly distributed.</summary><p>That’s right. The observations will be evenly distributed because each one is randomly assigned to any one of the three boats. Or, put another way, an observation is equally likely to be sent to any boat. So, even if AquaByte most commonly collects observations between midnight and 1am, observations will be evenly spread out among the boats.</p></details>
+
+<details><summary>The observations will not be evenly distributed.</summary><p>Not quite. The observations will be evenly distributed because each one is randomly assigned to any one of the three boats. Or, put another way, an observation is equally likely to be sent to any boat. So, even if AquaByte most commonly collects observations between midnight and 1am, observations will be evenly spread out among the boats.</p></details>
+
+<div class="alert" data-alert="secondary" role="alert"><p>Suppose a researcher wants to query for all observations between midnight and 1am. On how many of the boats will they need to run the query?</p></div>
+
+<details><summary>The researcher will need to run the query on all of the boats.</summary><p>That’s right. Because the observations are randomly assigned to any boat, each observation between midnight and 1am could be on any one of the three boats. If a query is only run on one boat, there’s a chance it has missed observations, stored on other boats, that it should have returned.</p></details>
+
+<details><summary>The researcher will need to run the query on only some of the boats.</summary><p>Not quite. Consider that each observation between midnight and 1am is equally likely to be on any one of the three boats. So if the researcher only runs the query on one of the boats, there is a chance the query will have missed observations on other boats.</p></details>
+
+<p>Based on what you’ve learned from the above, from lecture, and from your own intuition, write 2–3 sentences that describe both reasons to adopt this approach and reasons <em>not</em> to adopt this approach. Write the sentences in <code class="language-plaintext highlighter-rouge">answers.md</code>, within the “Random Partitioning” section.</p>
+
+<h3 id="partitioning-by-hour">Partitioning by Hour</h3>
+
+<p>Suppose, for the reasons you’ve written, the AquaByte team decides not to have AquaByte randomly send its observations to each boat. Instead, a team member proposes that you partition the data by <em>time of day</em>. For instance,</p>
+
+<ul>
+  <li data-marker="*">Boat A will receive all observations within the hours of 0–7 (i.e., midnight to 7:59 AM), inclusive.</li>
+  <li data-marker="*">Boat B will receive all observations within the hours of 8–15 (i.e., 8:00 AM to 3:59 PM), inclusive.</li>
+  <li data-marker="*">Boat C will receive all observations within the hours of 16–23 (i.e., 4:00 PM to 11:59 PM), inclusive.</li>
+</ul>
+
+<p>With the questions below, analyze the technical trade-offs of this design decision.</p>
+
+<p><img src="hour.jpg" alt="Partitioning by Hour"></p>
+
+<p>Consider the following two thought questions. Once you have an idea in your head, choose the answer that best corresponds to your thinking by clicking the appropriate dropdown.</p>
+
+<div class="alert" data-alert="secondary" role="alert"><p>Will the observations likely be evenly distributed across all boats, even if AquaByte most commonly collects observations between midnight and 1am? Why or why not?</p></div>
+
+<details><summary>The observations will be evenly distributed.</summary><p>Not quite. The observations will not be evenly distributed if AquaByte most commonly collects observations between midnight and 1am. Since most observations are collected between midnight and 1am, and because Boat A will receive all observations within the hours of 0–7 (i.e., midnight to 7:59 AM), inclusive, Boat A will receive most of the observations.</p></details>
+
+<details><summary>The observations will not be evenly distributed.</summary><p>That’s right. Since most observations are collected between midnight and 1am, and because Boat A will receive all observations within the hours of 0–7 (i.e., midnight to 7:59 AM), inclusive, Boat A will receive most of the observations.</p></details>
+
+<div class="alert" data-alert="secondary" role="alert"><p>Suppose a researcher wants to query for all observations between midnight and 1am. On how many of the boats will they need to run the query?</p></div>
+
+<details><summary>The researcher will need to run the query on all of the boats.</summary><p>Not quite. Boat A will receive all observations within the hours of 0–7 (i.e., midnight to 7:59 AM), inclusive. This means that all observations between midnight and 1am can be found on Boat A.</p></details>
+
+<details><summary>The researcher will need to run the query on only some of the boats.</summary><p>That’s right. Boat A will receive all observations within the hours of 0–7 (i.e., midnight to 7:59 AM), inclusive. This means that all observations between midnight and 1am can be found on Boat A.</p></details>
+
+<p>Based on what you’ve learned from the above, from lecture, and from your own intuition, write 2–3 sentences that describe both reasons to adopt this approach and reasons <em>not</em> to adopt this approach. Write the sentences in <code class="language-plaintext highlighter-rouge">answers.md</code>, within the “Partitioning by Hour” section.</p>
+
+<h3 id="partitioning-by-hash-value">Partitioning by Hash Value</h3>
+
+<p>Suppose, for the reasons you’ve identified above, the AquaByte team decides not to have AquaByte send observations to certain boats depending on the hour in which they were collected. Instead, a team member proposes that you partition the observations by <em>hash value</em> of their timestamp.</p>
+
+<p>If unfamiliar, a hash value is generated by a <em>hash function</em>. A hash function is an algorithm that takes some input (such as a timestamp, for example) and—based on the input—outputs an arbitrary number (the hash value).</p>
+
+<p>For instance, suppose the team develops a hash function that assigns a value between 0 and 1,499, inclusive, to each possible primary key AquaByte could send to the distributed data system. As examples of inputs and outputs:</p>
+
+<ul>
+  <li data-marker="*">The algorithm computes the hash value 45 for <code class="language-plaintext highlighter-rouge">2023-11-01 00:00:01.020</code>.</li>
+  <li data-marker="*">The algorithm computes the hash value 588 for <code class="language-plaintext highlighter-rouge">2023-11-01 16:21:59.924</code>.</li>
+  <li data-marker="*">The algorithm computes the hash value 1200 for <code class="language-plaintext highlighter-rouge">2023-11-01 00:00:04.127</code>.</li>
+</ul>
+
+<p>Importantly, the hash function is <em>consistent</em>: it will always compute the same hash value when given the same timestamp. The hash function also distributes timestamps <em>evenly</em> across all possible hash values: that is, a single observation is no more likely to be assigned one hash value than another. With the questions below, analyze the technical trade-offs of this design decision.</p>
+
+<p><img src="hash.jpg" alt="Hash Partitioning"></p>
+
+<p>Consider the following three thought questions. Once you have an idea in your head, choose the answer that best corresponds to your thinking by clicking the appropriate dropdown.</p>
+
+<div class="alert" data-alert="secondary" role="alert"><p>Will the observations likely be evenly distributed across all boats, even if AquaByte most commonly collects observations between midnight and 1am? Why or why not?</p></div>
+
+<details><summary>The observations will be evenly distributed.</summary><p>That’s right. A single observation is no more likely to be assigned one hash value than another, which means any single observation could be sent to any one of the three available boats.</p></details>
+
+<details><summary>The observations will not be evenly distributed.</summary><p>Not quite. Though AquaByte does most commonly collect observations between midnight and 1am, a single observation is no more likely to be assigned one hash value than another. Any single observation could be sent to any one of the three available boats.</p></details>
+
+<div class="alert" data-alert="secondary" role="alert"><p>Suppose a researcher wants to query for all observations between midnight and 1am. On how many of the boats will they need to run the query?</p></div>
+
+<details><summary>The researcher will likely need to run the query on all of the boats.</summary><p>That’s right. Each observation in a <em>range</em> of observations could be assigned any arbitrary hash value: the hash values themselves are not in a specified range. For that reason, the query would be best run on all boats.</p></details>
+
+<details><summary>The researcher will likely need to run the query on only some of the boats.</summary><p>Not quite. It’s certainly possible to know the hash value of a <em>specific</em> observation. But each observation in a <em>range</em> of observations could be assigned any arbitrary hash value: the hash values themselves are not in a specified range. For that reason, the query would be best run on all boats.</p></details>
+
+<div class="alert" data-alert="secondary" role="alert"><p>Suppose a researcher wants to query for a specific observation, which occurred at exactly <code class="language-plaintext highlighter-rouge">2023-11-01 00:00:01.020</code>. On how many of the boats will they need to run the query?</p></div>
+
+<details><summary>The researcher will need to run the query on all of the boats.</summary><p>Not quite. It is possible to know the hash value of a specific timestamp, which can tell the researcher where to run the query.</p></details>
+
+<details><summary>The researcher will need to run the query on only some of the boats.</summary><p>That’s right. It is possible to know the hash value of a specific timestamp, which can tell the researcher where to run the query.</p></details>
+
+<p>Based on what you’ve learned from the above, from lecture, and from your own intuition, write 2–3 sentences that describe both reasons to adopt this approach and reasons <em>not</em> to adopt this approach. Write the sentences in <code class="language-plaintext highlighter-rouge">answers.md</code>, within the “Partitioning by Hash Value” section.</p>
+
+<h2 id="how-to-submit">How to Submit</h2>
+
+<p>In your terminal, execute the below to submit your work.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>submit50 cs50/problems/2024/sql/deep
+</code></pre></div></div>
+
+
+                </main>
+
+            </div>
+
+        </div>
+
+        
+ 
+        <script src="../../../assets/page.js?1775509000"></script>
+
+    
+
+
+</body></html>

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONTAINER_NAME="cs50-sql-postgres"
+
+if docker ps --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
+    docker stop "$CONTAINER_NAME" >/dev/null
+fi

@@ -1,0 +1,6 @@
+-- CS50 SQL PSet 2: ATL
+-- Official page: https://cs50.harvard.edu/sql/psets/2/atl/
+--
+-- Build and test locally with:
+--   sqlite3 atl.db
+--   .read schema.sql

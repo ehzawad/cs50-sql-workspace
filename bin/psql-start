@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CONTAINER_NAME="cs50-sql-postgres"
+POSTGRES_IMAGE="${CS50_SQL_POSTGRES_IMAGE:-postgres:16}"
+DATA_DIR="$ROOT/data/postgres"
+
+mkdir -p "$DATA_DIR"
+
+if docker ps --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
+    exit 0
+fi
+
+if docker ps -a --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
+    docker start "$CONTAINER_NAME" >/dev/null
+else
+    docker run \
+        --name "$CONTAINER_NAME" \
+        -e POSTGRES_PASSWORD=crimson \
+        -e POSTGRES_USER=postgres \
+        -v "$DATA_DIR:/var/lib/postgresql/data" \
+        -v "$ROOT:/workspace" \
+        -d \
+        "$POSTGRES_IMAGE" >/dev/null
+fi
+
+for _ in $(seq 1 60); do
+    if docker exec "$CONTAINER_NAME" pg_isready -U postgres >/dev/null 2>&1; then
+        exit 0
+    fi
+    sleep 1
+done
+
+echo "PostgreSQL container did not become ready in time." >&2
+exit 1

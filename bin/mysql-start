@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CONTAINER_NAME="cs50-sql-mysql"
+MYSQL_IMAGE="${CS50_SQL_MYSQL_IMAGE:-mysql:8}"
+DATA_DIR="$ROOT/data/mysql"
+
+mkdir -p "$DATA_DIR"
+
+if docker ps --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
+    exit 0
+fi
+
+if docker ps -a --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
+    docker start "$CONTAINER_NAME" >/dev/null
+    exit 0
+fi
+
+docker run \
+    --name "$CONTAINER_NAME" \
+    -e MYSQL_ROOT_PASSWORD=crimson \
+    -v "$DATA_DIR:/var/lib/mysql" \
+    -v "$ROOT:/workspace" \
+    -d \
+    "$MYSQL_IMAGE" >/dev/null
+
+# Wait until the server is accepting connections.
+for _ in $(seq 1 60); do
+    if docker exec "$CONTAINER_NAME" mysqladmin ping -uroot -pcrimson --silent >/dev/null 2>&1; then
+        exit 0
+    fi
+    if docker exec "$CONTAINER_NAME" mysqladmin ping -uroot --silent >/dev/null 2>&1; then
+        docker exec "$CONTAINER_NAME" mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'crimson'; FLUSH PRIVILEGES;" >/dev/null 2>&1 || true
+        exit 0
+    fi
+    sleep 1
+done
+
+echo "MySQL container did not become ready in time." >&2
+exit 1

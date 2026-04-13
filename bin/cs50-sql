@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SQLITE="$ROOT/bin/sqlite3"
+
+usage() {
+    cat <<'EOF'
+Usage:
+  ./bin/cs50-sql week0
+  ./bin/cs50-sql packages
+  ./bin/cs50-sql bnb
+  ./bin/cs50-sql --list
+  ./bin/cs50-sql cyberchase
+  ./bin/cs50-sql views
+  ./bin/cs50-sql normals
+  ./bin/cs50-sql players
+  ./bin/cs50-sql /path/to/folder-with-one-db
+  ./bin/cs50-sql /absolute/or/relative/path/to/file.db
+
+Aliases:
+  week0       -> cs50/week0/src0/longlist.db
+  cyberchase  -> cs50/pset0/cyberchase/cyberchase.db
+  views       -> cs50/pset0/views/views.db
+  normals     -> cs50/pset0/normals/normals.db
+  players     -> cs50/pset0/players/players.db
+
+The shell starts with:
+  .headers on
+  .mode box
+EOF
+}
+
+list_dbs() {
+    find "$ROOT/cs50" -type f -name '*.db' | sort | sed "s#^$ROOT/##"
+}
+
+target="${1:-week0}"
+
+case "$target" in
+    -h|--help|help)
+        usage
+        exit 0
+        ;;
+    --list|list)
+        list_dbs
+        exit 0
+        ;;
+    week0)
+        db="$ROOT/cs50/week0/src0/longlist.db"
+        ;;
+    cyberchase)
+        db="$ROOT/cs50/pset0/cyberchase/cyberchase.db"
+        ;;
+    views)
+        db="$ROOT/cs50/pset0/views/views.db"
+        ;;
+    normals)
+        db="$ROOT/cs50/pset0/normals/normals.db"
+        ;;
+    players)
+        db="$ROOT/cs50/pset0/players/players.db"
+        ;;
+    *)
+        if [[ -d "$target" ]]; then
+            mapfile -t matches < <(find -L "$target" -maxdepth 1 -type f -name '*.db' | sort)
+        elif [[ -f "$target" ]]; then
+            matches=("$target")
+        else
+            mapfile -t matches < <(find "$ROOT/cs50" -type f -name "${target}.db" | sort)
+        fi
+
+        if [[ "${#matches[@]}" -eq 1 ]]; then
+            db="${matches[0]}"
+        elif [[ "${#matches[@]}" -gt 1 ]]; then
+            echo "Ambiguous database name: $target" >&2
+            printf '%s\n' "${matches[@]}" >&2
+            exit 1
+        else
+            db="$target"
+        fi
+        ;;
+esac
+
+if [[ ! -f "$db" ]]; then
+    echo "Database not found: $db" >&2
+    usage >&2
+    exit 1
+fi
+
+exec "$SQLITE" \
+    -cmd ".headers on" \
+    -cmd ".mode box" \
+    "$db"

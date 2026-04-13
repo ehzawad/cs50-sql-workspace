@@ -1,0 +1,7298 @@
+1
+00:00:00,000 --> 00:00:03,486
+[MUSIC PLAYING]
+
+2
+00:00:03,486 --> 00:00:16,434
+
+
+3
+00:00:16,434 --> 00:00:19,090
+CARTER ZENKE: Well hello,
+one and all, and welcome
+
+4
+00:00:19,090 --> 00:00:22,510
+back to CS50 Introduction
+to Databases with SQL.
+
+5
+00:00:22,510 --> 00:00:25,090
+My name is Carter Zenke,
+and today we'll focus
+
+6
+00:00:25,090 --> 00:00:29,050
+on optimizing-- trying to
+reduce the time our queries take
+
+7
+00:00:29,050 --> 00:00:32,500
+as well as reducing the storage
+space our database might use.
+
+8
+00:00:32,500 --> 00:00:34,960
+We'll also see how to
+handle concurrency.
+
+9
+00:00:34,960 --> 00:00:38,300
+That is, many queries all at once.
+
+10
+00:00:38,300 --> 00:00:41,560
+Now we'll do all of this in
+the context of a new database,
+
+11
+00:00:41,560 --> 00:00:45,940
+this one-- the Internet Movies
+Database, or IMDb for short.
+
+12
+00:00:45,940 --> 00:00:51,680
+If you've been to imdb.com you may have
+seen this whole big database of movies,
+
+13
+00:00:51,680 --> 00:00:56,360
+and we've compiled that into our very
+own SQLite database for us today.
+
+14
+00:00:56,360 --> 00:00:58,830
+Now this database is big.
+
+15
+00:00:58,830 --> 00:01:01,240
+It is much bigger than
+anything we've seen so far.
+
+16
+00:01:01,240 --> 00:01:07,090
+In fact, it has over 200,000 movie
+ratings, over 400,000 movies,
+
+17
+00:01:07,090 --> 00:01:12,850
+and 1.4 million stars or people
+who have acted in some movie.
+
+18
+00:01:12,850 --> 00:01:17,360
+And the goal of this database is to
+represent movies, the people in them,
+
+19
+00:01:17,360 --> 00:01:21,280
+and the average ratings
+for each of those movies.
+
+20
+00:01:21,280 --> 00:01:24,250
+Now we have ourselves an
+entity relationship diagram
+
+21
+00:01:24,250 --> 00:01:27,470
+to describe this database,
+and it looks a bit like this.
+
+22
+00:01:27,470 --> 00:01:31,690
+We have people in one
+table, movies in another,
+
+23
+00:01:31,690 --> 00:01:34,870
+and ratings in a
+separate table down here.
+
+24
+00:01:34,870 --> 00:01:37,870
+Notice that people have
+a name and a birthday
+
+25
+00:01:37,870 --> 00:01:41,320
+along with an ID, the
+primary key for that table.
+
+26
+00:01:41,320 --> 00:01:45,020
+Movies too have a title and
+the year they were released
+
+27
+00:01:45,020 --> 00:01:48,130
+as well as their own
+primary key ID here.
+
+28
+00:01:48,130 --> 00:01:51,970
+Rating down here has the
+average rating for a given movie
+
+29
+00:01:51,970 --> 00:01:55,540
+as well as the number of votes
+that went into calculating
+
+30
+00:01:55,540 --> 00:01:57,220
+that average rating here.
+
+31
+00:01:57,220 --> 00:02:02,950
+And notice too that the movie and people
+table has a many-to-many relationship.
+
+32
+00:02:02,950 --> 00:02:06,790
+That is, a person can star
+in more than one movie
+
+33
+00:02:06,790 --> 00:02:11,450
+in the same way a movie
+can have multiple stars.
+
+34
+00:02:11,450 --> 00:02:14,560
+So if we want to implement
+this many-to-many relationship,
+
+35
+00:02:14,560 --> 00:02:17,230
+we've seen one way to do that.
+
+36
+00:02:17,230 --> 00:02:19,720
+Let me actually ask
+the audience here, how
+
+37
+00:02:19,720 --> 00:02:23,470
+have we implemented a many-to-many
+relationship historically?
+
+38
+00:02:23,470 --> 00:02:27,170
+What kind of tables do we
+need for this, do you think?
+
+39
+00:02:27,170 --> 00:02:27,670
+All right.
+
+40
+00:02:27,670 --> 00:02:30,320
+So not to worry if you don't have an
+idea of what we're going to use here.
+
+41
+00:02:30,320 --> 00:02:32,528
+Let's take a peek at what
+tables we can actually use.
+
+42
+00:02:32,528 --> 00:02:37,030
+So here as we've seen historically we
+might have two tables, one for people
+
+43
+00:02:37,030 --> 00:02:38,770
+and one for movies.
+
+44
+00:02:38,770 --> 00:02:41,800
+And notice here in the
+people table we have names
+
+45
+00:02:41,800 --> 00:02:45,130
+along with a primary key called ID.
+
+46
+00:02:45,130 --> 00:02:49,300
+And similarly in our movies
+table, we also have a title
+
+47
+00:02:49,300 --> 00:02:55,180
+column along with a movies own
+primary key, an ID column over there.
+
+48
+00:02:55,180 --> 00:02:59,380
+Now to implement the relationship
+between people and movies,
+
+49
+00:02:59,380 --> 00:03:02,810
+we have to have some table
+in the middle of these two.
+
+50
+00:03:02,810 --> 00:03:08,050
+One that relates people IDs
+or person IDs with movie IDs.
+
+51
+00:03:08,050 --> 00:03:09,940
+And if we look at this
+table, I could see
+
+52
+00:03:09,940 --> 00:03:14,020
+that if I see person ID next
+to some given movie ID, well
+
+53
+00:03:14,020 --> 00:03:17,260
+it means that the person
+with this ID has starred in,
+
+54
+00:03:17,260 --> 00:03:19,660
+played a role in, this movie here.
+
+55
+00:03:19,660 --> 00:03:21,610
+We see person 158--
+
+56
+00:03:21,610 --> 00:03:27,160
+let's see, Tom Hanks-- was in the
+movie ID with 114709, or Toy Story
+
+57
+00:03:27,160 --> 00:03:29,500
+as we see in the movies table.
+
+58
+00:03:29,500 --> 00:03:33,160
+And now knowing this, how
+can we figure out which
+
+59
+00:03:33,160 --> 00:03:36,160
+movies Kristen Bell has starred in?
+
+60
+00:03:36,160 --> 00:03:38,770
+If we know of Kristen
+Bell's ID, what should we
+
+61
+00:03:38,770 --> 00:03:42,841
+then do to find the movies
+Kristen Bell has starred in?
+
+62
+00:03:42,841 --> 00:03:48,490
+AUDIENCE: You could select the ID of
+the people then look into the stars
+
+63
+00:03:48,490 --> 00:03:51,462
+table, then look at
+[INAUDIBLE] the movies table.
+
+64
+00:03:51,462 --> 00:03:53,170
+CARTER ZENKE: Yeah,
+I like your thinking.
+
+65
+00:03:53,170 --> 00:03:54,610
+So there's multiple steps here.
+
+66
+00:03:54,610 --> 00:03:58,780
+We have to go through each table to
+find ultimately the movie that Kristen
+
+67
+00:03:58,780 --> 00:03:59,950
+Bell has starred in.
+
+68
+00:03:59,950 --> 00:04:03,610
+The first step might be to
+ask, what is Kristen Bell's ID?
+
+69
+00:04:03,610 --> 00:04:06,310
+Well it seems to be 68338.
+
+70
+00:04:06,310 --> 00:04:09,040
+Then, to your point, we
+could look at the stars table
+
+71
+00:04:09,040 --> 00:04:12,710
+and find out what movie IDs
+correspond to that ID here.
+
+72
+00:04:12,710 --> 00:04:17,779
+So it seems like 2294629 corresponds
+with Kristen Bell's ID here.
+
+73
+00:04:17,779 --> 00:04:20,200
+Then finally we look up
+in the movies table, well,
+
+74
+00:04:20,200 --> 00:04:23,770
+what title corresponds with 2294629?
+
+75
+00:04:23,770 --> 00:04:25,660
+It seems to be the movie Frozen.
+
+76
+00:04:25,660 --> 00:04:30,350
+So visually, we have this
+relationship among these tables here.
+
+77
+00:04:30,350 --> 00:04:33,610
+So let's now dive into
+our movies database
+
+78
+00:04:33,610 --> 00:04:36,100
+to actually get a sense of
+what data is inside of this.
+
+79
+00:04:36,100 --> 00:04:39,100
+And for that I'll go back to my
+computer so we can open this database up
+
+80
+00:04:39,100 --> 00:04:40,300
+in SQLite.
+
+81
+00:04:40,300 --> 00:04:44,410
+I'll come back over here and
+I'll open up my own environment
+
+82
+00:04:44,410 --> 00:04:48,250
+where I can type sqlite3 movies.db.
+
+83
+00:04:48,250 --> 00:04:49,780
+movies.db.
+
+84
+00:04:49,780 --> 00:04:56,980
+And now if I zoom in just a bit, I
+can then type .schema to show you all
+
+85
+00:04:56,980 --> 00:04:59,530
+the tables that exist in this database.
+
+86
+00:04:59,530 --> 00:05:06,070
+I see up top I do have a movies table
+that has a primary key called ID,
+
+87
+00:05:06,070 --> 00:05:08,980
+a column called title
+and a column called year.
+
+88
+00:05:08,980 --> 00:05:12,040
+I have that same people table
+with names and birthdays,
+
+89
+00:05:12,040 --> 00:05:17,530
+and I also have this stars table that
+corresponds with person IDs and movie
+
+90
+00:05:17,530 --> 00:05:21,780
+IDs, relating in this
+case people and movies.
+
+91
+00:05:21,780 --> 00:05:25,600
+OK, so let's try selecting
+then from our movies table
+
+92
+00:05:25,600 --> 00:05:28,930
+to see what movies we have,
+take a peek at our data.
+
+93
+00:05:28,930 --> 00:05:30,880
+Well, we saw a little
+bit ago, we could try
+
+94
+00:05:30,880 --> 00:05:33,640
+to take a peek at our data
+using a certain SQL keyword.
+
+95
+00:05:33,640 --> 00:05:38,800
+I could SELECT * from "movies"
+to see all columns from movies,
+
+96
+00:05:38,800 --> 00:05:42,790
+but if I have let's say
+400,000 rows I don't
+
+97
+00:05:42,790 --> 00:05:44,540
+want to print all those to the screen.
+
+98
+00:05:44,540 --> 00:05:47,480
+So what could I use instead?
+
+99
+00:05:47,480 --> 00:05:49,598
+A certain SQL keyword.
+
+100
+00:05:49,598 --> 00:05:51,140
+I'm hearing LIMIT, so let's try that.
+
+101
+00:05:51,140 --> 00:05:53,000
+I'll say LIMIT 5.
+
+102
+00:05:53,000 --> 00:05:55,100
+I only want the first five results here.
+
+103
+00:05:55,100 --> 00:06:00,820
+I'll hit Enter, and here I'll see those
+first five movies in my movies table.
+
+104
+00:06:00,820 --> 00:06:03,850
+They each have their own
+unique ID, a primary key.
+
+105
+00:06:03,850 --> 00:06:07,360
+They have a title and the
+year that they were published.
+
+106
+00:06:07,360 --> 00:06:12,070
+But if you've been to
+imdb.com, you may have wanted
+
+107
+00:06:12,070 --> 00:06:13,600
+to search for a particular movie.
+
+108
+00:06:13,600 --> 00:06:17,590
+Maybe you wanted to find your favorite
+movie among all the possible movies
+
+109
+00:06:17,590 --> 00:06:18,520
+in their database.
+
+110
+00:06:18,520 --> 00:06:22,480
+And we can simulate that kind of
+query by querying the database here.
+
+111
+00:06:22,480 --> 00:06:25,930
+Whenever you type in IMDd's browser--
+that's like the search for a movie
+
+112
+00:06:25,930 --> 00:06:28,930
+called Frozen, for example--
+
+113
+00:06:28,930 --> 00:06:31,180
+odds are that behind the
+scenes a database is actually
+
+114
+00:06:31,180 --> 00:06:33,490
+running that same query
+to return to you what
+
+115
+00:06:33,490 --> 00:06:36,220
+movies have that title called Frozen.
+
+116
+00:06:36,220 --> 00:06:38,470
+Now for me my favorite
+movie since I was a kid
+
+117
+00:06:38,470 --> 00:06:41,650
+is one called Cars, so let me
+try to search for Cars here.
+
+118
+00:06:41,650 --> 00:06:48,700
+I'll try to find SELECT * from
+"movies" where the "title" = 'Cars'.
+
+119
+00:06:48,700 --> 00:06:52,840
+And you could imagine me going to
+IMDb, typing in Cars in the search bar,
+
+120
+00:06:52,840 --> 00:06:55,720
+and behind the scenes
+this SQL query gets
+
+121
+00:06:55,720 --> 00:06:59,920
+run to find what movies
+have the title Cars.
+
+122
+00:06:59,920 --> 00:07:05,320
+So let me hit Enter here, and now I'll
+see that one movie has that title Cars.
+
+123
+00:07:05,320 --> 00:07:10,540
+Came out in 2006 and the ID is 317219.
+
+124
+00:07:10,540 --> 00:07:13,720
+But this is a lecture on
+optimizing, so it's worth
+
+125
+00:07:13,720 --> 00:07:18,370
+asking how much time did it
+take for this query to run?
+
+126
+00:07:18,370 --> 00:07:19,600
+Let's find out.
+
+127
+00:07:19,600 --> 00:07:23,380
+Well I can use a SQLite
+command here called timer.
+
+128
+00:07:23,380 --> 00:07:29,080
+I'll say .timer on to make sure
+that I time my future queries.
+
+129
+00:07:29,080 --> 00:07:30,670
+I'll hit Enter now.
+
+130
+00:07:30,670 --> 00:07:33,820
+And now if I try selecting again,
+I'll hit the up arrow twice
+
+131
+00:07:33,820 --> 00:07:35,260
+to get back my old query.
+
+132
+00:07:35,260 --> 00:07:40,030
+I can type Enter and I'll
+see not just the results
+
+133
+00:07:40,030 --> 00:07:44,380
+but the time it took to run that query.
+
+134
+00:07:44,380 --> 00:07:47,250
+Now notice, we have several
+different measures of time here.
+
+135
+00:07:47,250 --> 00:07:50,130
+I have the quote, unquote "real
+time" which is essentially
+
+136
+00:07:50,130 --> 00:07:54,060
+the stopwatch time, meaning from the
+time I press Enter to the time I saw
+
+137
+00:07:54,060 --> 00:07:56,835
+these results, how long did that take?
+
+138
+00:07:56,835 --> 00:07:58,710
+But of course you're
+familiar with computers.
+
+139
+00:07:58,710 --> 00:08:02,037
+You know there's more involved
+than just this query running.
+
+140
+00:08:02,037 --> 00:08:03,870
+I also have to wait for
+the operating system
+
+141
+00:08:03,870 --> 00:08:05,340
+to finish other processes as well.
+
+142
+00:08:05,340 --> 00:08:07,740
+That's where user and
+system time come in.
+
+143
+00:08:07,740 --> 00:08:12,070
+User time is how much time this
+query particularly took on the CPU.
+
+144
+00:08:12,070 --> 00:08:14,820
+System time is how long I spent
+waiting around for other processes
+
+145
+00:08:14,820 --> 00:08:17,130
+to finish before I could run this query.
+
+146
+00:08:17,130 --> 00:08:19,200
+For us, we'll focus on real time.
+
+147
+00:08:19,200 --> 00:08:22,120
+What was the wall clock time,
+the stopwatch time, so to speak,
+
+148
+00:08:22,120 --> 00:08:26,480
+between the time I pressed Enter
+and the time I saw these results.
+
+149
+00:08:26,480 --> 00:08:27,380
+OK.
+
+150
+00:08:27,380 --> 00:08:33,350
+So here we have a query
+taking 0.084 seconds.
+
+151
+00:08:33,350 --> 00:08:35,270
+I mean, that is pretty good.
+
+152
+00:08:35,270 --> 00:08:41,030
+If I only wait around for less than a
+tenth of a second, I'm not complaining.
+
+153
+00:08:41,030 --> 00:08:45,260
+But if I'm an engineer
+at IMDb, why might I
+
+154
+00:08:45,260 --> 00:08:50,450
+be concerned about a query that
+takes 0.084 seconds, particularly
+
+155
+00:08:50,450 --> 00:08:53,000
+if I have lots and lots of users?
+
+156
+00:08:53,000 --> 00:08:55,120
+What's the problem there?
+
+157
+00:08:55,120 --> 00:09:00,320
+AUDIENCE: For users, the database
+might be overwhelmed by the queries.
+
+158
+00:09:00,320 --> 00:09:05,840
+And you should also consider how
+much time the application takes
+
+159
+00:09:05,840 --> 00:09:08,738
+to form the query to the database too.
+
+160
+00:09:08,738 --> 00:09:09,530
+CARTER ZENKE: Yeah.
+
+161
+00:09:09,530 --> 00:09:11,720
+So the basic idea here
+is that when I have
+
+162
+00:09:11,720 --> 00:09:15,090
+a single query that takes maybe less
+than tenth of a second, that's fine.
+
+163
+00:09:15,090 --> 00:09:19,010
+But if I have many, many users
+running those queries all at once,
+
+164
+00:09:19,010 --> 00:09:21,390
+that time is going to add up.
+
+165
+00:09:21,390 --> 00:09:24,500
+And so if I'm an engineer
+or even somebody in finance,
+
+166
+00:09:24,500 --> 00:09:28,160
+I want to reduce that time because
+I'm paying per second that I
+
+167
+00:09:28,160 --> 00:09:30,830
+run this database on some other server.
+
+168
+00:09:30,830 --> 00:09:33,980
+So we can optimize these
+queries, but let's first
+
+169
+00:09:33,980 --> 00:09:36,470
+get a sense of how
+they're presently running.
+
+170
+00:09:36,470 --> 00:09:41,360
+What is SQLite doing underneath the
+hood to find this movie called Cars?
+
+171
+00:09:41,360 --> 00:09:45,920
+Well for that, I'll bring up a certain
+visual here of our titles column.
+
+172
+00:09:45,920 --> 00:09:50,840
+So imagine here that we have a
+smaller database called Movies
+
+173
+00:09:50,840 --> 00:09:52,890
+that just has titles in this case.
+
+174
+00:09:52,890 --> 00:09:57,350
+And now I want to search these
+titles, but I'm a computer.
+
+175
+00:09:57,350 --> 00:09:58,190
+I'm not a human.
+
+176
+00:09:58,190 --> 00:10:01,550
+Meaning I can only look
+at one item at a time.
+
+177
+00:10:01,550 --> 00:10:05,720
+I can only look at one
+row and check its title.
+
+178
+00:10:05,720 --> 00:10:11,570
+Now if I want to find the row or
+the rows that have Cars in them,
+
+179
+00:10:11,570 --> 00:10:16,610
+what's the best I could do
+if my titles are not sorted?
+
+180
+00:10:16,610 --> 00:10:18,890
+What's the best approach
+I could take here?
+
+181
+00:10:18,890 --> 00:10:24,922
+If I can only look at one row at a
+time, how might I search this column?
+
+182
+00:10:24,922 --> 00:10:27,990
+AUDIENCE: You should use a
+linear search then, right?
+
+183
+00:10:27,990 --> 00:10:29,680
+CARTER ZENKE: So I like your intuition.
+
+184
+00:10:29,680 --> 00:10:31,900
+There is an algorithm,
+a step-by-step process
+
+185
+00:10:31,900 --> 00:10:34,990
+called linear search where
+we look at one element
+
+186
+00:10:34,990 --> 00:10:38,170
+at a time or, in this
+case one row at a time.
+
+187
+00:10:38,170 --> 00:10:40,750
+That's exactly what we
+can do for this table.
+
+188
+00:10:40,750 --> 00:10:44,980
+I can look at one row at a time to
+find is this title in this column
+
+189
+00:10:44,980 --> 00:10:46,360
+or is it not?
+
+190
+00:10:46,360 --> 00:10:50,120
+So here to visualize, I
+could take this title column.
+
+191
+00:10:50,120 --> 00:10:52,970
+I can only look at one at a time.
+
+192
+00:10:52,970 --> 00:10:58,630
+But if this data is not sorted, I can
+do no better than looking at every row
+
+193
+00:10:58,630 --> 00:10:59,920
+exactly once.
+
+194
+00:10:59,920 --> 00:11:01,780
+So here we start with Toy Story.
+
+195
+00:11:01,780 --> 00:11:05,110
+We ask, is Toy Story equal to Cars?
+
+196
+00:11:05,110 --> 00:11:07,000
+It's not, so we'll keep going.
+
+197
+00:11:07,000 --> 00:11:09,100
+Here I'll check Cars 3.
+
+198
+00:11:09,100 --> 00:11:12,070
+Is Cars 3 strictly equal to Cars?
+
+199
+00:11:12,070 --> 00:11:15,040
+It has Cars in it, but
+it's not Cars exactly.
+
+200
+00:11:15,040 --> 00:11:16,180
+So I'll keep going.
+
+201
+00:11:16,180 --> 00:11:17,380
+I'll look at Frozen.
+
+202
+00:11:17,380 --> 00:11:23,170
+And Frozen is not Cars either, so I'll
+keep going again and here I see Cars.
+
+203
+00:11:23,170 --> 00:11:26,540
+So maybe I could stop here.
+
+204
+00:11:26,540 --> 00:11:28,360
+But why couldn't I?
+
+205
+00:11:28,360 --> 00:11:34,300
+Well if I need to find not just the
+one row that has Cars but all the rows
+
+206
+00:11:34,300 --> 00:11:39,790
+that have Cars, I have to keep going to
+see is Cars elsewhere in this column?
+
+207
+00:11:39,790 --> 00:11:42,910
+Is it not just here, but
+also in other rows too?
+
+208
+00:11:42,910 --> 00:11:44,050
+So I'll keep going.
+
+209
+00:11:44,050 --> 00:11:47,020
+I'll look at WALL-E,
+Ratatouille, Soul, Turning Red
+
+210
+00:11:47,020 --> 00:11:50,290
+until I get to the end of this column.
+
+211
+00:11:50,290 --> 00:11:53,530
+And this process is called
+a scan of the table.
+
+212
+00:11:53,530 --> 00:11:58,210
+We're scanning our column top
+to bottom looking for the result
+
+213
+00:11:58,210 --> 00:12:00,160
+that we need to find.
+
+214
+00:12:00,160 --> 00:12:03,580
+But it turns out we can
+actually optimize this search.
+
+215
+00:12:03,580 --> 00:12:07,898
+We can do a bit better than
+going one by one by one by one,
+
+216
+00:12:07,898 --> 00:12:09,940
+and for this we need a
+bit of a metaphor to think
+
+217
+00:12:09,940 --> 00:12:12,170
+about how we can search our table.
+
+218
+00:12:12,170 --> 00:12:15,080
+So if you have ever
+seen a kind of textbook,
+
+219
+00:12:15,080 --> 00:12:17,620
+you might have seen something
+a bit like this here.
+
+220
+00:12:17,620 --> 00:12:19,780
+This is a Handbook of
+Education Research.
+
+221
+00:12:19,780 --> 00:12:23,470
+And maybe I want to find
+which pages correspond
+
+222
+00:12:23,470 --> 00:12:26,060
+to how students learn computer science.
+
+223
+00:12:26,060 --> 00:12:29,350
+So one thing I could do is
+open to the start of the book.
+
+224
+00:12:29,350 --> 00:12:34,630
+I could go page by page looking
+for which pages have "how students
+
+225
+00:12:34,630 --> 00:12:36,700
+learn computer science."
+
+226
+00:12:36,700 --> 00:12:40,690
+I keep going here, and if I want
+to find all the pages that have
+
+227
+00:12:40,690 --> 00:12:42,610
+"how students learn
+computer science" on them,
+
+228
+00:12:42,610 --> 00:12:45,610
+I can do no better than
+going through every one
+
+229
+00:12:45,610 --> 00:12:49,600
+by one by one until I'm at
+the end of this textbook.
+
+230
+00:12:49,600 --> 00:12:53,420
+But chances are you
+yourself don't do this.
+
+231
+00:12:53,420 --> 00:12:56,270
+You do something better.
+
+232
+00:12:56,270 --> 00:13:00,010
+And there's some built-in
+structure in this book that could
+
+233
+00:13:00,010 --> 00:13:01,930
+help you find what you're looking for.
+
+234
+00:13:01,930 --> 00:13:07,170
+What might you use to find something
+in a textbook or some other book too?
+
+235
+00:13:07,170 --> 00:13:10,300
+AUDIENCE: We can use
+the index of the book.
+
+236
+00:13:10,300 --> 00:13:12,100
+CARTER ZENKE: You can use the index.
+
+237
+00:13:12,100 --> 00:13:14,470
+So often a book like a
+textbook has something
+
+238
+00:13:14,470 --> 00:13:17,440
+at the very back of
+the book that tells me
+
+239
+00:13:17,440 --> 00:13:21,370
+all the subjects that are inside
+this book, but in alphabetical order.
+
+240
+00:13:21,370 --> 00:13:24,550
+So I can see here there is a subject
+index in the back of the book
+
+241
+00:13:24,550 --> 00:13:28,330
+here that lists the subjects
+in alphabetical order, A to Z.
+
+242
+00:13:28,330 --> 00:13:31,210
+And if I want to find "how
+students learn computer science,"
+
+243
+00:13:31,210 --> 00:13:34,300
+I could perhaps search for
+computer science in this index.
+
+244
+00:13:34,300 --> 00:13:37,990
+I could find A, B, C. There's C,
+and here I see computer science.
+
+245
+00:13:37,990 --> 00:13:42,310
+Now I know all the pages I need
+to look at inside this book
+
+246
+00:13:42,310 --> 00:13:46,490
+without going through each
+of them one by one by one.
+
+247
+00:13:46,490 --> 00:13:50,080
+So in the same way that
+books have an index, so too
+
+248
+00:13:50,080 --> 00:13:53,810
+can databases and tables
+have an index as well.
+
+249
+00:13:53,810 --> 00:13:57,400
+So let's see a definition
+here for what an index is.
+
+250
+00:13:57,400 --> 00:14:00,340
+Well an index is a
+structure that we can use.
+
+251
+00:14:00,340 --> 00:14:03,010
+It's built into our
+database to help us speed up
+
+252
+00:14:03,010 --> 00:14:06,550
+the retrieval of rows from that table.
+
+253
+00:14:06,550 --> 00:14:12,670
+I first search my index, find out
+what rows my given search term is in,
+
+254
+00:14:12,670 --> 00:14:16,730
+and then look those rows up in my table.
+
+255
+00:14:16,730 --> 00:14:22,540
+Now if I want to create an index on
+a table, I can use some SQL syntax.
+
+256
+00:14:22,540 --> 00:14:27,760
+I can say "create index"
+and give it some name.
+
+257
+00:14:27,760 --> 00:14:31,270
+But I need to also specify
+a few other things.
+
+258
+00:14:31,270 --> 00:14:35,500
+Similar to my books index,
+that index has some content.
+
+259
+00:14:35,500 --> 00:14:38,770
+It's an index by subject
+or an index by author.
+
+260
+00:14:38,770 --> 00:14:42,670
+So I need to tell this
+index what to include.
+
+261
+00:14:42,670 --> 00:14:47,440
+So I should also say create index,
+give it a name on some table
+
+262
+00:14:47,440 --> 00:14:52,720
+and some columns in that table,
+telling my index what data for my table
+
+263
+00:14:52,720 --> 00:14:55,090
+it should include.
+
+264
+00:14:55,090 --> 00:14:59,230
+So let's create our very own
+index in the movies table
+
+265
+00:14:59,230 --> 00:15:02,690
+to identify how we can make this
+query just a bit faster overall.
+
+266
+00:15:02,690 --> 00:15:08,440
+So I'll come back to my computer here,
+and let's now try to create this index.
+
+267
+00:15:08,440 --> 00:15:11,290
+I will open up a new tab here.
+
+268
+00:15:11,290 --> 00:15:12,070
+A new tab.
+
+269
+00:15:12,070 --> 00:15:14,500
+And then I'll log back into my database.
+
+270
+00:15:14,500 --> 00:15:17,950
+I'll say sqlite3 movies.db.
+
+271
+00:15:17,950 --> 00:15:22,550
+And now I want to first
+create some index here.
+
+272
+00:15:22,550 --> 00:15:27,280
+So I'll turn my timer back on and now
+I'll type the syntax we just learned.
+
+273
+00:15:27,280 --> 00:15:29,810
+I want to create an index.
+
+274
+00:15:29,810 --> 00:15:33,760
+And if I'm searching my
+title column in Movies,
+
+275
+00:15:33,760 --> 00:15:38,110
+I should probably include the
+Title column in this index.
+
+276
+00:15:38,110 --> 00:15:41,470
+So I'll say call this
+the "title_index" here.
+
+277
+00:15:41,470 --> 00:15:46,450
+It'll be on the Movies table and
+it'll contain the data in the Title
+
+278
+00:15:46,450 --> 00:15:49,850
+column of Movies a bit like this.
+
+279
+00:15:49,850 --> 00:15:55,052
+Now I'll hit Enter and I'll see this
+index took some time to be created.
+
+280
+00:15:55,052 --> 00:15:57,010
+There's some stuff going
+on underneath the hood
+
+281
+00:15:57,010 --> 00:16:00,940
+where I'm putting this data in a new
+structure we're calling the index here.
+
+282
+00:16:00,940 --> 00:16:07,930
+But now if I rerun this query,
+if I say SELECT * FROM "movies,"
+
+283
+00:16:07,930 --> 00:16:15,450
+SELECT * from "movies" where
+the "title" = 'Cars' semicolon,
+
+284
+00:16:15,450 --> 00:16:16,620
+it was a lot faster.
+
+285
+00:16:16,620 --> 00:16:25,590
+Here I see 0.01 seconds real
+time compared to 0.084 seconds.
+
+286
+00:16:25,590 --> 00:16:28,380
+That's a savings of almost eight times.
+
+287
+00:16:28,380 --> 00:16:31,740
+Almost eight times faster
+now that we have this index.
+
+288
+00:16:31,740 --> 00:16:34,260
+Now it took some time
+to create the index.
+
+289
+00:16:34,260 --> 00:16:38,070
+If I run just a few
+queries, I much easily
+
+290
+00:16:38,070 --> 00:16:40,770
+make that time up in
+terms of the time I'm
+
+291
+00:16:40,770 --> 00:16:46,560
+using on my server to look up these
+kinds of pieces of information.
+
+292
+00:16:46,560 --> 00:16:50,760
+OK, so let's actually take a
+look at how we can ensure a query
+
+293
+00:16:50,760 --> 00:16:53,460
+is using some index.
+
+294
+00:16:53,460 --> 00:16:55,980
+Here I'm just kind of
+taking it on my word.
+
+295
+00:16:55,980 --> 00:16:57,780
+Here it was faster,
+so it used the index.
+
+296
+00:16:57,780 --> 00:17:01,710
+But there is a way for you to
+know whether an index was used.
+
+297
+00:17:01,710 --> 00:17:06,839
+I could use a SQL statement
+called EXPLAIN QUERY PLAN.
+
+298
+00:17:06,839 --> 00:17:10,329
+Other DBMSs might call
+this just simply EXPLAIN,
+
+299
+00:17:10,329 --> 00:17:14,190
+but in SQLite it's EXPLAIN QUERY PLAN.
+
+300
+00:17:14,190 --> 00:17:17,819
+And then after EXPLAIN QUERY
+PLAN, I can type the query
+
+301
+00:17:17,819 --> 00:17:20,760
+that I want to learn the plan for.
+
+302
+00:17:20,760 --> 00:17:24,880
+That is, how does SQLite plan
+to find me this information?
+
+303
+00:17:24,880 --> 00:17:27,579
+How does it plan to execute this query?
+
+304
+00:17:27,579 --> 00:17:33,540
+So now I'll type SELECT * FROM
+"movies" WHERE "title" = 'Cars'
+
+305
+00:17:33,540 --> 00:17:35,460
+like this, semicolon.
+
+306
+00:17:35,460 --> 00:17:36,600
+I'll hit Enter.
+
+307
+00:17:36,600 --> 00:17:39,420
+And now I don't get
+the results, but I do
+
+308
+00:17:39,420 --> 00:17:45,060
+get the plan SQLite intends
+to use to find me this result.
+
+309
+00:17:45,060 --> 00:17:46,350
+And take a look here.
+
+310
+00:17:46,350 --> 00:17:51,930
+I see QUERY PLAN, and underneath
+I see what SQLite intends to do.
+
+311
+00:17:51,930 --> 00:17:55,260
+It will search the movies
+table, but it will do so
+
+312
+00:17:55,260 --> 00:17:58,410
+using the index that
+we called title_index.
+
+313
+00:17:58,410 --> 00:18:02,560
+And it will do so given
+some value for title here.
+
+314
+00:18:02,560 --> 00:18:06,210
+So we can actually see SQLite
+does plan to use the index
+
+315
+00:18:06,210 --> 00:18:08,050
+to speed up this query.
+
+316
+00:18:08,050 --> 00:18:11,770
+We can confirm that this is
+exactly what's happening.
+
+317
+00:18:11,770 --> 00:18:15,450
+But let me try now to
+remove this index and see
+
+318
+00:18:15,450 --> 00:18:19,380
+what SQLite would have done
+when we didn't have this index.
+
+319
+00:18:19,380 --> 00:18:23,070
+I'll come back over here and I'll
+go back to my other connection
+
+320
+00:18:23,070 --> 00:18:24,030
+to my database.
+
+321
+00:18:24,030 --> 00:18:25,470
+This one over here.
+
+322
+00:18:25,470 --> 00:18:28,290
+And now I'll remove the
+index we just created.
+
+323
+00:18:28,290 --> 00:18:30,510
+To remove an index I can drop it.
+
+324
+00:18:30,510 --> 00:18:35,948
+I can say DROP INDEX
+"title_index" semicolon.
+
+325
+00:18:35,948 --> 00:18:37,740
+And now that took just
+some amount of time,
+
+326
+00:18:37,740 --> 00:18:39,365
+but now I don't have the index anymore.
+
+327
+00:18:39,365 --> 00:18:45,180
+I can type .schema, and I'll see
+that index is not part of my schema.
+
+328
+00:18:45,180 --> 00:18:54,330
+But now if I try EXPLAIN QUERY PLAN
+SELECT * from "movies" WHERE "title"
+
+329
+00:18:54,330 --> 00:19:00,780
+= 'Cars' semicolon, I'll see that
+the plan is not to use the index.
+
+330
+00:19:00,780 --> 00:19:04,860
+The plan is to scan movies,
+where scan, we saw before,
+
+331
+00:19:04,860 --> 00:19:08,130
+means to go top to bottom
+through that title column
+
+332
+00:19:08,130 --> 00:19:12,070
+and find me all the rows
+that have Cars in them.
+
+333
+00:19:12,070 --> 00:19:14,460
+So you can see here the
+optimization we're already
+
+334
+00:19:14,460 --> 00:19:18,890
+making by using this index here.
+
+335
+00:19:18,890 --> 00:19:21,740
+OK, so let's take a
+moment here and pause.
+
+336
+00:19:21,740 --> 00:19:26,780
+What questions do we have about indexes
+and how they're used in this case?
+
+337
+00:19:26,780 --> 00:19:33,950
+AUDIENCE: Doesn't databases have
+implicit algorithms to optimize search?
+
+338
+00:19:33,950 --> 00:19:35,420
+CARTER ZENKE: Yeah, good question.
+
+339
+00:19:35,420 --> 00:19:39,050
+Do databases have implicit
+algorithms to optimize search?
+
+340
+00:19:39,050 --> 00:19:41,190
+They do for some columns.
+
+341
+00:19:41,190 --> 00:19:46,520
+So if we saw in our table earlier,
+we had a primary key column like ID.
+
+342
+00:19:46,520 --> 00:19:52,310
+In SQLite and most other DBMSs, if I
+specify that a column is a primary key
+
+343
+00:19:52,310 --> 00:19:55,430
+then that database management
+system will automatically
+
+344
+00:19:55,430 --> 00:19:59,280
+create an index via which I
+can search for a primary key.
+
+345
+00:19:59,280 --> 00:20:03,920
+If though I have a regular old column
+like title or like year or so on,
+
+346
+00:20:03,920 --> 00:20:07,130
+it doesn't go through the process
+of automatically optimizing
+
+347
+00:20:07,130 --> 00:20:08,030
+that search for me.
+
+348
+00:20:08,030 --> 00:20:12,457
+I have to try to do that
+myself as we're doing here.
+
+349
+00:20:12,457 --> 00:20:13,290
+Let's take one more.
+
+350
+00:20:13,290 --> 00:20:16,000
+AUDIENCE: Would it be advisable
+to create a different index
+
+351
+00:20:16,000 --> 00:20:17,800
+for every column in case we need it?
+
+352
+00:20:17,800 --> 00:20:20,380
+CARTER ZENKE: Yeah, I mean it
+seems like indexes are so good.
+
+353
+00:20:20,380 --> 00:20:21,790
+They speed up queries for us.
+
+354
+00:20:21,790 --> 00:20:25,030
+Why not create an index
+on every column we have?
+
+355
+00:20:25,030 --> 00:20:26,800
+Well as we'll see in
+just a moment, there
+
+356
+00:20:26,800 --> 00:20:30,730
+are some trade-offs involving space
+and also the time it later takes
+
+357
+00:20:30,730 --> 00:20:33,020
+us to insert or add new data.
+
+358
+00:20:33,020 --> 00:20:33,910
+So good questions.
+
+359
+00:20:33,910 --> 00:20:36,620
+I'll come back to my laptop
+where we can continue on.
+
+360
+00:20:36,620 --> 00:20:40,870
+So we've seen how indexes
+can speed up queries.
+
+361
+00:20:40,870 --> 00:20:43,900
+We're searching for one column
+here, but they could also speed up
+
+362
+00:20:43,900 --> 00:20:46,310
+queries across multiple tables.
+
+363
+00:20:46,310 --> 00:20:48,910
+So let's try a different
+kind of query here.
+
+364
+00:20:48,910 --> 00:20:52,810
+What I might do now is try
+to find all of those movies
+
+365
+00:20:52,810 --> 00:20:55,480
+that Tom Hanks starred in.
+
+366
+00:20:55,480 --> 00:20:59,230
+And we did a bit of a example of
+this a little earlier visually,
+
+367
+00:20:59,230 --> 00:21:04,450
+but my goal is to find all of those
+titles that Tom Hanks played a role in.
+
+368
+00:21:04,450 --> 00:21:07,690
+Well if my goal is to end
+up with titles of movies,
+
+369
+00:21:07,690 --> 00:21:13,520
+I could try selecting "title" from
+the "movies" column like this.
+
+370
+00:21:13,520 --> 00:21:16,720
+But if I look at that
+movie's table, oh no, I only
+
+371
+00:21:16,720 --> 00:21:20,740
+have titles, year, and
+the ID of those movies.
+
+372
+00:21:20,740 --> 00:21:23,230
+I don't have anything
+related to Tom Hanks.
+
+373
+00:21:23,230 --> 00:21:27,250
+Well Tom Hanks though is probably
+showing up in the stars table
+
+374
+00:21:27,250 --> 00:21:30,940
+where I could correspond Tom
+Hanks's ID with the movie IDs
+
+375
+00:21:30,940 --> 00:21:32,950
+that Tom Hanks played a role in.
+
+376
+00:21:32,950 --> 00:21:35,860
+So let me try filtering
+these movies by an ID.
+
+377
+00:21:35,860 --> 00:21:40,450
+I'll say WHERE the "id" of that
+movie is IN some list of movie IDs
+
+378
+00:21:40,450 --> 00:21:43,960
+that also correspond with
+Tom Hanks's person ID.
+
+379
+00:21:43,960 --> 00:21:47,650
+So I'll make a subquery here
+to find exactly those films.
+
+380
+00:21:47,650 --> 00:21:54,340
+Now I'll say SELECT "movie_id"
+FROM "stars" where the "person _id"
+
+381
+00:21:54,340 --> 00:21:56,140
+is equal to--
+
+382
+00:21:56,140 --> 00:21:58,180
+well I don't know Tom Hanks's person ID.
+
+383
+00:21:58,180 --> 00:22:00,880
+I could try to hard-code it
+here, but I could do better
+
+384
+00:22:00,880 --> 00:22:05,710
+by having another subquery to
+find what is Tom Hanks's ID?
+
+385
+00:22:05,710 --> 00:22:08,950
+Now I'll indent not just
+four times but eight
+
+386
+00:22:08,950 --> 00:22:12,160
+to show this is my next
+level of a subquery here.
+
+387
+00:22:12,160 --> 00:22:19,270
+I'll now SELECT "id" FROM "people"
+WHERE the "name" = 'Tom Hanks'.
+
+388
+00:22:19,270 --> 00:22:21,020
+'Tom Hanks' like this.
+
+389
+00:22:21,020 --> 00:22:23,950
+And now I can close out my subqueries.
+
+390
+00:22:23,950 --> 00:22:28,300
+I've found the ID of Tom Hanks,
+I've found those movie IDs that
+
+391
+00:22:28,300 --> 00:22:30,970
+correspond with the
+person ID of Tom Hanks,
+
+392
+00:22:30,970 --> 00:22:34,900
+and then I've found the titles
+that correspond to those movie IDs.
+
+393
+00:22:34,900 --> 00:22:39,100
+Now I'll hit a semicolon here,
+press Enter, and I should see--
+
+394
+00:22:39,100 --> 00:22:43,300
+I get back all of Tom Hanks's movies,
+all of those that he played a role in.
+
+395
+00:22:43,300 --> 00:22:45,910
+And I'll also see the time that it took.
+
+396
+00:22:45,910 --> 00:22:50,840
+The real time for this query
+was about 0.197 seconds.
+
+397
+00:22:50,840 --> 00:22:54,880
+So getting a little bit slower now that
+we're looking across multiple tables
+
+398
+00:22:54,880 --> 00:22:57,580
+and having multiple subqueries.
+
+399
+00:22:57,580 --> 00:23:00,890
+One index could speed this up as well.
+
+400
+00:23:00,890 --> 00:23:03,555
+I can make a new terminal here.
+
+401
+00:23:03,555 --> 00:23:05,680
+Let me open up the connection
+to my database again.
+
+402
+00:23:05,680 --> 00:23:08,470
+I'll say sqlite3 movies.db.
+
+403
+00:23:08,470 --> 00:23:12,490
+And now I should figure
+out what columns do
+
+404
+00:23:12,490 --> 00:23:15,670
+I need to index to speed up this query?
+
+405
+00:23:15,670 --> 00:23:19,940
+Well one thing I could do is
+try EXPLAIN QUERY PLAN again.
+
+406
+00:23:19,940 --> 00:23:25,310
+I want to understand what SQLite
+plans to do to execute this query.
+
+407
+00:23:25,310 --> 00:23:29,020
+So I'll EXPLAIN QUERY PLAN and I'll
+type in the same query from before.
+
+408
+00:23:29,020 --> 00:23:33,430
+I'll say SELECT the
+"title" FROM "movies" WHERE
+
+409
+00:23:33,430 --> 00:23:37,720
+the "id" is IN those movies
+that Tom Hanks played a role in.
+
+410
+00:23:37,720 --> 00:23:45,400
+So I'll SELECT in this case movie_id
+from the "stars" table where
+
+411
+00:23:45,400 --> 00:23:49,180
+the person_id equals Tom Hanks's ID.
+
+412
+00:23:49,180 --> 00:23:50,450
+Now I'll find that.
+
+413
+00:23:50,450 --> 00:23:53,650
+I'll indent eight times to show
+this is my next level subquery.
+
+414
+00:23:53,650 --> 00:23:59,050
+I'll SELECT "id" from
+"people" WHERE "name"
+
+415
+00:23:59,050 --> 00:24:02,510
+= 'Tom Hanks' and I'll wrap
+the line just a little bit.
+
+416
+00:24:02,510 --> 00:24:04,510
+Let me zoom out so you
+can see it all in one go.
+
+417
+00:24:04,510 --> 00:24:10,570
+And now I'll close out these
+subqueries just like this, hit Enter,
+
+418
+00:24:10,570 --> 00:24:16,090
+and I should see if I zoom back in the
+plan SQLite intends to use to find me
+
+419
+00:24:16,090 --> 00:24:17,590
+the results of this query.
+
+420
+00:24:17,590 --> 00:24:19,490
+Now let's take a look here.
+
+421
+00:24:19,490 --> 00:24:21,900
+I'm planning to first scan people.
+
+422
+00:24:21,900 --> 00:24:23,650
+To understand the
+structure of this I need
+
+423
+00:24:23,650 --> 00:24:26,500
+to first go all the way in
+to this bottom part here.
+
+424
+00:24:26,500 --> 00:24:32,320
+I'm going to scan people to
+find presumably Tom Hanks's ID.
+
+425
+00:24:32,320 --> 00:24:36,610
+Then after I do that, I'm
+going to scan stars presumably
+
+426
+00:24:36,610 --> 00:24:41,080
+to find all the movie IDs
+that have Tom Hanks's ID.
+
+427
+00:24:41,080 --> 00:24:45,130
+But then up here I'm finally
+going to search movies
+
+428
+00:24:45,130 --> 00:24:47,320
+using integer primary key.
+
+429
+00:24:47,320 --> 00:24:49,750
+Some index is automatically
+created for me
+
+430
+00:24:49,750 --> 00:24:52,850
+as we saw before for my primary keys.
+
+431
+00:24:52,850 --> 00:24:56,620
+So it seems like the optimization
+here could be in the people
+
+432
+00:24:56,620 --> 00:25:00,040
+table and the stars table.
+
+433
+00:25:00,040 --> 00:25:05,620
+Now let me ask, if I wanted to
+create an index on either the people
+
+434
+00:25:05,620 --> 00:25:09,970
+table or the stars table, what
+do you think I should include?
+
+435
+00:25:09,970 --> 00:25:15,650
+Which column should I include in
+this index given my query here?
+
+436
+00:25:15,650 --> 00:25:21,130
+What column should I include in this
+index given this previous query?
+
+437
+00:25:21,130 --> 00:25:26,180
+AUDIENCE: We could index the
+ID and the name of the person?
+
+438
+00:25:26,180 --> 00:25:27,530
+CARTER ZENKE: Yeah, good idea.
+
+439
+00:25:27,530 --> 00:25:29,930
+Index the ID and the name of the person.
+
+440
+00:25:29,930 --> 00:25:34,670
+So if we look at this query again
+we'll see that our WHERE clause here
+
+441
+00:25:34,670 --> 00:25:37,770
+is searching by the name
+in the people table,
+
+442
+00:25:37,770 --> 00:25:41,240
+and up here this WHERE clause
+is searching by the person ID
+
+443
+00:25:41,240 --> 00:25:43,700
+column in our stars table.
+
+444
+00:25:43,700 --> 00:25:46,280
+So it would stand to reason
+that I should actually
+
+445
+00:25:46,280 --> 00:25:49,850
+create an index that includes
+the name column in people
+
+446
+00:25:49,850 --> 00:25:52,250
+and the person ID column in stars.
+
+447
+00:25:52,250 --> 00:25:54,200
+Perhaps two separate indexes.
+
+448
+00:25:54,200 --> 00:25:55,710
+One for each year.
+
+449
+00:25:55,710 --> 00:25:57,470
+So let's go ahead and create those now.
+
+450
+00:25:57,470 --> 00:26:03,350
+I'll come back to my computer and
+here I will try to create this index.
+
+451
+00:26:03,350 --> 00:26:06,590
+I'll say first create an index.
+
+452
+00:26:06,590 --> 00:26:10,040
+CREATE INDEX called "person_index."
+
+453
+00:26:10,040 --> 00:26:16,070
+And I'll create it on stars and
+the person ID column in stars
+
+454
+00:26:16,070 --> 00:26:17,960
+as we just discussed.
+
+455
+00:26:17,960 --> 00:26:23,600
+Now if I hit Enter I should let it
+take some time to build up this index,
+
+456
+00:26:23,600 --> 00:26:26,270
+but now I can also create my next one.
+
+457
+00:26:26,270 --> 00:26:35,300
+I'll say CREATE INDEX, and then I'll
+choose "name_index" on people table.
+
+458
+00:26:35,300 --> 00:26:37,890
+And I'll include the name column here.
+
+459
+00:26:37,890 --> 00:26:39,710
+So now I'll hit Enter.
+
+460
+00:26:39,710 --> 00:26:42,980
+That too will take some
+time to run, but now
+
+461
+00:26:42,980 --> 00:26:45,350
+if I try to explain
+the query plan again--
+
+462
+00:26:45,350 --> 00:26:50,630
+I'll clear my screen, try EXPLAIN QUERY
+PLAN, and then I'll type in this query
+
+463
+00:26:50,630 --> 00:26:51,170
+again.
+
+464
+00:26:51,170 --> 00:26:56,060
+I'll say SELECT "title" FROM movies
+WHERE the "id" is IN those movies
+
+465
+00:26:56,060 --> 00:26:59,600
+that Tom Hanks played a role in
+that have the person ID next to it.
+
+466
+00:26:59,600 --> 00:27:03,590
+Then I'll say which is Tom Hanks's ID?
+
+467
+00:27:03,590 --> 00:27:08,650
+And I'll close out the
+subquery here just like this.
+
+468
+00:27:08,650 --> 00:27:12,480
+And now if I explain
+the plan yet again, I
+
+469
+00:27:12,480 --> 00:27:16,570
+should see I'm now optimizing
+this query even further.
+
+470
+00:27:16,570 --> 00:27:19,950
+I can see down below here, my plan
+is to search the people table.
+
+471
+00:27:19,950 --> 00:27:23,160
+Not to scan it, but to
+search it using what we call
+
+472
+00:27:23,160 --> 00:27:25,710
+a covering index called "name_index."
+
+473
+00:27:25,710 --> 00:27:27,010
+The one we just created.
+
+474
+00:27:27,010 --> 00:27:29,610
+We'll explain covering
+index in just a little bit.
+
+475
+00:27:29,610 --> 00:27:32,760
+Next though, I'm going
+to search stars using
+
+476
+00:27:32,760 --> 00:27:37,060
+the index we just created called
+"name_index" given some person ID.
+
+477
+00:27:37,060 --> 00:27:40,290
+And then finally, I'll
+search movies using
+
+478
+00:27:40,290 --> 00:27:42,660
+an integer primary key
+index, the one that's
+
+479
+00:27:42,660 --> 00:27:45,850
+automatically created for me here.
+
+480
+00:27:45,850 --> 00:27:48,570
+So here we see some new vocabulary.
+
+481
+00:27:48,570 --> 00:27:53,060
+Not just using index, but
+using a covering index.
+
+482
+00:27:53,060 --> 00:27:55,470
+Well, what is a covering index?
+
+483
+00:27:55,470 --> 00:27:58,650
+A covering index, it turns
+out, is still an index.
+
+484
+00:27:58,650 --> 00:28:01,050
+It's the same kind of
+idea, but it is one
+
+485
+00:28:01,050 --> 00:28:06,390
+in which we have all the data
+we need inside the index itself.
+
+486
+00:28:06,390 --> 00:28:11,250
+It's one in which the query data can
+be found only by searching the index.
+
+487
+00:28:11,250 --> 00:28:14,460
+There's no need for me to go
+from the index to the table.
+
+488
+00:28:14,460 --> 00:28:17,040
+I can just look it up in the index.
+
+489
+00:28:17,040 --> 00:28:20,850
+It's similar to me searching this
+textbook and getting to the index
+
+490
+00:28:20,850 --> 00:28:24,450
+and not then needing to actually
+go back in the book's pages.
+
+491
+00:28:24,450 --> 00:28:29,290
+I can find everything I'm
+looking for in the index itself.
+
+492
+00:28:29,290 --> 00:28:34,260
+And this is good because if I need to
+not just find the items in my index
+
+493
+00:28:34,260 --> 00:28:39,130
+but then look them up in my table, that
+look up in the table takes some time.
+
+494
+00:28:39,130 --> 00:28:41,580
+So if I instead have
+a covering index, one
+
+495
+00:28:41,580 --> 00:28:45,310
+that includes all data I want to
+find exactly right there in it,
+
+496
+00:28:45,310 --> 00:28:49,120
+that's going to be faster for
+me than a regular old index.
+
+497
+00:28:49,120 --> 00:28:54,750
+So let's try then turning one
+more index into a covering index.
+
+498
+00:28:54,750 --> 00:28:55,890
+I'll come back over here.
+
+499
+00:28:55,890 --> 00:29:00,780
+And we saw before that we
+had the index on the stars
+
+500
+00:29:00,780 --> 00:29:03,660
+table using just a regular old index.
+
+501
+00:29:03,660 --> 00:29:06,420
+Using index person index.
+
+502
+00:29:06,420 --> 00:29:10,050
+But what are we trying
+to find from this index?
+
+503
+00:29:10,050 --> 00:29:13,170
+We're trying to find
+the movie ID column.
+
+504
+00:29:13,170 --> 00:29:18,910
+So I could create an index that
+includes the movie ID column as well.
+
+505
+00:29:18,910 --> 00:29:22,300
+I can have indexes that
+span multiple columns.
+
+506
+00:29:22,300 --> 00:29:23,730
+So let's try that here.
+
+507
+00:29:23,730 --> 00:29:27,240
+I'll come back over and
+I'll create this new index
+
+508
+00:29:27,240 --> 00:29:29,730
+that intends to cover our search here.
+
+509
+00:29:29,730 --> 00:29:35,940
+I want to include not just the person
+ID column but also the movie ID
+
+510
+00:29:35,940 --> 00:29:40,320
+column so I can quickly find that
+data inside the index itself.
+
+511
+00:29:40,320 --> 00:29:45,620
+Let me drop our current implementation
+of the person index like this.
+
+512
+00:29:45,620 --> 00:29:49,090
+And I'll hit semicolon here,
+and now that index is gone.
+
+513
+00:29:49,090 --> 00:29:53,040
+But if I type now
+CREATE INDEX, I'll also
+
+514
+00:29:53,040 --> 00:29:56,700
+call this "person_index" ON "stars."
+
+515
+00:29:56,700 --> 00:30:00,240
+and I'll say let's include
+not just the person ID column.
+
+516
+00:30:00,240 --> 00:30:05,940
+Let's also include in this case,
+the movie ID column like this.
+
+517
+00:30:05,940 --> 00:30:08,730
+Now I'll hit semicolon, Enter.
+
+518
+00:30:08,730 --> 00:30:11,580
+And it'll take a bit of
+time to run, but once it's
+
+519
+00:30:11,580 --> 00:30:15,420
+done I can probably try to explain
+the query plan again and see
+
+520
+00:30:15,420 --> 00:30:17,160
+if we have our covering index.
+
+521
+00:30:17,160 --> 00:30:20,910
+I'll go back up top here,
+I'll EXPLAIN QUERY PLAN,
+
+522
+00:30:20,910 --> 00:30:24,910
+and I'll choose to recreate this
+query from before just like this.
+
+523
+00:30:24,910 --> 00:30:30,660
+I'm going to select the "movie_id" FROM
+"stars" and then find Tom Hanks's ID
+
+524
+00:30:30,660 --> 00:30:36,580
+and then close out these
+subqueries here just like this.
+
+525
+00:30:36,580 --> 00:30:41,830
+And now once I EXPLAIN QUERY PLAN,
+we've optimized even further.
+
+526
+00:30:41,830 --> 00:30:44,160
+Now I have two covering indexes.
+
+527
+00:30:44,160 --> 00:30:48,690
+I can find all the information I need
+just by looking in these indexes,
+
+528
+00:30:48,690 --> 00:30:52,100
+not by doing a table lookup.
+
+529
+00:30:52,100 --> 00:30:56,375
+So let's now run this query and see
+just how much faster it might be.
+
+530
+00:30:56,375 --> 00:31:00,470
+I'll come back to my laptop here, and
+let's get rid of EXPLAIN QUERY PLAN.
+
+531
+00:31:00,470 --> 00:31:02,660
+Let's now turn our timer on.
+
+532
+00:31:02,660 --> 00:31:06,380
+I'll turn the timer on like
+this and I'll rerun this query.
+
+533
+00:31:06,380 --> 00:31:10,520
+I'll say we select title from movies
+where the ID is in the stars table
+
+534
+00:31:10,520 --> 00:31:13,790
+so long as the movie ID
+aligns with the person ID.
+
+535
+00:31:13,790 --> 00:31:18,590
+Then I'll find Tom Hanks's person ID
+here, I'll close out my subqueries,
+
+536
+00:31:18,590 --> 00:31:24,078
+and I should be able to find that
+this query is just a little bit--
+
+537
+00:31:24,078 --> 00:31:25,370
+this is an understatement here.
+
+538
+00:31:25,370 --> 00:31:26,400
+A lot faster.
+
+539
+00:31:26,400 --> 00:31:32,120
+So if I go back to my old query here,
+I'll see this one took 0.197 seconds.
+
+540
+00:31:32,120 --> 00:31:37,320
+This one with two covering
+indexes takes 0.004 seconds.
+
+541
+00:31:37,320 --> 00:31:40,970
+This is an order of magnitude
+faster than my prior query
+
+542
+00:31:40,970 --> 00:31:44,540
+because I've used indexes now.
+
+543
+00:31:44,540 --> 00:31:46,940
+So, let's see.
+
+544
+00:31:46,940 --> 00:31:53,180
+If we have all these benefits of
+indexes, we must be paying something.
+
+545
+00:31:53,180 --> 00:31:59,310
+If I have this book here and I'm
+trying to find some data inside of it,
+
+546
+00:31:59,310 --> 00:32:03,740
+what might the trade-offs be
+if I want to create an index?
+
+547
+00:32:03,740 --> 00:32:07,460
+Let me think first about
+this database on my computer.
+
+548
+00:32:07,460 --> 00:32:08,870
+What am I giving up?
+
+549
+00:32:08,870 --> 00:32:13,400
+If I'm making sure my query is faster,
+what am I losing, do you think?
+
+550
+00:32:13,400 --> 00:32:16,010
+AUDIENCE: Space will
+require for indexing also.
+
+551
+00:32:16,010 --> 00:32:19,370
+The more index we would have,
+the more space and more memory
+
+552
+00:32:19,370 --> 00:32:21,278
+we would have to consume for that.
+
+553
+00:32:21,278 --> 00:32:22,070
+CARTER ZENKE: Yeah.
+
+554
+00:32:22,070 --> 00:32:25,070
+So it's a general theme
+that when I try to speed up
+
+555
+00:32:25,070 --> 00:32:28,130
+something in computer science,
+I have to pay some cost which
+
+556
+00:32:28,130 --> 00:32:29,990
+is often in terms of space.
+
+557
+00:32:29,990 --> 00:32:34,400
+That when I create an index I'm
+using more space in my database.
+
+558
+00:32:34,400 --> 00:32:37,010
+And this similarly applies
+to an old fashioned textbook.
+
+559
+00:32:37,010 --> 00:32:39,470
+If I have an index in
+here, I'm literally
+
+560
+00:32:39,470 --> 00:32:43,550
+paying in pages to print so
+people can find content better.
+
+561
+00:32:43,550 --> 00:32:46,130
+This is some extra
+money I have to spend,
+
+562
+00:32:46,130 --> 00:32:49,670
+extra pages I have to print in
+order to make my queries faster,
+
+563
+00:32:49,670 --> 00:32:53,220
+either on this book or in my database.
+
+564
+00:32:53,220 --> 00:32:57,650
+So let's understand why
+indexes take up so much space
+
+565
+00:32:57,650 --> 00:33:00,440
+by looking at the underlying
+data structure they
+
+566
+00:33:00,440 --> 00:33:03,110
+use to store information.
+
+567
+00:33:03,110 --> 00:33:05,900
+Well it turns out that the
+part of the reason indexes
+
+568
+00:33:05,900 --> 00:33:09,780
+take up so much space is because
+they use a certain data structure,
+
+569
+00:33:09,780 --> 00:33:16,110
+a way of organizing data called a
+B-Tree, or a balanced tree structure.
+
+570
+00:33:16,110 --> 00:33:18,920
+So not to worry if you don't
+know what a tree structure is.
+
+571
+00:33:18,920 --> 00:33:23,030
+Here's a visual to keep in mind as you
+think about using trees in computer
+
+572
+00:33:23,030 --> 00:33:25,520
+science and in indexes in particular.
+
+573
+00:33:25,520 --> 00:33:27,780
+A tree might look a bit like this.
+
+574
+00:33:27,780 --> 00:33:31,640
+And notice how it's similar to
+a family tree with grandparents
+
+575
+00:33:31,640 --> 00:33:34,430
+and parents and children and so on.
+
+576
+00:33:34,430 --> 00:33:38,450
+You could if you wanted to kind
+of do a 180 on this diagram.
+
+577
+00:33:38,450 --> 00:33:41,030
+Flip it right side up
+and now you might see
+
+578
+00:33:41,030 --> 00:33:44,010
+more of a tree structure
+going from top to bottom.
+
+579
+00:33:44,010 --> 00:33:47,300
+You can see down here what might
+call the trunk of the tree followed
+
+580
+00:33:47,300 --> 00:33:49,670
+by some branches-- these over here.
+
+581
+00:33:49,670 --> 00:33:50,930
+And then the leaves.
+
+582
+00:33:50,930 --> 00:33:54,890
+These up top kind of the
+edge of this tree diagram.
+
+583
+00:33:54,890 --> 00:33:56,750
+And there's a few
+vocabulary words you might
+
+584
+00:33:56,750 --> 00:33:59,090
+want to know when you talk about trees.
+
+585
+00:33:59,090 --> 00:34:02,190
+One of them is this idea of a node.
+
+586
+00:34:02,190 --> 00:34:06,230
+So this right here is a
+single node in our tree.
+
+587
+00:34:06,230 --> 00:34:11,210
+A tree is made up of a collection
+of nodes, and each of these nodes
+
+588
+00:34:11,210 --> 00:34:13,590
+stores some value.
+
+589
+00:34:13,590 --> 00:34:17,900
+Maybe it's a value in the column
+we're trying to index, for example.
+
+590
+00:34:17,900 --> 00:34:22,040
+But in addition to that
+value, this node also
+
+591
+00:34:22,040 --> 00:34:26,780
+stores pointers, kind of arrows
+metaphorically, to other nodes
+
+592
+00:34:26,780 --> 00:34:30,590
+to tell us where in
+memory these nodes are.
+
+593
+00:34:30,590 --> 00:34:32,719
+And by stringing these
+nodes together, we
+
+594
+00:34:32,719 --> 00:34:36,270
+can build up this tree-like structure.
+
+595
+00:34:36,270 --> 00:34:40,280
+Now this node here points
+to three other nodes.
+
+596
+00:34:40,280 --> 00:34:45,530
+And some new vocabulary here is
+that this node has three children.
+
+597
+00:34:45,530 --> 00:34:47,929
+Going back to that
+family tree example, we
+
+598
+00:34:47,929 --> 00:34:52,469
+see that this node here has three
+children which are these right here.
+
+599
+00:34:52,469 --> 00:34:56,078
+But these nodes themselves also
+have three children of their own.
+
+600
+00:34:56,078 --> 00:34:58,370
+So if I were to go down to
+the next level of our tree--
+
+601
+00:34:58,370 --> 00:35:02,180
+well if I'm referring to this
+node here, these nodes down below
+
+602
+00:35:02,180 --> 00:35:04,190
+are that node's grandchildren.
+
+603
+00:35:04,190 --> 00:35:07,080
+The children of its children.
+
+604
+00:35:07,080 --> 00:35:10,490
+Now these nodes here
+also have another name.
+
+605
+00:35:10,490 --> 00:35:14,240
+We saw before they're
+often called leaf nodes.
+
+606
+00:35:14,240 --> 00:35:15,560
+They're the edge of our tree.
+
+607
+00:35:15,560 --> 00:35:21,040
+And we know a node is a leaf node when
+there are no other nodes it points to.
+
+608
+00:35:21,040 --> 00:35:24,970
+So this is the general idea
+of what an index looks like.
+
+609
+00:35:24,970 --> 00:35:26,920
+But let's get a little
+more concrete and try
+
+610
+00:35:26,920 --> 00:35:32,540
+to build an index from our title
+column in our movies table here.
+
+611
+00:35:32,540 --> 00:35:37,150
+So let's assume we have a
+table of IDs and titles here,
+
+612
+00:35:37,150 --> 00:35:41,140
+and I want to create an
+index on this title column
+
+613
+00:35:41,140 --> 00:35:43,340
+to search it more efficiently.
+
+614
+00:35:43,340 --> 00:35:47,350
+Well we saw before that the best I
+can do when this data is unsorted
+
+615
+00:35:47,350 --> 00:35:49,130
+is to go top to bottom.
+
+616
+00:35:49,130 --> 00:35:51,970
+First look at Toy Story,
+then look at Cars 3,
+
+617
+00:35:51,970 --> 00:35:54,740
+then look at Frozen, all
+the way down to the bottom.
+
+618
+00:35:54,740 --> 00:35:58,220
+I can only scan this
+column, so to speak.
+
+619
+00:35:58,220 --> 00:36:02,560
+But I know I could probably do a
+little better if the data is sorted.
+
+620
+00:36:02,560 --> 00:36:05,030
+If the data is sorted I could
+look roughly in the middle,
+
+621
+00:36:05,030 --> 00:36:07,270
+and if I've gone too far,
+go back a little bit.
+
+622
+00:36:07,270 --> 00:36:09,770
+Or if I haven't gone far
+enough, go forward a little bit
+
+623
+00:36:09,770 --> 00:36:13,910
+and do a fewer number of lookups
+to find data I'm looking for.
+
+624
+00:36:13,910 --> 00:36:16,210
+So let me sort this title column.
+
+625
+00:36:16,210 --> 00:36:18,980
+I'll put it like this.
+
+626
+00:36:18,980 --> 00:36:22,230
+What have I done wrong?
+
+627
+00:36:22,230 --> 00:36:26,980
+First I had this, then I
+wanted to sort my title
+
+628
+00:36:26,980 --> 00:36:29,860
+column to make it faster to search.
+
+629
+00:36:29,860 --> 00:36:35,365
+But what rule did I break here by
+sorting this title column like that?
+
+630
+00:36:35,365 --> 00:36:38,620
+AUDIENCE: Yes, Carter, the thing
+is that by sorting only the movie's
+
+631
+00:36:38,620 --> 00:36:43,630
+name and not the ID you will break
+the entire other databases that
+
+632
+00:36:43,630 --> 00:36:45,320
+relates to that one.
+
+633
+00:36:45,320 --> 00:36:50,260
+So for example, let's look for
+a movie in which, I don't know,
+
+634
+00:36:50,260 --> 00:36:53,230
+Johnny Depp is working or has worked on.
+
+635
+00:36:53,230 --> 00:36:56,080
+And the result may be,
+I don't know, Titanic.
+
+636
+00:36:56,080 --> 00:36:57,820
+CARTER ZENKE: Yeah, I love that example.
+
+637
+00:36:57,820 --> 00:36:59,450
+That really drives it home here.
+
+638
+00:36:59,450 --> 00:37:04,330
+And in more general terms, I
+had this primary key called ID.
+
+639
+00:37:04,330 --> 00:37:10,120
+And in the prior state I had
+Toy Story with the ID of 114709.
+
+640
+00:37:10,120 --> 00:37:14,650
+A primary key means that Toy Story
+should be consistently identified
+
+641
+00:37:14,650 --> 00:37:18,580
+with this number, 114709.
+
+642
+00:37:18,580 --> 00:37:22,600
+But to your point, Mateo, if
+I sort only the title column,
+
+643
+00:37:22,600 --> 00:37:25,060
+well now Cars has that ID--
+
+644
+00:37:25,060 --> 00:37:27,070
+114709.
+
+645
+00:37:27,070 --> 00:37:29,620
+I've broken that
+relationship, particularly
+
+646
+00:37:29,620 --> 00:37:37,180
+if other tables are relying on Toy
+Story being identified by 114709.
+
+647
+00:37:37,180 --> 00:37:38,605
+So I can't do this.
+
+648
+00:37:38,605 --> 00:37:39,730
+This is bad.
+
+649
+00:37:39,730 --> 00:37:43,520
+I need some other way
+to sort my title column.
+
+650
+00:37:43,520 --> 00:37:46,570
+So let's bring this back
+to what it was here.
+
+651
+00:37:46,570 --> 00:37:49,300
+Let me focus just on the title column.
+
+652
+00:37:49,300 --> 00:37:54,100
+Well I can't sort this title column
+because it's part of my table
+
+653
+00:37:54,100 --> 00:37:57,100
+and the ordering of
+that table does matter.
+
+654
+00:37:57,100 --> 00:38:00,440
+What I could do though is
+create a copy of this column
+
+655
+00:38:00,440 --> 00:38:02,180
+and maybe sort that copy.
+
+656
+00:38:02,180 --> 00:38:06,530
+So I'll literally create a copy of
+this title column elsewhere in memory.
+
+657
+00:38:06,530 --> 00:38:09,230
+And let me just remove this
+title column identifier here
+
+658
+00:38:09,230 --> 00:38:10,850
+so I have just the data.
+
+659
+00:38:10,850 --> 00:38:14,350
+Just the data in this column
+somewhere else in memory.
+
+660
+00:38:14,350 --> 00:38:17,990
+And now I could sort
+this data like this.
+
+661
+00:38:17,990 --> 00:38:21,370
+So let's say I now want to find Cars.
+
+662
+00:38:21,370 --> 00:38:24,470
+Well now that my data is
+sorted, what could I do?
+
+663
+00:38:24,470 --> 00:38:27,730
+I could look first in the middle--
+at Ratatouille for instance--
+
+664
+00:38:27,730 --> 00:38:31,000
+and then realize, well Cars
+comes before Ratatouille.
+
+665
+00:38:31,000 --> 00:38:34,450
+Maybe I'll go a little
+higher in my index here.
+
+666
+00:38:34,450 --> 00:38:36,670
+I'll search in the middle
+of this first half.
+
+667
+00:38:36,670 --> 00:38:38,800
+I'll look at, in this case, Frozen.
+
+668
+00:38:38,800 --> 00:38:41,320
+And Cars-- well it still
+comes before Frozen,
+
+669
+00:38:41,320 --> 00:38:44,560
+so let me look up at the
+first half of this first half.
+
+670
+00:38:44,560 --> 00:38:47,770
+I'll then go up here and
+I'll have spotted Cars.
+
+671
+00:38:47,770 --> 00:38:54,010
+So a much faster way to search for
+information now once I have it sorted.
+
+672
+00:38:54,010 --> 00:38:56,500
+But I don't think we're quite there yet.
+
+673
+00:38:56,500 --> 00:39:01,090
+If I wanted to find the
+year that Cars was released,
+
+674
+00:39:01,090 --> 00:39:08,620
+I found that it's in my title column but
+what am I not able to do at this point?
+
+675
+00:39:08,620 --> 00:39:10,840
+I've copied the data
+somewhere else, but now I
+
+676
+00:39:10,840 --> 00:39:13,270
+want to find some
+other data in my table.
+
+677
+00:39:13,270 --> 00:39:15,390
+What can't I do?
+
+678
+00:39:15,390 --> 00:39:18,148
+AUDIENCE: We need to point to index.
+
+679
+00:39:18,148 --> 00:39:18,940
+CARTER ZENKE: Yeah.
+
+680
+00:39:18,940 --> 00:39:21,430
+I need to be able to
+find some way to relate
+
+681
+00:39:21,430 --> 00:39:24,590
+this index with the rows in my table.
+
+682
+00:39:24,590 --> 00:39:27,250
+So here this is elsewhere in memory.
+
+683
+00:39:27,250 --> 00:39:31,460
+It's good that I can find that
+Cars is in my title column.
+
+684
+00:39:31,460 --> 00:39:35,050
+But if I want to find the other
+data in this row like the year
+
+685
+00:39:35,050 --> 00:39:37,060
+that Cars was released,
+well I have to have
+
+686
+00:39:37,060 --> 00:39:43,340
+some way of linking this
+data here, Cars, to my table.
+
+687
+00:39:43,340 --> 00:39:46,930
+So often in an index, we won't just
+copy the data to some new location
+
+688
+00:39:46,930 --> 00:39:47,620
+and sort it.
+
+689
+00:39:47,620 --> 00:39:52,240
+We'll also have some link between
+these indexed pieces of data over here
+
+690
+00:39:52,240 --> 00:39:54,920
+and our rows and our table back here.
+
+691
+00:39:54,920 --> 00:40:00,940
+So for instance here is Cars,
+and Cars appears to be in row 4.
+
+692
+00:40:00,940 --> 00:40:05,650
+Similarly Cars 3 looks to
+be in row 2 in my table.
+
+693
+00:40:05,650 --> 00:40:11,620
+And I could metaphorically visually
+draw some lines between Cars over here
+
+694
+00:40:11,620 --> 00:40:14,540
+in my index and Cars in my table.
+
+695
+00:40:14,540 --> 00:40:17,950
+I could draw one that looks a bit
+like this going from Cars in my index
+
+696
+00:40:17,950 --> 00:40:20,510
+to actually Cars in my table.
+
+697
+00:40:20,510 --> 00:40:24,010
+I could draw one for Cars 3
+going from this index place
+
+698
+00:40:24,010 --> 00:40:27,410
+here to row 2 in my title column.
+
+699
+00:40:27,410 --> 00:40:32,380
+So that is the way I can link
+my index with my table data.
+
+700
+00:40:32,380 --> 00:40:38,860
+I could do the rest of these too for all
+of my other pieces of data in my index.
+
+701
+00:40:38,860 --> 00:40:42,090
+So let's focus on this now just
+to check for understanding.
+
+702
+00:40:42,090 --> 00:40:44,100
+I have this index.
+
+703
+00:40:44,100 --> 00:40:48,180
+That index has my sorted
+title data and also
+
+704
+00:40:48,180 --> 00:40:51,820
+the row number in which I
+found that piece of data.
+
+705
+00:40:51,820 --> 00:40:56,580
+So let's say here I want
+to find the movie Soul.
+
+706
+00:40:56,580 --> 00:40:58,380
+I want to find the movie Soul.
+
+707
+00:40:58,380 --> 00:41:03,876
+How could I find Soul in my index?
+
+708
+00:41:03,876 --> 00:41:06,500
+AUDIENCE: Yeah, since
+it is already sorted
+
+709
+00:41:06,500 --> 00:41:08,198
+I believe you could use binary search.
+
+710
+00:41:08,198 --> 00:41:08,990
+CARTER ZENKE: Yeah.
+
+711
+00:41:08,990 --> 00:41:12,020
+I could use algorithm called binary
+search, which if you're not familiar
+
+712
+00:41:12,020 --> 00:41:15,320
+simply means start in the
+middle and if I've gone too far,
+
+713
+00:41:15,320 --> 00:41:17,690
+look at either the left
+half or the right half
+
+714
+00:41:17,690 --> 00:41:20,520
+and repeat that process over and over.
+
+715
+00:41:20,520 --> 00:41:22,160
+So here is my index again.
+
+716
+00:41:22,160 --> 00:41:25,470
+I'll go roughly to the middle and
+I'll look at Ratatouille here.
+
+717
+00:41:25,470 --> 00:41:29,390
+Well Soul, I know, comes after
+Ratatouille alphabetically,
+
+718
+00:41:29,390 --> 00:41:31,020
+so what should I do?
+
+719
+00:41:31,020 --> 00:41:33,410
+I should now look in
+this second half here.
+
+720
+00:41:33,410 --> 00:41:35,570
+I might go to Toy Story.
+
+721
+00:41:35,570 --> 00:41:38,720
+Once I see Toy Story, I know
+I've gone a little bit too far.
+
+722
+00:41:38,720 --> 00:41:41,720
+Soul comes before Toy
+Story alphabetically,
+
+723
+00:41:41,720 --> 00:41:45,080
+so I'll look in the first
+half of this second half.
+
+724
+00:41:45,080 --> 00:41:46,230
+And what do I see?
+
+725
+00:41:46,230 --> 00:41:49,183
+I see Soul right there.
+
+726
+00:41:49,183 --> 00:41:50,130
+OK.
+
+727
+00:41:50,130 --> 00:41:52,700
+So our index seems to be working.
+
+728
+00:41:52,700 --> 00:41:54,950
+It allows me to more
+efficiently find data.
+
+729
+00:41:54,950 --> 00:41:58,250
+I no longer have to look
+through every single row.
+
+730
+00:41:58,250 --> 00:42:03,190
+I can simply use a more efficient
+algorithm like binary search.
+
+731
+00:42:03,190 --> 00:42:08,980
+But now there's one more catch which
+is, if I had many, many, many rows--
+
+732
+00:42:08,980 --> 00:42:12,940
+not just nine but literally thousands
+or hundreds of thousands or millions
+
+733
+00:42:12,940 --> 00:42:19,090
+of rows in this index, that's a lot of
+data to store in one location in memory
+
+734
+00:42:19,090 --> 00:42:22,450
+or even to load into my
+computer's RAM, so to speak--
+
+735
+00:42:22,450 --> 00:42:24,020
+its random access memory--
+
+736
+00:42:24,020 --> 00:42:26,740
+so it can do all this jumping around.
+
+737
+00:42:26,740 --> 00:42:31,510
+Ideally what I would do is break
+this index up into smaller pieces
+
+738
+00:42:31,510 --> 00:42:34,300
+so I don't have to load
+all of this at once.
+
+739
+00:42:34,300 --> 00:42:38,420
+And in reality our index is
+not a single column like this,
+
+740
+00:42:38,420 --> 00:42:42,160
+but often individual nodes
+where each of these--
+
+741
+00:42:42,160 --> 00:42:48,560
+1, 2, 3-- might be some node
+scattered about the computer's memory.
+
+742
+00:42:48,560 --> 00:42:51,190
+But what problem have I introduced now?
+
+743
+00:42:51,190 --> 00:42:53,500
+If these are around
+the computer's memory,
+
+744
+00:42:53,500 --> 00:42:56,510
+I can't actually jump
+between them anymore.
+
+745
+00:42:56,510 --> 00:43:00,140
+I can't go maybe one space
+above Toy Story and find Soul.
+
+746
+00:43:00,140 --> 00:43:03,500
+This node might be elsewhere in memory.
+
+747
+00:43:03,500 --> 00:43:06,760
+And so we'll need some
+other nodes to actually help
+
+748
+00:43:06,760 --> 00:43:10,090
+us find what we're
+looking for in this index.
+
+749
+00:43:10,090 --> 00:43:15,010
+I might have one more over here
+that tells me what kind of data
+
+750
+00:43:15,010 --> 00:43:17,230
+is in each of these nodes.
+
+751
+00:43:17,230 --> 00:43:21,190
+Maybe I have one here that
+has both Frozen and Soul.
+
+752
+00:43:21,190 --> 00:43:25,990
+Notice how here Frozen is the
+furthest down alphabetically in this
+
+753
+00:43:25,990 --> 00:43:26,980
+node up here.
+
+754
+00:43:26,980 --> 00:43:30,280
+And notice down below here
+Soul is the furthest down
+
+755
+00:43:30,280 --> 00:43:33,520
+alphabetically in this node here.
+
+756
+00:43:33,520 --> 00:43:37,150
+That is, if what I'm looking
+for comes before Frozen,
+
+757
+00:43:37,150 --> 00:43:38,800
+I should look at this node.
+
+758
+00:43:38,800 --> 00:43:42,730
+If what I'm looking for comes
+after Frozen but before Soul,
+
+759
+00:43:42,730 --> 00:43:44,620
+I should look in this node.
+
+760
+00:43:44,620 --> 00:43:49,390
+Or if what I'm looking for comes before
+none of these, it comes after Soul,
+
+761
+00:43:49,390 --> 00:43:53,390
+I should look at this node down here.
+
+762
+00:43:53,390 --> 00:43:54,910
+So let's find an example.
+
+763
+00:43:54,910 --> 00:43:56,970
+Let's say I want to find Cars now.
+
+764
+00:43:56,970 --> 00:44:00,610
+Well I'd start in this root
+node, this base of this tree
+
+765
+00:44:00,610 --> 00:44:03,190
+we're building here that I've
+turned kind of right side--
+
+766
+00:44:03,190 --> 00:44:04,240
+this way.
+
+767
+00:44:04,240 --> 00:44:05,980
+Let's say Frozen.
+
+768
+00:44:05,980 --> 00:44:09,610
+I'll go here and does
+Cars come before Frozen?
+
+769
+00:44:09,610 --> 00:44:12,490
+Well it does, so I'll
+look in this node now.
+
+770
+00:44:12,490 --> 00:44:16,570
+I'll come up here and I'll
+find Cars in that node.
+
+771
+00:44:16,570 --> 00:44:17,500
+Let's see here.
+
+772
+00:44:17,500 --> 00:44:19,840
+Maybe I want to find Ratatouille.
+
+773
+00:44:19,840 --> 00:44:23,380
+I'll go back to the beginning and
+I'll look through this root node.
+
+774
+00:44:23,380 --> 00:44:27,080
+I'll say, does Ratatouille
+come before Frozen?
+
+775
+00:44:27,080 --> 00:44:27,580
+It doesn't.
+
+776
+00:44:27,580 --> 00:44:30,970
+It comes after Frozen, so
+I'll look and check Soul.
+
+777
+00:44:30,970 --> 00:44:33,670
+Does Ratatouille come before Soul?
+
+778
+00:44:33,670 --> 00:44:36,070
+Well it does, so I'll
+look in this node now.
+
+779
+00:44:36,070 --> 00:44:37,330
+I'll go find Luca.
+
+780
+00:44:37,330 --> 00:44:40,240
+I'm not quite there yet,
+but I will see Ratatouille
+
+781
+00:44:40,240 --> 00:44:43,870
+so I know that I've now found
+Ratatouille in my index.
+
+782
+00:44:43,870 --> 00:44:45,880
+And now for one more--
+
+783
+00:44:45,880 --> 00:44:47,680
+let me check for understanding here.
+
+784
+00:44:47,680 --> 00:44:51,370
+How could I find Turning Red?
+
+785
+00:44:51,370 --> 00:44:56,310
+What steps would I follow
+to find Turning Red?
+
+786
+00:44:56,310 --> 00:45:02,115
+I might start at that root node, but
+then what questions should I ask?
+
+787
+00:45:02,115 --> 00:45:08,740
+AUDIENCE: From Frozen also we can
+see Ratatouille is to the right
+
+788
+00:45:08,740 --> 00:45:10,890
+so that we move in direction of Soul.
+
+789
+00:45:10,890 --> 00:45:15,850
+Now once we get there we find the middle
+elements and we can see Ratatouille
+
+790
+00:45:15,850 --> 00:45:19,120
+is to the right of the middle elements.
+
+791
+00:45:19,120 --> 00:45:20,520
+So that's how we find it.
+
+792
+00:45:20,520 --> 00:45:25,560
+Divide the list into two
+halves and look into the half
+
+793
+00:45:25,560 --> 00:45:27,448
+that the element is found.
+
+794
+00:45:27,448 --> 00:45:29,740
+CARTER ZENKE: Yeah, I like
+what you were thinking here.
+
+795
+00:45:29,740 --> 00:45:33,590
+So you're talking about traversing this
+tree we've built and turned on its side
+
+796
+00:45:33,590 --> 00:45:34,090
+here.
+
+797
+00:45:34,090 --> 00:45:36,010
+And let's visualize that search here.
+
+798
+00:45:36,010 --> 00:45:41,440
+So first we'll start at Frozen and ask,
+does Turning Red come before Frozen?
+
+799
+00:45:41,440 --> 00:45:41,940
+It doesn't.
+
+800
+00:45:41,940 --> 00:45:43,530
+It comes after, so I'll keep looking.
+
+801
+00:45:43,530 --> 00:45:44,640
+I'll look at Soul.
+
+802
+00:45:44,640 --> 00:45:47,620
+Does Turning Red come before Soul?
+
+803
+00:45:47,620 --> 00:45:48,120
+It doesn't.
+
+804
+00:45:48,120 --> 00:45:53,430
+It comes after Soul, so I know I
+need to look at this node down here.
+
+805
+00:45:53,430 --> 00:45:55,050
+I'll go find Toy Story.
+
+806
+00:45:55,050 --> 00:45:57,990
+Not quite there yet, but
+now I'll see Turning Red.
+
+807
+00:45:57,990 --> 00:46:00,150
+I'm able to find what I'm looking for.
+
+808
+00:46:00,150 --> 00:46:01,110
+And not just that.
+
+809
+00:46:01,110 --> 00:46:07,000
+I can find what row number Turning
+Red is actually in in my table.
+
+810
+00:46:07,000 --> 00:46:12,180
+So when you use an index, SQL or
+SQLite is using some algorithm a bit
+
+811
+00:46:12,180 --> 00:46:13,090
+like this.
+
+812
+00:46:13,090 --> 00:46:15,870
+It creates some tree
+structure a bit like this here
+
+813
+00:46:15,870 --> 00:46:18,780
+with individual nodes
+that has your column data.
+
+814
+00:46:18,780 --> 00:46:22,470
+It then uses this kind of
+algorithm to search that index
+
+815
+00:46:22,470 --> 00:46:26,770
+and find whether or not that
+piece of data is in your index.
+
+816
+00:46:26,770 --> 00:46:32,050
+And if it is, it will go ahead and look
+up that piece of data in your table.
+
+817
+00:46:32,050 --> 00:46:36,000
+So see here, although this is
+turned on its side, the relationship
+
+818
+00:46:36,000 --> 00:46:37,740
+between a kind of tree.
+
+819
+00:46:37,740 --> 00:46:43,680
+We had a root node or a trunk node here
+pointing to some of these leaf nodes--
+
+820
+00:46:43,680 --> 00:46:45,570
+the edge of our graph right here.
+
+821
+00:46:45,570 --> 00:46:48,750
+And you can see some relationship
+between these nodes here
+
+822
+00:46:48,750 --> 00:46:52,350
+and our tree as well
+right here with arrows
+
+823
+00:46:52,350 --> 00:46:55,770
+pointing across these individual nodes.
+
+824
+00:46:55,770 --> 00:47:01,050
+So let me pause here and ask what
+questions do we have on this structure
+
+825
+00:47:01,050 --> 00:47:02,985
+and how we've searched it?
+
+826
+00:47:02,985 --> 00:47:07,683
+AUDIENCE: Is that related
+to linked lists or arrays?
+
+827
+00:47:07,683 --> 00:47:08,850
+CARTER ZENKE: Good question.
+
+828
+00:47:08,850 --> 00:47:11,780
+Is this related to
+linked lists or arrays?
+
+829
+00:47:11,780 --> 00:47:14,550
+So if you're familiar, a
+linked list is some set
+
+830
+00:47:14,550 --> 00:47:18,030
+of nodes that have been linked together
+in memory using these arrows like we
+
+831
+00:47:18,030 --> 00:47:19,800
+saw on our diagram here.
+
+832
+00:47:19,800 --> 00:47:24,135
+It is the case that sometimes an
+index will include a linked list.
+
+833
+00:47:24,135 --> 00:47:27,100
+
+
+834
+00:47:27,100 --> 00:47:28,245
+Let's take one more here.
+
+835
+00:47:28,245 --> 00:47:32,400
+AUDIENCE: I want to
+know, a covering index--
+
+836
+00:47:32,400 --> 00:47:37,890
+how is the [INAUDIBLE] covering
+index and what has been--
+
+837
+00:47:37,890 --> 00:47:44,160
+I mean, if we just [INAUDIBLE] index
+and then we just start covering index,
+
+838
+00:47:44,160 --> 00:47:49,740
+how SQL automatically getting
+that covering index that's here?
+
+839
+00:47:49,740 --> 00:47:53,010
+CARTER ZENKE: Yeah, so I think we're
+asking, how is the index created?
+
+840
+00:47:53,010 --> 00:47:54,940
+Like, what is the
+process for doing that?
+
+841
+00:47:54,940 --> 00:47:58,920
+Well it turns out that just as we saw
+here in the slides, SQLite or whatever
+
+842
+00:47:58,920 --> 00:48:03,240
+DBMS you're using will take a copy of
+the data that should be in that index
+
+843
+00:48:03,240 --> 00:48:06,750
+and organize it into a tree
+structure like we saw here.
+
+844
+00:48:06,750 --> 00:48:09,150
+It may or may not be similar
+to the structure we saw just
+
+845
+00:48:09,150 --> 00:48:14,640
+a little earlier with nodes that have
+different pieces of row data in them.
+
+846
+00:48:14,640 --> 00:48:17,280
+Good question there.
+
+847
+00:48:17,280 --> 00:48:18,180
+OK.
+
+848
+00:48:18,180 --> 00:48:21,090
+So we've seen now the
+trade-off that we get
+
+849
+00:48:21,090 --> 00:48:24,510
+with index, which is they're
+very fast to look up some data
+
+850
+00:48:24,510 --> 00:48:26,400
+but they take up a lot more space.
+
+851
+00:48:26,400 --> 00:48:29,370
+There's a lot of
+redundancy to them here.
+
+852
+00:48:29,370 --> 00:48:31,890
+There's also one more
+trade-off, which is
+
+853
+00:48:31,890 --> 00:48:37,230
+if I want to insert something into this
+structure, it'll take me more time.
+
+854
+00:48:37,230 --> 00:48:39,240
+I have to navigate this structure here.
+
+855
+00:48:39,240 --> 00:48:44,010
+I have to figure out should it come
+before this value or after this value?
+
+856
+00:48:44,010 --> 00:48:48,030
+And I'll have to traverse
+this tree every time verses
+
+857
+00:48:48,030 --> 00:48:51,420
+without an index I could just add
+something to the end of this list.
+
+858
+00:48:51,420 --> 00:48:54,930
+But with a B-Tree, with an index,
+I need to traverse all these nodes
+
+859
+00:48:54,930 --> 00:48:57,760
+and figure out where should
+that piece of data go?
+
+860
+00:48:57,760 --> 00:48:59,593
+So these trade-offs are
+something you should
+
+861
+00:48:59,593 --> 00:49:03,660
+keep in mind as you build indexes
+and optimize your queries.
+
+862
+00:49:03,660 --> 00:49:04,560
+OK.
+
+863
+00:49:04,560 --> 00:49:07,650
+There are ways though to
+actually optimize the space
+
+864
+00:49:07,650 --> 00:49:10,710
+that we use using a tree like this.
+
+865
+00:49:10,710 --> 00:49:15,310
+We can use a structure called not
+an index, but a partial index.
+
+866
+00:49:15,310 --> 00:49:19,620
+And if you're concerned about space,
+a partial index might be good for you.
+
+867
+00:49:19,620 --> 00:49:25,200
+A partial index only includes a subset
+of the data from a given column,
+
+868
+00:49:25,200 --> 00:49:28,800
+thus making your index smaller overall.
+
+869
+00:49:28,800 --> 00:49:31,590
+You could think of a partial
+index being useful when
+
+870
+00:49:31,590 --> 00:49:35,490
+you know that your users
+will only query a subset--
+
+871
+00:49:35,490 --> 00:49:38,820
+only a small number of
+rows from that table.
+
+872
+00:49:38,820 --> 00:49:42,690
+And for example in IMDb,
+maybe we know people
+
+873
+00:49:42,690 --> 00:49:46,770
+are more likely to search for a movie
+that came out this year versus someone
+
+874
+00:49:46,770 --> 00:49:49,720
+that came out 15 years ago or so.
+
+875
+00:49:49,720 --> 00:49:53,340
+So we could create an index that
+focuses on those movies that
+
+876
+00:49:53,340 --> 00:49:59,800
+came out this year versus 15 years
+ago or so, and we'll do just that.
+
+877
+00:49:59,800 --> 00:50:03,670
+If I want to create a partial
+index I can use this syntax here.
+
+878
+00:50:03,670 --> 00:50:06,720
+I could say create an index
+and give it some name,
+
+879
+00:50:06,720 --> 00:50:11,670
+then include some data from
+this table and this column here,
+
+880
+00:50:11,670 --> 00:50:13,530
+or a list of columns I can provide.
+
+881
+00:50:13,530 --> 00:50:19,140
+But then what I need0 to do is add a
+condition where some condition is true.
+
+882
+00:50:19,140 --> 00:50:23,370
+These are the rows I want
+to include in this index.
+
+883
+00:50:23,370 --> 00:50:27,910
+Before we had just create index name
+on table from a list of columns.
+
+884
+00:50:27,910 --> 00:50:33,420
+Now we can add in this WHERE clause
+that says only include those rows where
+
+885
+00:50:33,420 --> 00:50:35,320
+this condition is true.
+
+886
+00:50:35,320 --> 00:50:36,840
+So let's try that now.
+
+887
+00:50:36,840 --> 00:50:39,210
+I'll come back to my computer.
+
+888
+00:50:39,210 --> 00:50:41,880
+And why don't we try
+creating a partial index
+
+889
+00:50:41,880 --> 00:50:46,710
+to help speed up the lookup of
+movies that came out this year.
+
+890
+00:50:46,710 --> 00:50:50,520
+Well I could come back to my terminal
+and I could remove, let's say,
+
+891
+00:50:50,520 --> 00:50:51,900
+this one over here.
+
+892
+00:50:51,900 --> 00:50:55,320
+Now I'll try to create
+this partial index.
+
+893
+00:50:55,320 --> 00:51:00,690
+I'll say create an index called
+"recents" to indicate this
+
+894
+00:51:00,690 --> 00:51:03,090
+will help us search for recent movies.
+
+895
+00:51:03,090 --> 00:51:08,400
+Now I'll make this "recents" ON
+"movies" in the ("title") column.
+
+896
+00:51:08,400 --> 00:51:12,510
+I want to look up titles
+ultimately, but now I
+
+897
+00:51:12,510 --> 00:51:20,190
+only want to create an index for
+those rows where the year equals 2023.
+
+898
+00:51:20,190 --> 00:51:26,790
+I only want to include those titles in
+my index that were released in 2023.
+
+899
+00:51:26,790 --> 00:51:31,890
+So I'll hit Enter now and I'll see I
+created this index for myself here.
+
+900
+00:51:31,890 --> 00:51:33,900
+Now let me try searching for those.
+
+901
+00:51:33,900 --> 00:51:40,440
+I'll SELECT "title" FROM
+"movies" WHERE the "year" = 2023.
+
+902
+00:51:40,440 --> 00:51:41,610
+Enter.
+
+903
+00:51:41,610 --> 00:51:45,910
+And I'll see a lot of
+movies came out in 2023.
+
+904
+00:51:45,910 --> 00:51:48,550
+Now, it's taking 1.3 seconds here.
+
+905
+00:51:48,550 --> 00:51:51,600
+But now I could prove to you
+that we are using some index.
+
+906
+00:51:51,600 --> 00:52:00,120
+I could say EXPLAIN QUERY PLAN and
+now type SELECT "title" FROM "movies"
+
+907
+00:52:00,120 --> 00:52:03,120
+WHERE the "year" = 2023.
+
+908
+00:52:03,120 --> 00:52:04,440
+Hit Enter.
+
+909
+00:52:04,440 --> 00:52:06,600
+And now we'll see-- what are we doing?
+
+910
+00:52:06,600 --> 00:52:09,870
+We're going to-- we'll
+scan movies but we're still
+
+911
+00:52:09,870 --> 00:52:13,950
+going to use the index we
+just created called "recents."
+
+912
+00:52:13,950 --> 00:52:17,580
+So it's helping speed us up
+just a little bit overall.
+
+913
+00:52:17,580 --> 00:52:21,540
+Now let me try dropping this index
+and showing you the opposite.
+
+914
+00:52:21,540 --> 00:52:24,560
+I'll come back over here
+and I could try dropping it.
+
+915
+00:52:24,560 --> 00:52:26,310
+And actually, before
+I do that let me show
+
+916
+00:52:26,310 --> 00:52:29,340
+you what would happen if I
+didn't search for movie in 2023.
+
+917
+00:52:29,340 --> 00:52:32,560
+I would try EXPLAIN QUERY PLAN.
+
+918
+00:52:32,560 --> 00:52:42,150
+And let me try SELECT "title" FROM
+"movies" where the year = 1998
+
+919
+00:52:42,150 --> 00:52:43,140
+like this.
+
+920
+00:52:43,140 --> 00:52:47,130
+And see now I'm only
+back to scanning movies.
+
+921
+00:52:47,130 --> 00:52:50,670
+So before in my prior query
+I was able to use the index
+
+922
+00:52:50,670 --> 00:52:54,480
+because my WHERE clause included 2023.
+
+923
+00:52:54,480 --> 00:52:58,590
+Now though I'm using 1998,
+which were rows that were not
+
+924
+00:52:58,590 --> 00:53:02,520
+included in this partial index.
+
+925
+00:53:02,520 --> 00:53:03,270
+OK.
+
+926
+00:53:03,270 --> 00:53:05,850
+So let me ask now, what
+questions do we have
+
+927
+00:53:05,850 --> 00:53:09,600
+on these partial index which
+we can use to optimize some
+
+928
+00:53:09,600 --> 00:53:12,920
+of the space these indexes take up?
+
+929
+00:53:12,920 --> 00:53:16,030
+AUDIENCE: Are indexes
+not saved in schema?
+
+930
+00:53:16,030 --> 00:53:17,280
+CARTER ZENKE: A good question.
+
+931
+00:53:17,280 --> 00:53:19,370
+Are indexes saved in the schema?
+
+932
+00:53:19,370 --> 00:53:23,510
+In SQLite if I type .schema I can
+actually see them in my schema.
+
+933
+00:53:23,510 --> 00:53:25,070
+So let me go back here and show you.
+
+934
+00:53:25,070 --> 00:53:27,560
+If I now type something like--
+
+935
+00:53:27,560 --> 00:53:29,620
+let me turn timer off here--
+
+936
+00:53:29,620 --> 00:53:35,150
+.schema, you can see down below here
+that I actually have these indexes
+
+937
+00:53:35,150 --> 00:53:37,190
+as part of my schema.
+
+938
+00:53:37,190 --> 00:53:40,910
+I'll see the create index
+statements I used down below here.
+
+939
+00:53:40,910 --> 00:53:44,810
+Create an index called name_index,
+called person_index, called recents.
+
+940
+00:53:44,810 --> 00:53:49,460
+And all that I used to create
+these indexes now inside my schema.
+
+941
+00:53:49,460 --> 00:53:54,790
+If I drop some index it'll then be
+just removed from my schema altogether.
+
+942
+00:53:54,790 --> 00:53:57,160
+Good question.
+
+943
+00:53:57,160 --> 00:53:57,660
+OK.
+
+944
+00:53:57,660 --> 00:54:00,450
+So speaking of dropping
+indexes, one other way
+
+945
+00:54:00,450 --> 00:54:04,470
+we can more efficiently use space is
+to do a bit of vacuuming so to speak.
+
+946
+00:54:04,470 --> 00:54:08,040
+So let's introduce this idea
+of vacuuming up our database.
+
+947
+00:54:08,040 --> 00:54:10,200
+Let me show you a slide here.
+
+948
+00:54:10,200 --> 00:54:14,010
+And this one involves this
+idea of trying to clean up
+
+949
+00:54:14,010 --> 00:54:17,580
+unused space in our database.
+
+950
+00:54:17,580 --> 00:54:22,500
+Often when we delete something,
+either a rows or an index,
+
+951
+00:54:22,500 --> 00:54:25,890
+we don't actually delete
+those bits that were
+
+952
+00:54:25,890 --> 00:54:29,190
+being used by those rows or that index.
+
+953
+00:54:29,190 --> 00:54:33,690
+We just mark them as being available
+for whatever we next insert.
+
+954
+00:54:33,690 --> 00:54:36,400
+They can be overwritten, so to speak.
+
+955
+00:54:36,400 --> 00:54:39,930
+But if I want to actually
+reduce the size of my database
+
+956
+00:54:39,930 --> 00:54:44,880
+after I delete something, I should
+use something like vacuum in SQLite
+
+957
+00:54:44,880 --> 00:54:47,610
+or optimize in some other DBMS.
+
+958
+00:54:47,610 --> 00:54:50,950
+Vacuuming is a bit like taking those
+unused bits and just sucking them up.
+
+959
+00:54:50,950 --> 00:54:55,500
+Taking them back in so we can give
+them back to the operating system.
+
+960
+00:54:55,500 --> 00:54:59,490
+And the keyword we can use for
+vacuum is just simply vacuum.
+
+961
+00:54:59,490 --> 00:55:00,720
+So let's try this.
+
+962
+00:55:00,720 --> 00:55:02,640
+I'll come back to my computer over here.
+
+963
+00:55:02,640 --> 00:55:06,120
+And let me open up a new
+terminal-- one that I can use
+
+964
+00:55:06,120 --> 00:55:09,240
+to find the current size of movies.db.
+
+965
+00:55:09,240 --> 00:55:12,720
+So I'll hit this + button here
+and now I could type a command.
+
+966
+00:55:12,720 --> 00:55:17,830
+Not a SQL command or a SQLite
+command, but actually a Unix command.
+
+967
+00:55:17,830 --> 00:55:22,320
+I could type du -b for
+the disk usage in bytes.
+
+968
+00:55:22,320 --> 00:55:24,810
+How many bytes is a particular file?
+
+969
+00:55:24,810 --> 00:55:31,560
+I could then say movies.db here, and
+if I hit Enter I should see movies.db
+
+970
+00:55:31,560 --> 00:55:37,230
+is something like 158 million
+bytes or 158 megabytes.
+
+971
+00:55:37,230 --> 00:55:41,290
+So let's see what happens if I were to
+delete an index which you know takes up
+
+972
+00:55:41,290 --> 00:55:43,380
+some amount of space in our database.
+
+973
+00:55:43,380 --> 00:55:45,510
+I'll go back to my terminal here.
+
+974
+00:55:45,510 --> 00:55:48,990
+And let me try to drop an index
+that we had recently created.
+
+975
+00:55:48,990 --> 00:55:55,170
+I'll say DROP INDEX "person_index" to
+remove the person index in this case.
+
+976
+00:55:55,170 --> 00:55:58,860
+I'll hit Enter and now I see
+that "person_index" is dropped.
+
+977
+00:55:58,860 --> 00:56:05,250
+If I type .schema here, I no longer
+see it in my schema down below.
+
+978
+00:56:05,250 --> 00:56:09,180
+So now let me check the disk usage
+in bytes and see if it's any smaller.
+
+979
+00:56:09,180 --> 00:56:13,410
+I'll hit the up arrow to get access
+to that same command, hit Enter.
+
+980
+00:56:13,410 --> 00:56:14,940
+It seems like it's the same size.
+
+981
+00:56:14,940 --> 00:56:17,940
+It's still 158 megabytes.
+
+982
+00:56:17,940 --> 00:56:19,830
+So let me try dropping
+something more here.
+
+983
+00:56:19,830 --> 00:56:23,430
+I'll go back to my terminal
+here and now I'll try--
+
+984
+00:56:23,430 --> 00:56:25,500
+what other do I have?
+
+985
+00:56:25,500 --> 00:56:30,630
+I have "name_index" so I'll say let's
+DROP index "name_index" like this.
+
+986
+00:56:30,630 --> 00:56:34,680
+I'll hit Enter and I'll
+see that index is now gone.
+
+987
+00:56:34,680 --> 00:56:37,200
+Well now I'll also try dropping recents.
+
+988
+00:56:37,200 --> 00:56:43,470
+I'll DROP INDEX "recents" and
+now I believe all of my indexes
+
+989
+00:56:43,470 --> 00:56:44,310
+should be gone.
+
+990
+00:56:44,310 --> 00:56:48,510
+If I type .schema, I don't
+see any more indexes.
+
+991
+00:56:48,510 --> 00:56:51,300
+So now let's check on
+the disk usage in bytes.
+
+992
+00:56:51,300 --> 00:56:54,750
+I'll go back to my other
+terminal, hit du -b again,
+
+993
+00:56:54,750 --> 00:56:58,290
+and it's still 158 megabytes.
+
+994
+00:56:58,290 --> 00:57:01,170
+Well what can we do to clean this up?
+
+995
+00:57:01,170 --> 00:57:03,180
+We could run vacuum.
+
+996
+00:57:03,180 --> 00:57:07,140
+If you remember here when we delete
+an index-- we drop the index,
+
+997
+00:57:07,140 --> 00:57:09,840
+we don't actually shrink
+our database file.
+
+998
+00:57:09,840 --> 00:57:13,320
+We just mark those bits that
+were part of the index as being
+
+999
+00:57:13,320 --> 00:57:15,120
+available for re-use.
+
+1000
+00:57:15,120 --> 00:57:17,700
+So let's now vacuum
+and compress our file
+
+1001
+00:57:17,700 --> 00:57:21,210
+to give back those bytes and those
+bits to the operating system.
+
+1002
+00:57:21,210 --> 00:57:27,000
+I'll come back to my terminal
+here and type VACUUM; hit Enter,
+
+1003
+00:57:27,000 --> 00:57:30,360
+and I'll wait for it to
+find those bits and bytes,
+
+1004
+00:57:30,360 --> 00:57:33,300
+wait for it to give them
+back, to de-allocate them,
+
+1005
+00:57:33,300 --> 00:57:34,950
+to go back to the operating system.
+
+1006
+00:57:34,950 --> 00:57:39,660
+And now if I come back and I
+type du -b again, hit Enter--
+
+1007
+00:57:39,660 --> 00:57:42,970
+I should see a much smaller file.
+
+1008
+00:57:42,970 --> 00:57:45,990
+So before we had about
+158 million bytes.
+
+1009
+00:57:45,990 --> 00:57:50,670
+We're down to in this case 100
+million after dropping our indexes
+
+1010
+00:57:50,670 --> 00:57:53,360
+and using VACUUM.
+
+1011
+00:57:53,360 --> 00:57:57,390
+So let me ask now, what questions
+do we have on vacuuming?
+
+1012
+00:57:57,390 --> 00:58:00,020
+AUDIENCE: Can we do
+vacuuming in a faster way?
+
+1013
+00:58:00,020 --> 00:58:02,730
+CARTER ZENKE: Can you
+vacuum in a faster way?
+
+1014
+00:58:02,730 --> 00:58:05,120
+So I think it depends on
+the size of the vacuum
+
+1015
+00:58:05,120 --> 00:58:06,990
+that you're trying to implement here.
+
+1016
+00:58:06,990 --> 00:58:08,900
+If you have a lot of
+bits and bytes you're
+
+1017
+00:58:08,900 --> 00:58:11,990
+trying to de-allocate,
+that could take more time.
+
+1018
+00:58:11,990 --> 00:58:15,290
+The process here is the computer has
+to find those bits and bytes you're
+
+1019
+00:58:15,290 --> 00:58:19,590
+no longer using and then give each of
+those back to the operating system.
+
+1020
+00:58:19,590 --> 00:58:24,178
+So it could depend on the size
+and how long they take to find.
+
+1021
+00:58:24,178 --> 00:58:25,720
+And let's take another question here.
+
+1022
+00:58:25,720 --> 00:58:30,691
+AUDIENCE: Initially you said once we
+drop a database, we don't lose the--
+
+1023
+00:58:30,691 --> 00:58:33,310
+the data is not deleted.
+
+1024
+00:58:33,310 --> 00:58:36,550
+The space is just reallocated, right?
+
+1025
+00:58:36,550 --> 00:58:37,960
+If I go you right.
+
+1026
+00:58:37,960 --> 00:58:42,280
+So does that mean the
+queries we run today,
+
+1027
+00:58:42,280 --> 00:58:46,780
+are they locked somewhere that--
+let's say you mistakenly did a query.
+
+1028
+00:58:46,780 --> 00:58:50,710
+You can go back and pull that data back?
+
+1029
+00:58:50,710 --> 00:58:51,880
+Is that possible?
+
+1030
+00:58:51,880 --> 00:58:55,000
+Kind of like a reversal of a query.
+
+1031
+00:58:55,000 --> 00:58:57,880
+CARTER ZENKE: Yeah, so you're
+talking about some forensics here.
+
+1032
+00:58:57,880 --> 00:59:01,900
+Like, could we mark something as
+deleted but still find it later?
+
+1033
+00:59:01,900 --> 00:59:05,290
+There actually are people who are
+trained in this, in forensics,
+
+1034
+00:59:05,290 --> 00:59:07,600
+to find pieces of data that
+you thought were deleted
+
+1035
+00:59:07,600 --> 00:59:12,160
+but are actually still on your
+computer just forgotten, if you will.
+
+1036
+00:59:12,160 --> 00:59:14,740
+In this case in SQLite it
+would take a lot of work
+
+1037
+00:59:14,740 --> 00:59:18,190
+to go ahead and find all of those
+bits and bytes we've removed.
+
+1038
+00:59:18,190 --> 00:59:21,550
+But once we vacuum, once we actually
+give them back to the operating system,
+
+1039
+00:59:21,550 --> 00:59:24,220
+we can no longer find
+those in the database
+
+1040
+00:59:24,220 --> 00:59:26,830
+because they're not just
+marked as being de-allocated.
+
+1041
+00:59:26,830 --> 00:59:30,720
+They actually have been given back and
+they're no longer part of our database.
+
+1042
+00:59:30,720 --> 00:59:32,710
+Good question there.
+
+1043
+00:59:32,710 --> 00:59:35,800
+OK, so we've seen here
+how we can optimize
+
+1044
+00:59:35,800 --> 00:59:38,680
+our queries by reducing
+the time that they take
+
+1045
+00:59:38,680 --> 00:59:40,870
+although at the cost of some space.
+
+1046
+00:59:40,870 --> 00:59:45,130
+When we come back, we'll see how we
+can handle not just one query at a time
+
+1047
+00:59:45,130 --> 00:59:47,440
+but many all at once.
+
+1048
+00:59:47,440 --> 00:59:49,010
+See you in a bit.
+
+1049
+00:59:49,010 --> 00:59:50,330
+And we're back.
+
+1050
+00:59:50,330 --> 00:59:54,460
+So we've seen so far how to optimize
+individual queries, ensuring
+
+1051
+00:59:54,460 --> 00:59:58,000
+they take less time and
+also to ensure our databases
+
+1052
+00:59:58,000 --> 01:00:00,800
+use as little space as possible.
+
+1053
+01:00:00,800 --> 01:00:03,010
+What we'll focus on
+now is trying to ensure
+
+1054
+01:00:03,010 --> 01:00:08,125
+we can handle not just one query
+at a time but multiple all at once.
+
+1055
+01:00:08,125 --> 01:00:10,570
+And this is this idea of concurrency.
+
+1056
+01:00:10,570 --> 01:00:16,180
+Concurrency is when I get multiple
+queries, multiple interactions, all
+
+1057
+01:00:16,180 --> 01:00:20,110
+at roughly the same time and my
+computer system, my database,
+
+1058
+01:00:20,110 --> 01:00:23,810
+needs to figure out how to
+handle all of those at once.
+
+1059
+01:00:23,810 --> 01:00:27,040
+This is particularly important for
+websites that get a lot of traffic,
+
+1060
+01:00:27,040 --> 01:00:28,900
+or even for the financial sector.
+
+1061
+01:00:28,900 --> 01:00:32,110
+People are constantly making
+trades, placing orders,
+
+1062
+01:00:32,110 --> 01:00:34,610
+exchanging money, and so on.
+
+1063
+01:00:34,610 --> 01:00:37,690
+So let's see one example here of a bank.
+
+1064
+01:00:37,690 --> 01:00:40,870
+Let's say here I have
+a table of accounts
+
+1065
+01:00:40,870 --> 01:00:44,860
+and each account has a name
+and some balance to it.
+
+1066
+01:00:44,860 --> 01:00:50,890
+Well we decide here that maybe
+Alice wants to pay Bob $10.
+
+1067
+01:00:50,890 --> 01:00:54,220
+So what should I do to
+update the balances here?
+
+1068
+01:00:54,220 --> 01:00:58,510
+Maybe the first thing I should do is
+make sure that Bob receives that money.
+
+1069
+01:00:58,510 --> 01:01:03,460
+I could update Bob's account to have
+a balance not of $20 but of $30 now.
+
+1070
+01:01:03,460 --> 01:01:05,920
+From $20 to $30.
+
+1071
+01:01:05,920 --> 01:01:07,450
+But here's the thing.
+
+1072
+01:01:07,450 --> 01:01:14,806
+If at this moment somebody looks at this
+table, what will they see that's wrong?
+
+1073
+01:01:14,806 --> 01:01:20,205
+What will they see that they might not
+get the right picture of at this point?
+
+1074
+01:01:20,205 --> 01:01:23,800
+
+
+1075
+01:01:23,800 --> 01:01:27,850
+I'm hearing they might not see
+the correct balance for Alice.
+
+1076
+01:01:27,850 --> 01:01:29,980
+Bob has gotten some money.
+
+1077
+01:01:29,980 --> 01:01:31,990
+He's gone from $20 here to $30.
+
+1078
+01:01:31,990 --> 01:01:34,060
+But now I have not just--
+
+1079
+01:01:34,060 --> 01:01:35,710
+let's see, $60 in the bank.
+
+1080
+01:01:35,710 --> 01:01:38,210
+I now have $70 it looks like.
+
+1081
+01:01:38,210 --> 01:01:40,900
+So if somebody looks at this
+transaction in this moment
+
+1082
+01:01:40,900 --> 01:01:43,420
+they'll see some incorrect information.
+
+1083
+01:01:43,420 --> 01:01:45,910
+What I should then do is
+update Alice's balance,
+
+1084
+01:01:45,910 --> 01:01:50,740
+subtracting $10 so we're at the right
+amount of dollars across our bank
+
+1085
+01:01:50,740 --> 01:01:51,830
+accounts here.
+
+1086
+01:01:51,830 --> 01:01:53,890
+So this is an issue.
+
+1087
+01:01:53,890 --> 01:01:57,370
+When I have one ongoing
+transaction like this
+
+1088
+01:01:57,370 --> 01:01:59,950
+and somebody else wants
+to look at that data,
+
+1089
+01:01:59,950 --> 01:02:03,430
+they really shouldn't be able
+to until this transaction is
+
+1090
+01:02:03,430 --> 01:02:06,020
+complete in its entirety.
+
+1091
+01:02:06,020 --> 01:02:09,340
+So ideally-- let's go back to what
+we had before with Alice at $10
+
+1092
+01:02:09,340 --> 01:02:10,480
+Bob at $20.
+
+1093
+01:02:10,480 --> 01:02:15,430
+Ideally if Alice wants to pay Bob, this
+should happen to an outside observer
+
+1094
+01:02:15,430 --> 01:02:16,510
+all at once.
+
+1095
+01:02:16,510 --> 01:02:19,360
+Bob should get those
+$10 and Alice should
+
+1096
+01:02:19,360 --> 01:02:23,590
+lose those $10 at the same
+exact moment so nobody
+
+1097
+01:02:23,590 --> 01:02:29,230
+can look and see that Bob has more money
+while Alice doesn't have less money.
+
+1098
+01:02:29,230 --> 01:02:34,060
+Now we can implement this
+idea of this transaction using
+
+1099
+01:02:34,060 --> 01:02:39,040
+a very similarly-named idea in
+databases called a transaction.
+
+1100
+01:02:39,040 --> 01:02:41,830
+Now a transaction in
+the world of databases
+
+1101
+01:02:41,830 --> 01:02:44,800
+is an individual unit of work.
+
+1102
+01:02:44,800 --> 01:02:49,370
+That means a transaction can't be
+broken down into smaller pieces.
+
+1103
+01:02:49,370 --> 01:02:52,720
+It happens all at once or not at all.
+
+1104
+01:02:52,720 --> 01:02:55,540
+And in fact a transaction
+has several properties
+
+1105
+01:02:55,540 --> 01:02:58,690
+and helps implement several
+properties of a database.
+
+1106
+01:02:58,690 --> 01:03:00,340
+Among these are ACID--
+
+1107
+01:03:00,340 --> 01:03:05,020
+A-C-I-D. You may have heard of these
+if you've looked up something about
+
+1108
+01:03:05,020 --> 01:03:10,150
+databases, but each one stands for
+some principle of ensuring a consistent
+
+1109
+01:03:10,150 --> 01:03:11,870
+and reliable database.
+
+1110
+01:03:11,870 --> 01:03:17,710
+In fact, A stands for atomicity, which
+means I can't break a transaction down
+
+1111
+01:03:17,710 --> 01:03:18,970
+into smaller pieces.
+
+1112
+01:03:18,970 --> 01:03:21,310
+I can't break a transaction
+between Alice and Bob
+
+1113
+01:03:21,310 --> 01:03:24,250
+into Bob's update and
+then Alice's update.
+
+1114
+01:03:24,250 --> 01:03:28,150
+It's just update both
+accounts at the same time.
+
+1115
+01:03:28,150 --> 01:03:32,080
+Consistency means a transaction
+to help me ensure that I
+
+1116
+01:03:32,080 --> 01:03:35,180
+don't violate some database constraint.
+
+1117
+01:03:35,180 --> 01:03:39,070
+Let's say I try to pay
+Bob from Alice's account,
+
+1118
+01:03:39,070 --> 01:03:40,900
+but Alice doesn't have the money.
+
+1119
+01:03:40,900 --> 01:03:44,530
+If that is the case, a
+transaction will revert, undo.
+
+1120
+01:03:44,530 --> 01:03:49,090
+So I go back to being in this
+consistent state for my database.
+
+1121
+01:03:49,090 --> 01:03:53,530
+Isolation means if I have more
+than one person trying to access
+
+1122
+01:03:53,530 --> 01:03:55,600
+this database, their queries--
+
+1123
+01:03:55,600 --> 01:03:58,940
+their transactions won't
+interfere with each other.
+
+1124
+01:03:58,940 --> 01:04:03,385
+And then finally, durability means
+if I were to unplug this database
+
+1125
+01:04:03,385 --> 01:04:06,010
+or we were to encounter a power
+failure or the server to crash,
+
+1126
+01:04:06,010 --> 01:04:11,230
+all that data would still be there from
+the time we committed our transaction
+
+1127
+01:04:11,230 --> 01:04:14,150
+or saved the results there.
+
+1128
+01:04:14,150 --> 01:04:18,670
+So transactions do a lot for us, but
+they have some very simple syntax.
+
+1129
+01:04:18,670 --> 01:04:24,130
+I can simply use BEGIN TRANSACTION and
+then follow it up with some statements
+
+1130
+01:04:24,130 --> 01:04:26,780
+I want to include in that transaction.
+
+1131
+01:04:26,780 --> 01:04:30,850
+And once I'm sure I want to save
+the results of these statements,
+
+1132
+01:04:30,850 --> 01:04:36,340
+I can then say COMMIT, meaning
+save these changes thus far.
+
+1133
+01:04:36,340 --> 01:04:38,620
+And it's using this
+kind of syntax we can
+
+1134
+01:04:38,620 --> 01:04:41,830
+ensure that nobody sees
+incorrect balances,
+
+1135
+01:04:41,830 --> 01:04:45,590
+let's say, for this
+bank account table here.
+
+1136
+01:04:45,590 --> 01:04:49,840
+So let's try this out and implement
+a payment between Alice and Bob,
+
+1137
+01:04:49,840 --> 01:04:52,180
+but now using a transaction.
+
+1138
+01:04:52,180 --> 01:04:54,670
+I'll come back to my computer here.
+
+1139
+01:04:54,670 --> 01:04:57,400
+And let me show you a new database.
+
+1140
+01:04:57,400 --> 01:05:00,580
+I'll type sqlite3 bank.db.
+
+1141
+01:05:00,580 --> 01:05:01,600
+I'll hit Enter.
+
+1142
+01:05:01,600 --> 01:05:02,980
+Oh, sqlite3.
+
+1143
+01:05:02,980 --> 01:05:03,520
+Sorry.
+
+1144
+01:05:03,520 --> 01:05:04,720
+bank.db.
+
+1145
+01:05:04,720 --> 01:05:09,430
+I'll hit Enter, and now let me type
+.schema to see the schema of this
+
+1146
+01:05:09,430 --> 01:05:10,360
+database.
+
+1147
+01:05:10,360 --> 01:05:12,970
+I'll see here a few different columns.
+
+1148
+01:05:12,970 --> 01:05:15,970
+But I have an "id"
+column, my primary key,
+
+1149
+01:05:15,970 --> 01:05:19,900
+a "name" column like we saw in our
+slides that is text and can't be null,
+
+1150
+01:05:19,900 --> 01:05:22,390
+and then a "balance" column.
+
+1151
+01:05:22,390 --> 01:05:26,740
+There's an integer, a whole number of
+dollars, that also must have a value.
+
+1152
+01:05:26,740 --> 01:05:27,850
+Can't be null.
+
+1153
+01:05:27,850 --> 01:05:30,730
+And I have a check
+constraint here saying
+
+1154
+01:05:30,730 --> 01:05:35,590
+the balance must be at all times
+greater than or equal to 0.
+
+1155
+01:05:35,590 --> 01:05:40,690
+So this is our implementation
+of a table of bank accounts.
+
+1156
+01:05:40,690 --> 01:05:44,650
+Let me try querying here to see
+what our account balances look like.
+
+1157
+01:05:44,650 --> 01:05:50,390
+I'll say SELECT * FROM
+"accounts" semicolon.
+
+1158
+01:05:50,390 --> 01:05:53,980
+And now I'll see that very same
+arrangement we saw in our slides.
+
+1159
+01:05:53,980 --> 01:05:59,450
+Alice has $10, Bob has
+$20, and Charlie has $30.
+
+1160
+01:05:59,450 --> 01:06:04,570
+So let me try then processing this
+transaction between Alice and Bob.
+
+1161
+01:06:04,570 --> 01:06:08,890
+Well at this moment I might
+try to update Bob's account
+
+1162
+01:06:08,890 --> 01:06:10,600
+at the first [? bat. ?] I'll say--
+
+1163
+01:06:10,600 --> 01:06:13,510
+let's try update and
+I'll update the accounts
+
+1164
+01:06:13,510 --> 01:06:21,730
+table, set the "balance" equal to
+"balance" + 10 where the "id" equals 2.
+
+1165
+01:06:21,730 --> 01:06:25,040
+Remember, Bob's accounts "id" is 2.
+
+1166
+01:06:25,040 --> 01:06:30,350
+So now if I hit Enter here, Bob should
+have gotten just 10 more dollars.
+
+1167
+01:06:30,350 --> 01:06:31,610
+But there's a problem.
+
+1168
+01:06:31,610 --> 01:06:34,790
+If I also connect to this database
+through another connection here,
+
+1169
+01:06:34,790 --> 01:06:37,457
+sqlite3 bank.DB.
+
+1170
+01:06:37,457 --> 01:06:40,040
+Maybe I'm somebody who's checking
+on the balances of the bank.
+
+1171
+01:06:40,040 --> 01:06:44,120
+I say SELECT * FROM "accounts."
+
+1172
+01:06:44,120 --> 01:06:48,360
+What do I see but an
+incorrect total balance?
+
+1173
+01:06:48,360 --> 01:06:51,890
+We should have $60, but here I see $70.
+
+1174
+01:06:51,890 --> 01:06:54,620
+So I need to complete
+this transaction to ensure
+
+1175
+01:06:54,620 --> 01:06:58,790
+that I actually have the right
+amount of balances across the board.
+
+1176
+01:06:58,790 --> 01:07:03,188
+Let me go back here and let me
+try to run the next part here.
+
+1177
+01:07:03,188 --> 01:07:03,980
+Let we update this.
+
+1178
+01:07:03,980 --> 01:07:10,910
+I'll say UPDATE "accounts," and I'll SET
+"balance" equal to "balance" minus 10.
+
+1179
+01:07:10,910 --> 01:07:17,960
+Minus 10 where the "id" equals in this
+case 1 where Alice's bank account ID
+
+1180
+01:07:17,960 --> 01:07:18,980
+is 1.
+
+1181
+01:07:18,980 --> 01:07:23,780
+Now if I hit Enter I should be able
+to go back to my other terminal
+
+1182
+01:07:23,780 --> 01:07:25,830
+and check on the balances again.
+
+1183
+01:07:25,830 --> 01:07:29,700
+And now I'll see the right
+balances all together.
+
+1184
+01:07:29,700 --> 01:07:33,380
+But there is a way to avoid
+me looking at this table
+
+1185
+01:07:33,380 --> 01:07:38,640
+and seeing an incorrect state, and the
+way to do that is called a transaction.
+
+1186
+01:07:38,640 --> 01:07:42,020
+So let's go back here, and
+I will reset my terminals.
+
+1187
+01:07:42,020 --> 01:07:45,410
+I'll now also give back Alice's money.
+
+1188
+01:07:45,410 --> 01:07:47,183
+Let me give back Bob the $10.
+
+1189
+01:07:47,183 --> 01:07:48,100
+I'm going to go back--
+
+1190
+01:07:48,100 --> 01:07:51,860
+[INAUDIBLE] say where
+"id" equals 1 here.
+
+1191
+01:07:51,860 --> 01:07:54,140
+Now Alice will have 10 more dollars.
+
+1192
+01:07:54,140 --> 01:07:57,020
+And I'll go back and
+I'll update accounts.
+
+1193
+01:07:57,020 --> 01:08:02,810
+I'll set the "balance"
+equal to "balance" minus 10
+
+1194
+01:08:02,810 --> 01:08:05,690
+where the "id" equals 2.
+
+1195
+01:08:05,690 --> 01:08:09,390
+So I'm giving Bob back the $10
+that they just gave to Alice.
+
+1196
+01:08:09,390 --> 01:08:15,160
+Now if I SELECT * from "accounts"
+we're back to where we began.
+
+1197
+01:08:15,160 --> 01:08:19,649
+So ideally I should able to complete
+this transaction between Alice and Bob
+
+1198
+01:08:19,649 --> 01:08:23,310
+without somebody seeing the
+intermediate process of Bob
+
+1199
+01:08:23,310 --> 01:08:25,470
+having more money than Alice.
+
+1200
+01:08:25,470 --> 01:08:26,850
+So let's try this.
+
+1201
+01:08:26,850 --> 01:08:31,649
+I'll say BEGIN TRANSACTION; Enter.
+
+1202
+01:08:31,649 --> 01:08:36,479
+And now I can include what I want
+to have happen in this transaction.
+
+1203
+01:08:36,479 --> 01:08:38,609
+First I want to update Bob's account.
+
+1204
+01:08:38,609 --> 01:08:45,640
+I'll say UPDATE "accounts" and SET
+"balance" equal to "balance" + 10
+
+1205
+01:08:45,640 --> 01:08:49,290
+where the "id" in this case equals--
+
+1206
+01:08:49,290 --> 01:08:53,170
+let's see, 2, because
+Bob's account ID is 2.
+
+1207
+01:08:53,170 --> 01:08:57,000
+Now I'll hit Enter, and now I'm
+in the middle of this transaction.
+
+1208
+01:08:57,000 --> 01:09:00,960
+But if I go to my other terminal--
+let's say I'm somebody new
+
+1209
+01:09:00,960 --> 01:09:02,640
+and I check on the balances of the bank.
+
+1210
+01:09:02,640 --> 01:09:06,520
+I say SELECT * FROM "accounts".
+
+1211
+01:09:06,520 --> 01:09:07,960
+What do I see?
+
+1212
+01:09:07,960 --> 01:09:10,390
+I don't see any change from before.
+
+1213
+01:09:10,390 --> 01:09:14,920
+Alice still has $10, Bob has
+$20, and Charlie has $30.
+
+1214
+01:09:14,920 --> 01:09:17,380
+And even though in
+this terminal I've been
+
+1215
+01:09:17,380 --> 01:09:21,430
+able to update the account balance,
+I haven't committed those changes.
+
+1216
+01:09:21,430 --> 01:09:24,380
+I haven't saved them to
+the database just yet.
+
+1217
+01:09:24,380 --> 01:09:26,770
+So let me try now removing
+money from Alice's account.
+
+1218
+01:09:26,770 --> 01:09:33,430
+I'll say UPDATE "accounts" and set
+"balance" equal to balance minus 10
+
+1219
+01:09:33,430 --> 01:09:36,700
+where the "id" equals 1.
+
+1220
+01:09:36,700 --> 01:09:39,550
+Now I'll remove $10
+from Alice's account.
+
+1221
+01:09:39,550 --> 01:09:43,060
+Hit Enter, and still if I go
+back to this other perspective
+
+1222
+01:09:43,060 --> 01:09:46,870
+here from somebody else checking
+on the bank balances, I see--
+
+1223
+01:09:46,870 --> 01:09:49,399
+well everything is still the same.
+
+1224
+01:09:49,399 --> 01:09:51,939
+But the moment I then
+go to this transaction
+
+1225
+01:09:51,939 --> 01:09:57,370
+and finish it by typing COMMIT, meaning
+save these changes, I'll commit here.
+
+1226
+01:09:57,370 --> 01:10:01,240
+I can go back and I'll
+see all in one moment
+
+1227
+01:10:01,240 --> 01:10:06,070
+that it appears Alice has paid Bob $10.
+
+1228
+01:10:06,070 --> 01:10:10,060
+So this is the atomicity
+part of transactions.
+
+1229
+01:10:10,060 --> 01:10:13,480
+I don't see the intermediate
+steps in the transaction.
+
+1230
+01:10:13,480 --> 01:10:19,000
+I only see that it happened
+all at once or not at all.
+
+1231
+01:10:19,000 --> 01:10:23,300
+OK, so this is one example
+here of a transaction.
+
+1232
+01:10:23,300 --> 01:10:27,700
+Let me ask what questions we have so
+far on the transactions we've made
+
+1233
+01:10:27,700 --> 01:10:31,060
+and how they can be used.
+
+1234
+01:10:31,060 --> 01:10:32,950
+AUDIENCE: You are
+searching based on ID--
+
+1235
+01:10:32,950 --> 01:10:35,560
+like an ID is equal to a question mark.
+
+1236
+01:10:35,560 --> 01:10:39,550
+But in a real-world scenario,
+how they would Search maybe
+
+1237
+01:10:39,550 --> 01:10:44,063
+like using the Transaction
+ID or basic account number?
+
+1238
+01:10:44,063 --> 01:10:45,230
+CARTER ZENKE: Good question.
+
+1239
+01:10:45,230 --> 01:10:47,050
+So here I'm searching by ID.
+
+1240
+01:10:47,050 --> 01:10:51,820
+I'm saying that I want to update the
+balance of account with ID 1 or ID 2,
+
+1241
+01:10:51,820 --> 01:10:52,660
+for instance.
+
+1242
+01:10:52,660 --> 01:10:55,510
+And this is similar in spirit
+to how your bank account likely
+
+1243
+01:10:55,510 --> 01:10:58,850
+has some unique number, an
+account number so to speak.
+
+1244
+01:10:58,850 --> 01:11:01,360
+So here in this table
+I'm updating balances
+
+1245
+01:11:01,360 --> 01:11:03,700
+by referring to the account number.
+
+1246
+01:11:03,700 --> 01:11:06,670
+You could imagine me
+using names, but there
+
+1247
+01:11:06,670 --> 01:11:10,120
+might be in some world
+multiple Alices, multiple Bobs.
+
+1248
+01:11:10,120 --> 01:11:15,740
+So I should uniquely identify each
+account using its ID in this case.
+
+1249
+01:11:15,740 --> 01:11:20,490
+OK, so let's come back and think
+through more kinds of transactions here.
+
+1250
+01:11:20,490 --> 01:11:24,570
+And let's think through a transaction
+we actually don't want to complete.
+
+1251
+01:11:24,570 --> 01:11:30,410
+So let's go back to our balance sheet
+where we have Alice at $0 and Bob
+
+1252
+01:11:30,410 --> 01:11:35,660
+at $30, and let's say Alice
+wants to pay Bob 10 more dollars.
+
+1253
+01:11:35,660 --> 01:11:39,830
+Well if I go through this
+transaction, what's going to happen?
+
+1254
+01:11:39,830 --> 01:11:44,390
+Alice will have -$10
+and Bob will have $40,
+
+1255
+01:11:44,390 --> 01:11:47,990
+and that violates our check
+constraint that we saw in our schema.
+
+1256
+01:11:47,990 --> 01:11:53,550
+The balance of Alice's account
+must always be at least $0.
+
+1257
+01:11:53,550 --> 01:11:56,360
+So if I were to complete
+this transaction,
+
+1258
+01:11:56,360 --> 01:11:59,870
+that would bring our database
+to an inconsistent state.
+
+1259
+01:11:59,870 --> 01:12:03,410
+It violates some
+constraint that we have.
+
+1260
+01:12:03,410 --> 01:12:06,800
+But what I can do is undo these changes.
+
+1261
+01:12:06,800 --> 01:12:10,730
+Revert them so that we go
+back to the original state
+
+1262
+01:12:10,730 --> 01:12:14,540
+if we ever violate some
+constraint like we just did.
+
+1263
+01:12:14,540 --> 01:12:17,880
+There's a technical name for
+this, which is rolling back.
+
+1264
+01:12:17,880 --> 01:12:21,980
+So if I ever want to not save
+the changes in this transaction,
+
+1265
+01:12:21,980 --> 01:12:23,840
+I can say ROLLBACK.
+
+1266
+01:12:23,840 --> 01:12:27,620
+Go back to the beginning, think about
+it as if this transaction never even
+
+1267
+01:12:27,620 --> 01:12:29,470
+happened at all.
+
+1268
+01:12:29,470 --> 01:12:30,380
+So let's try it.
+
+1269
+01:12:30,380 --> 01:12:33,870
+So I'll come back to my
+computer, and what I'll do
+
+1270
+01:12:33,870 --> 01:12:38,040
+is try to implement this idea
+first without a transaction.
+
+1271
+01:12:38,040 --> 01:12:41,400
+I'll go back to, let's say
+this first terminal here,
+
+1272
+01:12:41,400 --> 01:12:45,400
+and I'll SELECT * FROM
+"accounts" like this.
+
+1273
+01:12:45,400 --> 01:12:50,060
+Notice how Alice has $0 and Bob has $30.
+
+1274
+01:12:50,060 --> 01:12:53,010
+Well I want to pay Bob 10
+more dollars from Alice,
+
+1275
+01:12:53,010 --> 01:12:54,810
+so I'll update Bob's account.
+
+1276
+01:12:54,810 --> 01:12:59,430
+I'll find here my prior
+statement, UPDATE "accounts"
+
+1277
+01:12:59,430 --> 01:13:03,900
+SET "balance" equal to "balance"
++ 10 where the "id" equals 2.
+
+1278
+01:13:03,900 --> 01:13:07,260
+And recall that Bob's account ID is 2
+
+1279
+01:13:07,260 --> 01:13:10,085
+I'll hit Enter, and now if
+I SELECT * FROM "accounts"
+
+1280
+01:13:10,085 --> 01:13:11,460
+if we're looking somewhere else--
+
+1281
+01:13:11,460 --> 01:13:17,850
+SELECT * FROM "accounts," I'll
+see Bob has 10 more dollars.
+
+1282
+01:13:17,850 --> 01:13:21,300
+But now I need to subtract
+money from Alice's account.
+
+1283
+01:13:21,300 --> 01:13:27,750
+So I'll use the same thing but now I'll
+say minus 10 where the "id" equals 1.
+
+1284
+01:13:27,750 --> 01:13:30,120
+Alice's account ID is 1.
+
+1285
+01:13:30,120 --> 01:13:35,820
+Now I'll try to subtract $10 from Alice,
+but I get a constraint failure here.
+
+1286
+01:13:35,820 --> 01:13:39,120
+My check constraint failed
+on the balance column.
+
+1287
+01:13:39,120 --> 01:13:40,290
+Why did it do that?
+
+1288
+01:13:40,290 --> 01:13:47,460
+Because I now have less than
+$0 in that balance column.
+
+1289
+01:13:47,460 --> 01:13:52,260
+So I need to undo this but I
+don't have a transaction here.
+
+1290
+01:13:52,260 --> 01:13:57,550
+What could I do instead to
+undo what I've just done?
+
+1291
+01:13:57,550 --> 01:13:59,025
+AUDIENCE: So we can roll back.
+
+1292
+01:13:59,025 --> 01:14:01,740
+CARTER ZENKE: We could roll
+back, but here's the thing.
+
+1293
+01:14:01,740 --> 01:14:05,790
+A rollback only works while
+we're inside of a transaction.
+
+1294
+01:14:05,790 --> 01:14:09,700
+And a transaction begins when
+we say begin transaction.
+
+1295
+01:14:09,700 --> 01:14:12,930
+So here I actually didn't
+say begin transaction.
+
+1296
+01:14:12,930 --> 01:14:15,960
+What I have to do instead is
+run another update statement.
+
+1297
+01:14:15,960 --> 01:14:19,290
+I have to update, let's
+see, Bob's account
+
+1298
+01:14:19,290 --> 01:14:22,950
+to remove the $10 that Alice paid Bob.
+
+1299
+01:14:22,950 --> 01:14:23,710
+So let's try that.
+
+1300
+01:14:23,710 --> 01:14:27,810
+I'll come back to my computer
+and I will then revert back.
+
+1301
+01:14:27,810 --> 01:14:29,380
+I'll say let's undo this.
+
+1302
+01:14:29,380 --> 01:14:34,420
+Let's subtract $10 now from
+Bob's account where the ID is 2.
+
+1303
+01:14:34,420 --> 01:14:36,510
+Now we're back to where we began.
+
+1304
+01:14:36,510 --> 01:14:38,970
+If I check in from some
+other [INAUDIBLE] here,
+
+1305
+01:14:38,970 --> 01:14:44,310
+I'll see we're back to Alice
+having $0 and Bob having $30.
+
+1306
+01:14:44,310 --> 01:14:49,470
+But we ideally want to use rollback
+to undo some changes that we
+
+1307
+01:14:49,470 --> 01:14:51,400
+have made in a transaction.
+
+1308
+01:14:51,400 --> 01:14:54,000
+So for that let me
+now use a transaction.
+
+1309
+01:14:54,000 --> 01:14:58,980
+I'll say BEGIN TRANSACTION
+like this, hit Enter.
+
+1310
+01:14:58,980 --> 01:15:01,470
+Now I want to update Bob's balance.
+
+1311
+01:15:01,470 --> 01:15:05,070
+I'll say UPDATE "accounts SET
+"balance" equal to "balance" +
+
+1312
+01:15:05,070 --> 01:15:09,360
+10 where the "id" = 2.
+
+1313
+01:15:09,360 --> 01:15:11,860
+Bob's account ID is 2.
+
+1314
+01:15:11,860 --> 01:15:14,760
+Now let me subtract $10
+from Alice like this.
+
+1315
+01:15:14,760 --> 01:15:16,290
+- 10.
+
+1316
+01:15:16,290 --> 01:15:19,200
+I'll go back here and say
+where the "id" equals 1
+
+1317
+01:15:19,200 --> 01:15:21,660
+for Alice's account, hit Enter.
+
+1318
+01:15:21,660 --> 01:15:24,360
+But now I get that same
+constraint failure.
+
+1319
+01:15:24,360 --> 01:15:28,600
+Alice has less than $0,
+which can't be possible.
+
+1320
+01:15:28,600 --> 01:15:29,880
+So what do we do?
+
+1321
+01:15:29,880 --> 01:15:33,000
+Instead of having another
+update, we could just roll back.
+
+1322
+01:15:33,000 --> 01:15:36,030
+We could undo all of these
+previous statements here.
+
+1323
+01:15:36,030 --> 01:15:40,500
+ROLLBACK like this, hit Enter, and now
+I should see from another perspective
+
+1324
+01:15:40,500 --> 01:15:46,380
+here my table exactly as it was before
+with no intermediate step of Bob
+
+1325
+01:15:46,380 --> 01:15:50,140
+having money but Alice
+having negative $10.
+
+1326
+01:15:50,140 --> 01:15:54,240
+So let me ask m we've
+seen COMMIT and ROLLBACK.
+
+1327
+01:15:54,240 --> 01:15:57,440
+What questions do we
+have on transactions now?
+
+1328
+01:15:57,440 --> 01:16:03,530
+
+
+1329
+01:16:03,530 --> 01:16:04,030
+OK.
+
+1330
+01:16:04,030 --> 01:16:07,390
+Seeing none so far, so let's keep going.
+
+1331
+01:16:07,390 --> 01:16:11,290
+Transactions are helpful for
+ensuring that our data is consistent
+
+1332
+01:16:11,290 --> 01:16:13,570
+like we just saw, and
+that they're also--
+
+1333
+01:16:13,570 --> 01:16:15,130
+we have atomic transactions.
+
+1334
+01:16:15,130 --> 01:16:18,620
+We can't break things
+down into smaller pieces.
+
+1335
+01:16:18,620 --> 01:16:21,490
+But there is a case that
+transactions can help guard
+
+1336
+01:16:21,490 --> 01:16:24,880
+against some adversarial kind of attack.
+
+1337
+01:16:24,880 --> 01:16:27,460
+We're into what we call race condition.
+
+1338
+01:16:27,460 --> 01:16:32,140
+A race condition is when we have
+multiple people, multiple processes
+
+1339
+01:16:32,140 --> 01:16:37,900
+trying to access some value and also
+making a decision based on that value.
+
+1340
+01:16:37,900 --> 01:16:43,300
+If unaddressed it can lead to a scenario
+that's inconsistent in our database.
+
+1341
+01:16:43,300 --> 01:16:46,090
+And actually hackers can
+exploit race conditions
+
+1342
+01:16:46,090 --> 01:16:51,020
+to bring our database to an inconsistent
+state in a way that benefits them.
+
+1343
+01:16:51,020 --> 01:16:53,800
+So let's say our friends
+Charlie and Alice here, they
+
+1344
+01:16:53,800 --> 01:16:55,510
+decide to rob our bank.
+
+1345
+01:16:55,510 --> 01:16:59,510
+They decide to take money from
+it by exploiting race conditions.
+
+1346
+01:16:59,510 --> 01:17:04,000
+And here are the logs of what
+Charlie and Alice actually did.
+
+1347
+01:17:04,000 --> 01:17:10,090
+We see here that Charlie and Alice
+executed three concurrent transactions
+
+1348
+01:17:10,090 --> 01:17:11,260
+with our bank.
+
+1349
+01:17:11,260 --> 01:17:13,960
+On the one hand Charlie
+opened up his bank account
+
+1350
+01:17:13,960 --> 01:17:16,000
+on two different computers.
+
+1351
+01:17:16,000 --> 01:17:20,470
+He logged in and he said let
+me transfer $30 to Alice.
+
+1352
+01:17:20,470 --> 01:17:25,240
+He at the same time clicked transfer
+on both computers knowing just well
+
+1353
+01:17:25,240 --> 01:17:30,820
+he had only $30 to give to Alice, but he
+was going to send her $60 in this case.
+
+1354
+01:17:30,820 --> 01:17:34,120
+He was hoping that we weren't
+guarding against race conditions.
+
+1355
+01:17:34,120 --> 01:17:38,660
+That he could send $30 on
+both accounts to Alice.
+
+1356
+01:17:38,660 --> 01:17:41,260
+Now at the same time
+Alice is at the ATM,
+
+1357
+01:17:41,260 --> 01:17:45,010
+and they're hoping that at the
+same time Charlie presses transfer
+
+1358
+01:17:45,010 --> 01:17:50,890
+Alice hits confirm on their transaction
+to withdraw $60 from the ATM.
+
+1359
+01:17:50,890 --> 01:17:53,410
+And when all of these
+happen at once, we might
+
+1360
+01:17:53,410 --> 01:17:56,810
+run into some inconsistent
+states in our database.
+
+1361
+01:17:56,810 --> 01:17:59,710
+Let's say first we run
+this transaction here.
+
+1362
+01:17:59,710 --> 01:18:00,895
+Let's focus on this one.
+
+1363
+01:18:00,895 --> 01:18:02,770
+The first step is to
+check Charlie's balance.
+
+1364
+01:18:02,770 --> 01:18:05,500
+Does Charlie have $30?
+
+1365
+01:18:05,500 --> 01:18:06,970
+It seems like Charlie does.
+
+1366
+01:18:06,970 --> 01:18:11,410
+We continue we might say, OK, let me
+add $30 to Alice's account like this.
+
+1367
+01:18:11,410 --> 01:18:15,280
+Then let me subtract $30 from
+Charlie's account down below here.
+
+1368
+01:18:15,280 --> 01:18:18,130
+And finally, that's the
+end of our transaction.
+
+1369
+01:18:18,130 --> 01:18:21,610
+We checked Charlie's balance,
+we added $30 to Alice,
+
+1370
+01:18:21,610 --> 01:18:24,790
+and subtracted $30 from Charlie.
+
+1371
+01:18:24,790 --> 01:18:31,180
+But now at the same time, we're also
+processing the other transfer of $30
+
+1372
+01:18:31,180 --> 01:18:32,050
+to Alice.
+
+1373
+01:18:32,050 --> 01:18:35,590
+So here we check in terms of
+our time, top to bottom here--
+
+1374
+01:18:35,590 --> 01:18:37,810
+we check Charlie's
+balance at this point.
+
+1375
+01:18:37,810 --> 01:18:39,820
+It's still $30.
+
+1376
+01:18:39,820 --> 01:18:43,060
+Knowing this, this process
+goes ahead and says
+
+1377
+01:18:43,060 --> 01:18:45,730
+let's add $30 to Alice's account.
+
+1378
+01:18:45,730 --> 01:18:49,930
+And now only later let's
+subtract $30 like this.
+
+1379
+01:18:49,930 --> 01:18:54,740
+Now Charlie well appears to
+have no money in his account.
+
+1380
+01:18:54,740 --> 01:19:01,330
+But at this time above we've already
+sent $30 to Alice's account two times.
+
+1381
+01:19:01,330 --> 01:19:03,610
+And if Alice is waiting
+at the ATM over here
+
+1382
+01:19:03,610 --> 01:19:06,400
+and they press Confirm on that
+withdrawal, what might happen
+
+1383
+01:19:06,400 --> 01:19:07,360
+is something like this.
+
+1384
+01:19:07,360 --> 01:19:10,840
+At that moment that Alice
+has $60 in their account--
+
+1385
+01:19:10,840 --> 01:19:14,440
+they check and they see it-- they
+could then withdraw that $60.
+
+1386
+01:19:14,440 --> 01:19:17,390
+And now that money is
+gone from our bank,
+
+1387
+01:19:17,390 --> 01:19:19,840
+even if we realize Charlie
+shouldn't have been
+
+1388
+01:19:19,840 --> 01:19:22,980
+able to make that transaction happen.
+
+1389
+01:19:22,980 --> 01:19:26,510
+So what logically is a solution here?
+
+1390
+01:19:26,510 --> 01:19:31,170
+It seems these transactions
+happened all at the same time.
+
+1391
+01:19:31,170 --> 01:19:35,060
+But what would you do to reorder
+these statements to make it clear
+
+1392
+01:19:35,060 --> 01:19:39,690
+that we can only do one at a time?
+
+1393
+01:19:39,690 --> 01:19:45,260
+What would you do in this case to
+update this table to fix this problem?
+
+1394
+01:19:45,260 --> 01:19:52,710
+AUDIENCE: I would do the withdrawal
+and the debits as one transaction.
+
+1395
+01:19:52,710 --> 01:19:55,580
+So the subtraction is
+done and the addition
+
+1396
+01:19:55,580 --> 01:20:01,658
+is done as one unit of work in order
+for the double transfer not to happen.
+
+1397
+01:20:01,658 --> 01:20:02,450
+CARTER ZENKE: Yeah.
+
+1398
+01:20:02,450 --> 01:20:06,020
+So ideally we should treat each of
+these as a separate transaction.
+
+1399
+01:20:06,020 --> 01:20:10,280
+Literally a transaction in the database
+sense where if I go back to this table
+
+1400
+01:20:10,280 --> 01:20:15,000
+if Charlie transfers $30 to
+Alice at roughly the same time,
+
+1401
+01:20:15,000 --> 01:20:17,210
+I should handle these sequentially.
+
+1402
+01:20:17,210 --> 01:20:20,990
+I should first do this one,
+then I should do this one.
+
+1403
+01:20:20,990 --> 01:20:25,760
+And only after that should Alice be
+able to withdraw their $60, or at least
+
+1404
+01:20:25,760 --> 01:20:27,450
+try to in this case.
+
+1405
+01:20:27,450 --> 01:20:30,680
+So we need to make these transactions
+sequential, and the word for this
+
+1406
+01:20:30,680 --> 01:20:32,540
+is isolating our transactions.
+
+1407
+01:20:32,540 --> 01:20:34,580
+Here they are not isolated.
+
+1408
+01:20:34,580 --> 01:20:36,390
+They're working at the same time.
+
+1409
+01:20:36,390 --> 01:20:38,630
+But in reality I want
+them to be isolated--
+
+1410
+01:20:38,630 --> 01:20:41,390
+happen one after another after another.
+
+1411
+01:20:41,390 --> 01:20:44,870
+So ideally our table
+looks more like this.
+
+1412
+01:20:44,870 --> 01:20:48,890
+Charlie hits transfer at the
+exact same time on two laptops,
+
+1413
+01:20:48,890 --> 01:20:54,170
+but because we're working in
+transactions we only process one first.
+
+1414
+01:20:54,170 --> 01:20:55,610
+We start with this one here.
+
+1415
+01:20:55,610 --> 01:21:00,860
+We check the balance, we say let's add
+$30 to Alice's account and subtract $30
+
+1416
+01:21:00,860 --> 01:21:01,940
+from Charlie's.
+
+1417
+01:21:01,940 --> 01:21:05,930
+Once we're sure that is OK,
+we'll commit the transaction
+
+1418
+01:21:05,930 --> 01:21:08,120
+and that is a done deal.
+
+1419
+01:21:08,120 --> 01:21:09,770
+Now though, we'll go down below.
+
+1420
+01:21:09,770 --> 01:21:11,630
+We'll say begin transaction.
+
+1421
+01:21:11,630 --> 01:21:15,140
+We'll then say Charlie's balance
+is $0 because we're doing this
+
+1422
+01:21:15,140 --> 01:21:16,940
+after we did our first transaction.
+
+1423
+01:21:16,940 --> 01:21:19,370
+Charlie has no more money to give Alice.
+
+1424
+01:21:19,370 --> 01:21:23,480
+At that point what we'll do
+is try to add $30 to Alice
+
+1425
+01:21:23,480 --> 01:21:27,240
+but subtract $30 from Charlie, and
+we'll realize we made a mistake.
+
+1426
+01:21:27,240 --> 01:21:31,050
+We should roll back and
+undo what we just did here.
+
+1427
+01:21:31,050 --> 01:21:35,060
+So these now are separate
+transactions happening sequentially,
+
+1428
+01:21:35,060 --> 01:21:38,720
+and we avoid our error
+of giving Alice $60 when
+
+1429
+01:21:38,720 --> 01:21:41,180
+she shouldn't have that money at all.
+
+1430
+01:21:41,180 --> 01:21:46,460
+And then only after this is done do
+we let Alice try to withdraw $60.
+
+1431
+01:21:46,460 --> 01:21:47,780
+We'll go over here and see.
+
+1432
+01:21:47,780 --> 01:21:51,900
+Alice tries to have a balance of
+$60, withdraw $60, and commit it.
+
+1433
+01:21:51,900 --> 01:21:56,570
+But at this point she wouldn't
+actually have that money there.
+
+1434
+01:21:56,570 --> 01:22:01,810
+So let's see now what questions
+do we have on the way transactions
+
+1435
+01:22:01,810 --> 01:22:04,860
+are sequential in this case?
+
+1436
+01:22:04,860 --> 01:22:08,410
+AUDIENCE: In particularly I want
+to ask that there are millions
+
+1437
+01:22:08,410 --> 01:22:10,480
+of transactions that are going on.
+
+1438
+01:22:10,480 --> 01:22:14,320
+Particularly, also, is it like there
+that sequentially these transactions
+
+1439
+01:22:14,320 --> 01:22:16,750
+are being handled for the
+financial transaction over here
+
+1440
+01:22:16,750 --> 01:22:20,650
+that because there are a number
+of banks in a single country
+
+1441
+01:22:20,650 --> 01:22:22,150
+or international transactions.
+
+1442
+01:22:22,150 --> 01:22:25,210
+Are they handle sequentially or there
+is some parallel earning mechanism
+
+1443
+01:22:25,210 --> 01:22:27,583
+also exist if you may please clarify.
+
+1444
+01:22:27,583 --> 01:22:29,000
+CARTER ZENKE: Yeah, good question.
+
+1445
+01:22:29,000 --> 01:22:31,630
+So here visually we see these
+transactions are actually
+
+1446
+01:22:31,630 --> 01:22:34,000
+sequential in the operation here.
+
+1447
+01:22:34,000 --> 01:22:37,240
+And then your question is, are
+they literally sequential, like one
+
+1448
+01:22:37,240 --> 01:22:38,470
+after another after another?
+
+1449
+01:22:38,470 --> 01:22:41,855
+In reality they are very much
+just sequential like this.
+
+1450
+01:22:41,855 --> 01:22:43,730
+A database can get
+creative with use of locks
+
+1451
+01:22:43,730 --> 01:22:46,063
+as we'll see you in just a
+minute, but by and large they
+
+1452
+01:22:46,063 --> 01:22:48,130
+are sequential one after the other.
+
+1453
+01:22:48,130 --> 01:22:51,370
+And it's the job of a
+database module to ensure
+
+1454
+01:22:51,370 --> 01:22:56,300
+that these transactions are executed
+sequentially in an isolated way.
+
+1455
+01:22:56,300 --> 01:22:58,360
+Good question.
+
+1456
+01:22:58,360 --> 01:22:58,900
+OK.
+
+1457
+01:22:58,900 --> 01:23:04,340
+So let's see now how, if a database
+is able to make these sequential,
+
+1458
+01:23:04,340 --> 01:23:06,610
+it must be using something
+underneath the hood
+
+1459
+01:23:06,610 --> 01:23:10,180
+to ensure that these
+transactions don't interfere.
+
+1460
+01:23:10,180 --> 01:23:15,610
+And in SQLite and other DBMSs we use
+this idea of a lock on the database
+
+1461
+01:23:15,610 --> 01:23:20,680
+to ensure people can't access data
+when they really shouldn't be able to.
+
+1462
+01:23:20,680 --> 01:23:23,200
+So here let's look at
+an idea of what SQLite
+
+1463
+01:23:23,200 --> 01:23:26,920
+has at different kinds of
+locks on this database.
+
+1464
+01:23:26,920 --> 01:23:28,490
+We have a few different kinds--
+
+1465
+01:23:28,490 --> 01:23:32,290
+unlocked, shared, and exclusive,
+among some others here.
+
+1466
+01:23:32,290 --> 01:23:35,913
+Each one has a different
+meaning for different processes.
+
+1467
+01:23:35,913 --> 01:23:38,080
+So let's take a look here
+at our bank account table.
+
+1468
+01:23:38,080 --> 01:23:42,280
+Let's say two computers want
+to access this account's table.
+
+1469
+01:23:42,280 --> 01:23:47,560
+Well at this time because nobody is
+accessing our database, it is unlocked.
+
+1470
+01:23:47,560 --> 01:23:50,650
+Anyone could read from the
+database, sort of see what's inside,
+
+1471
+01:23:50,650 --> 01:23:54,490
+or write to it-- add some
+data or update some data.
+
+1472
+01:23:54,490 --> 01:23:59,650
+But let's say we have one computer here
+who wants to read from this database.
+
+1473
+01:23:59,650 --> 01:24:02,560
+They want to see what data is inside.
+
+1474
+01:24:02,560 --> 01:24:05,650
+Well that database in
+SQLite would acquire
+
+1475
+01:24:05,650 --> 01:24:08,650
+what's called a shared lock like this.
+
+1476
+01:24:08,650 --> 01:24:12,130
+They're able to read
+the database but also
+
+1477
+01:24:12,130 --> 01:24:14,500
+it's to allow others to read as well.
+
+1478
+01:24:14,500 --> 01:24:17,260
+A shared lock means I'm only reading.
+
+1479
+01:24:17,260 --> 01:24:20,180
+You too could read as well.
+
+1480
+01:24:20,180 --> 01:24:22,180
+So let's say this computer comes in.
+
+1481
+01:24:22,180 --> 01:24:24,760
+They decide to read from this table.
+
+1482
+01:24:24,760 --> 01:24:28,090
+They could acquire the same shared lock.
+
+1483
+01:24:28,090 --> 01:24:31,240
+And because we're only
+reading, not updating,
+
+1484
+01:24:31,240 --> 01:24:35,120
+multiple transactions
+can read all at once.
+
+1485
+01:24:35,120 --> 01:24:37,820
+We don't have to make these sequential.
+
+1486
+01:24:37,820 --> 01:24:42,170
+But if we have a transaction that's
+hoping to write to the database,
+
+1487
+01:24:42,170 --> 01:24:43,730
+to update some value--
+
+1488
+01:24:43,730 --> 01:24:46,370
+well that's when things
+get a little weird.
+
+1489
+01:24:46,370 --> 01:24:50,760
+I can't let somebody else read
+my data while I'm updating it.
+
+1490
+01:24:50,760 --> 01:24:53,690
+So what I need is for
+this process here, if it's
+
+1491
+01:24:53,690 --> 01:24:57,290
+writing, to acquire an exclusive lock.
+
+1492
+01:24:57,290 --> 01:25:01,100
+Meaning this is the only
+computer, only transaction that
+
+1493
+01:25:01,100 --> 01:25:04,310
+can read and write to this database.
+
+1494
+01:25:04,310 --> 01:25:09,540
+All others must hold off
+in order to be sequential.
+
+1495
+01:25:09,540 --> 01:25:13,320
+So we've seen transactions
+then are sequential
+
+1496
+01:25:13,320 --> 01:25:17,070
+and they use this idea of a
+lock to ensure other folks
+
+1497
+01:25:17,070 --> 01:25:22,210
+can't read when they're doing something
+sensitive like writing to the database.
+
+1498
+01:25:22,210 --> 01:25:28,210
+Let me ask now what questions we have
+on locks and how they work for us here?
+
+1499
+01:25:28,210 --> 01:25:30,680
+AUDIENCE: OK, my
+question is that suppose
+
+1500
+01:25:30,680 --> 01:25:33,080
+you're one computer [INAUDIBLE].
+
+1501
+01:25:33,080 --> 01:25:38,030
+For what amount this would
+allow to do the exclusive lock?
+
+1502
+01:25:38,030 --> 01:25:43,610
+Maybe if the timestamp is
+larger, then some other computers
+
+1503
+01:25:43,610 --> 01:25:46,740
+will get timeout exception
+and other things, right?
+
+1504
+01:25:46,740 --> 01:25:48,800
+Because it's not allowed to do--
+
+1505
+01:25:48,800 --> 01:25:50,330
+exclusively it's a lock.
+
+1506
+01:25:50,330 --> 01:25:52,370
+How are we going to decide those things?
+
+1507
+01:25:52,370 --> 01:25:55,010
+At what time one
+instance is going to be--
+
+1508
+01:25:55,010 --> 01:25:57,440
+put the exclusive lock on the resource?
+
+1509
+01:25:57,440 --> 01:25:59,600
+CARTER ZENKE: So the
+question is, at what point
+
+1510
+01:25:59,600 --> 01:26:02,690
+does the transaction actually
+get an exclusive lock,
+
+1511
+01:26:02,690 --> 01:26:07,050
+and how do we decide how to prioritize
+different transactions here?
+
+1512
+01:26:07,050 --> 01:26:10,310
+Well there are a few algorithms
+you could use, one of which
+
+1513
+01:26:10,310 --> 01:26:14,090
+is simply taking the transaction
+that just came first.
+
+1514
+01:26:14,090 --> 01:26:17,630
+If at this point I receive a
+request for an exclusive lock,
+
+1515
+01:26:17,630 --> 01:26:22,040
+I might just wait for others to finish
+reading and allow that one to proceed.
+
+1516
+01:26:22,040 --> 01:26:26,490
+I could also use a process called
+time-stamping, which is similar to this
+
+1517
+01:26:26,490 --> 01:26:30,230
+where I look at the timestamp, the time
+my database tried to write to the log
+
+1518
+01:26:30,230 --> 01:26:33,560
+and use the one that is
+earliest in that case.
+
+1519
+01:26:33,560 --> 01:26:38,210
+Now it's important to note that an
+exclusive lock does block others
+
+1520
+01:26:38,210 --> 01:26:40,380
+from running their own transactions.
+
+1521
+01:26:40,380 --> 01:26:44,480
+If I have an exclusive lock, no
+one else can run their transaction.
+
+1522
+01:26:44,480 --> 01:26:48,290
+That is kind of a necessary
+downside in this case
+
+1523
+01:26:48,290 --> 01:26:53,920
+to ensure that I don't make
+mistakes in updating my table.
+
+1524
+01:26:53,920 --> 01:26:55,480
+Let's take one more here.
+
+1525
+01:26:55,480 --> 01:26:57,850
+AUDIENCE: What's the
+granularity on locking?
+
+1526
+01:26:57,850 --> 01:27:02,050
+I mean, you seem to say you locked
+the database, but that's craziness.
+
+1527
+01:27:02,050 --> 01:27:05,080
+Do you lock a table or do
+you lock a record on a table?
+
+1528
+01:27:05,080 --> 01:27:07,607
+CARTER ZENKE: Yeah, it might
+depend on the DBMS itself.
+
+1529
+01:27:07,607 --> 01:27:13,540
+So at the very coarsest, a lock
+might just lock the entire database.
+
+1530
+01:27:13,540 --> 01:27:15,517
+I can't actually see
+anything inside of it.
+
+1531
+01:27:15,517 --> 01:27:18,100
+And I'll be able to demonstrate
+that for you in a minute here.
+
+1532
+01:27:18,100 --> 01:27:19,420
+Let me go back to my computer.
+
+1533
+01:27:19,420 --> 01:27:22,900
+Let me try to deliberately
+lock this database.
+
+1534
+01:27:22,900 --> 01:27:26,260
+If I go to my terminal, I
+can begin a transaction that
+
+1535
+01:27:26,260 --> 01:27:28,870
+automatically has an exclusive lock.
+
+1536
+01:27:28,870 --> 01:27:32,980
+In SQLite the statement
+is BEGIN EXCLUSIVE.
+
+1537
+01:27:32,980 --> 01:27:34,930
+BEGIN EXCLUSIVE TRANSACTION.
+
+1538
+01:27:34,930 --> 01:27:39,280
+I'll hit Enter like this, and now I'm
+in the middle of this transaction.
+
+1539
+01:27:39,280 --> 01:27:39,910
+It's exclusive.
+
+1540
+01:27:39,910 --> 01:27:43,060
+Has an exclusive lock
+nobody else can read.
+
+1541
+01:27:43,060 --> 01:27:47,230
+If I go back to my other terminal
+here, connect to my database,
+
+1542
+01:27:47,230 --> 01:27:51,880
+I could try SELECT * FROM "accounts"
+just to read from this table.
+
+1543
+01:27:51,880 --> 01:27:54,280
+And now I see Runtime error--
+
+1544
+01:27:54,280 --> 01:27:55,900
+database is locked.
+
+1545
+01:27:55,900 --> 01:28:00,280
+The entire database cannot be read
+from at the very coarsest level
+
+1546
+01:28:00,280 --> 01:28:02,170
+of an exclusive lock.
+
+1547
+01:28:02,170 --> 01:28:04,600
+Now because these locks are so coarse--
+
+1548
+01:28:04,600 --> 01:28:09,310
+I have to lock the entire database,
+SQLite has its own module,
+
+1549
+01:28:09,310 --> 01:28:14,050
+a way of prioritizing transactions
+and ensuring that a transaction only
+
+1550
+01:28:14,050 --> 01:28:17,590
+has an exclusive lock for the
+duration it absolutely needs to.
+
+1551
+01:28:17,590 --> 01:28:19,802
+Because otherwise you would
+slow down substantially
+
+1552
+01:28:19,802 --> 01:28:21,760
+if I had to wait and wait
+and wait for somebody
+
+1553
+01:28:21,760 --> 01:28:25,400
+to finish with their transaction.
+
+1554
+01:28:25,400 --> 01:28:26,770
+OK.
+
+1555
+01:28:26,770 --> 01:28:31,900
+So this then is how we can handle not
+just one query at a time but multiple.
+
+1556
+01:28:31,900 --> 01:28:35,860
+And today we've seen how to optimize
+our databases from making sure queries
+
+1557
+01:28:35,860 --> 01:28:39,670
+are faster to also making sure our
+databases use as little space as
+
+1558
+01:28:39,670 --> 01:28:40,420
+possible.
+
+1559
+01:28:40,420 --> 01:28:43,270
+We'll see next time how
+to actually scale up
+
+1560
+01:28:43,270 --> 01:28:45,460
+our databases using other DBMSs--
+
+1561
+01:28:45,460 --> 01:28:48,280
+like MySQL-- besides SQLite.
+
+1562
+01:28:48,280 --> 01:28:51,120
+We'll see you next time.
+
+1563
+01:28:51,120 --> 01:28:52,000

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+JAVAC="$ROOT/vendor/jdk/bin/javac"
+
+if [[ ! -x "$JAVAC" ]]; then
+    echo "Local JDK not found at $JAVAC" >&2
+    exit 1
+fi
+
+exec "$JAVAC" "$@"

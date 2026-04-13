@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+download_sqlite_tools() {
+    mkdir -p "$ROOT/downloads" "$ROOT/vendor/sqlite-tools"
+    local url="https://www.sqlite.org/2026/sqlite-tools-linux-x64-3530000.zip"
+    local zip="$ROOT/downloads/sqlite-tools-linux-x64-3530000.zip"
+    wget -nc -O "$zip" "$url"
+    unzip -oq "$zip" -d "$ROOT/vendor/sqlite-tools.tmp"
+    find "$ROOT/vendor/sqlite-tools.tmp" -maxdepth 2 -type f | while read -r f; do
+        mv "$f" "$ROOT/vendor/sqlite-tools/"
+    done
+    rm -rf "$ROOT/vendor/sqlite-tools.tmp"
+    chmod +x "$ROOT/vendor/sqlite-tools/"* || true
+}
+
+download_jdk() {
+    mkdir -p "$ROOT/downloads" "$ROOT/vendor/jdk"
+    local tarball="$ROOT/downloads/temurin-21-jdk.tar.gz"
+    wget -nc -O "$tarball" "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse"
+    tar -xzf "$tarball" -C "$ROOT/vendor/jdk" --strip-components=1
+}
+
+install_python_tools() {
+    python3 -m venv "$ROOT/.venv-cs50"
+    "$ROOT/.venv-cs50/bin/pip" install -U pip
+    "$ROOT/.venv-cs50/bin/pip" install cs50 check50 submit50
+    chmod +x "$ROOT/bin/"* || true
+}
+
+download_lecture_assets() {
+    mkdir -p "$ROOT/downloads/lectures"
+    for w in 0 1 2 3 4 5 6; do
+        mkdir -p "$ROOT/docs/week${w}/raw" "$ROOT/cs50/week${w}"
+        wget -nc -O "$ROOT/docs/week${w}/raw/lecture${w}-notes.html" "https://cs50.harvard.edu/sql/notes/${w}/"
+        wget -nc -O "$ROOT/docs/week${w}/raw/lecture${w}-transcript.txt" "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.txt"
+        wget -nc -O "$ROOT/docs/week${w}/raw/lecture${w}-subtitles.srt" "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.srt"
+        wget -nc -O "$ROOT/downloads/lectures/src${w}.zip" "https://cdn.cs50.net/sql/2023/x/lectures/${w}/src${w}.zip"
+        unzip -oq "$ROOT/downloads/lectures/src${w}.zip" -d "$ROOT/cs50/week${w}"
+    done
+}
+
+download_pset_assets() {
+    mkdir -p "$ROOT/downloads/psets" "$ROOT/docs/psets/raw"
+
+    while read -r rel; do
+        [[ -z "$rel" ]] && continue
+        wget -nc -O "$ROOT/downloads/psets/$(basename "$rel")" "https://cdn.cs50.net/sql/2024/x/psets/${rel}"
+    done <<'EOF'
+0/cyberchase.zip
+0/views.zip
+0/normals.zip
+0/players.zip
+1/packages.zip
+1/dese.zip
+1/moneyball.zip
+3/dont-panic.zip
+3/meteorites.zip
+4/census.zip
+4/private.zip
+4/bnb.zip
+5/snap.zip
+5/harvard.zip
+6/deep.zip
+6/dont-panic-python.zip
+6/dont-panic-java.zip
+EOF
+
+    unzip -oq "$ROOT/downloads/psets/cyberchase.zip" -d "$ROOT/cs50/pset0"
+    unzip -oq "$ROOT/downloads/psets/views.zip" -d "$ROOT/cs50/pset0"
+    unzip -oq "$ROOT/downloads/psets/normals.zip" -d "$ROOT/cs50/pset0"
+    unzip -oq "$ROOT/downloads/psets/players.zip" -d "$ROOT/cs50/pset0"
+
+    mkdir -p "$ROOT/cs50/pset1" "$ROOT/cs50/pset3" "$ROOT/cs50/pset4" "$ROOT/cs50/pset5" "$ROOT/cs50/pset6"
+    unzip -oq "$ROOT/downloads/psets/packages.zip" -d "$ROOT/cs50/pset1"
+    unzip -oq "$ROOT/downloads/psets/dese.zip" -d "$ROOT/cs50/pset1"
+    unzip -oq "$ROOT/downloads/psets/moneyball.zip" -d "$ROOT/cs50/pset1"
+    unzip -oq "$ROOT/downloads/psets/dont-panic.zip" -d "$ROOT/cs50/pset3"
+    unzip -oq "$ROOT/downloads/psets/meteorites.zip" -d "$ROOT/cs50/pset3"
+    unzip -oq "$ROOT/downloads/psets/census.zip" -d "$ROOT/cs50/pset4"
+    unzip -oq "$ROOT/downloads/psets/private.zip" -d "$ROOT/cs50/pset4"
+    unzip -oq "$ROOT/downloads/psets/bnb.zip" -d "$ROOT/cs50/pset4"
+    unzip -oq "$ROOT/downloads/psets/snap.zip" -d "$ROOT/cs50/pset5"
+    unzip -oq "$ROOT/downloads/psets/harvard.zip" -d "$ROOT/cs50/pset5"
+    unzip -oq "$ROOT/downloads/psets/deep.zip" -d "$ROOT/cs50/pset6"
+    unzip -oq "$ROOT/downloads/psets/dont-panic-python.zip" -d "$ROOT/cs50/pset6"
+    unzip -oq "$ROOT/downloads/psets/dont-panic-java.zip" -d "$ROOT/cs50/pset6"
+
+    mkdir -p "$ROOT/cs50/pset6/dont-panic"
+    ln -sfn harvard "$ROOT/cs50/pset5/your.harvard"
+    ln -sfn ../dont-panic-python "$ROOT/cs50/pset6/dont-panic/python"
+    ln -sfn ../dont-panic-java "$ROOT/cs50/pset6/dont-panic/java"
+}
+
+download_pset_pages() {
+    mkdir -p "$ROOT/docs/psets/raw"
+    while read -r url; do
+        [[ -z "$url" ]] && continue
+        local_name="$(echo "$url" | sed 's#https://cs50.harvard.edu/sql/psets/##; s#/$##; s#/#-#g')"
+        wget -nc -O "$ROOT/docs/psets/raw/${local_name}.html" "$url"
+    done <<'EOF'
+https://cs50.harvard.edu/sql/psets/1/packages/
+https://cs50.harvard.edu/sql/psets/1/dese/
+https://cs50.harvard.edu/sql/psets/1/moneyball/
+https://cs50.harvard.edu/sql/psets/2/atl/
+https://cs50.harvard.edu/sql/psets/2/connect/
+https://cs50.harvard.edu/sql/psets/2/donuts/
+https://cs50.harvard.edu/sql/psets/3/dont-panic/
+https://cs50.harvard.edu/sql/psets/3/meteorites/
+https://cs50.harvard.edu/sql/psets/4/census/
+https://cs50.harvard.edu/sql/psets/4/private/
+https://cs50.harvard.edu/sql/psets/4/bnb/
+https://cs50.harvard.edu/sql/psets/5/snap/
+https://cs50.harvard.edu/sql/psets/5/your.harvard/
+https://cs50.harvard.edu/sql/psets/6/connect/
+https://cs50.harvard.edu/sql/psets/6/deep/
+https://cs50.harvard.edu/sql/psets/6/dont-panic/python/
+https://cs50.harvard.edu/sql/psets/6/dont-panic/java/
+EOF
+}
+
+download_sqlite_tools
+download_jdk
+install_python_tools
+download_lecture_assets
+download_pset_assets
+download_pset_pages
+
+echo "Workspace bootstrap complete."

@@ -1,0 +1,6 @@
+-- CS50 SQL PSet 2: Donuts
+-- Official page: https://cs50.harvard.edu/sql/psets/2/donuts/
+--
+-- Build and test locally with:
+--   sqlite3 donuts.db
+--   .read schema.sql

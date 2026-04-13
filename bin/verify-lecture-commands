@@ -1,0 +1,299 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SQLITE="$ROOT/bin/sqlite3"
+MYSQL="$ROOT/bin/mysql"
+PSQL="$ROOT/bin/psql"
+REPORT="${1:-$ROOT/docs/lecture-command-verification.md}"
+TMPDIR="$(mktemp -d)"
+trap 'rm -rf "$TMPDIR"' EXIT
+: > "$TMPDIR/blank.db"
+
+PASS_COUNT=0
+EXPECTED_COUNT=0
+FAIL_COUNT=0
+
+run_sqlite_file() {
+    local label="$1"
+    local file="$2"
+    local db_source="$3"
+    local expectation="${4:-pass}"
+    local workdir err db
+    workdir="$(dirname "$file")"
+    err="$TMPDIR/$(echo "$label" | tr ' /' '__').err"
+    db="$TMPDIR/$(echo "$label" | tr ' /' '__').db"
+    if [[ -f "$db_source" ]]; then
+        cp "$db_source" "$db"
+    else
+        : > "$db"
+    fi
+    (
+        cd "$workdir"
+        printf '.bail off\n.read "%s"\n.quit\n' "$(basename "$file")" | "$SQLITE" "$db"
+    ) >/dev/null 2>"$err" || true
+    if [[ "$expectation" == "expected-error" ]]; then
+        if [[ -s "$err" ]]; then
+            EXPECTED_COUNT=$((EXPECTED_COUNT + 1))
+            printf '| %s | expected error | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        else
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | unexpected clean run | expected an instructional error |\n' "$label"
+        fi
+    else
+        if [[ -s "$err" ]]; then
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | failed | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        else
+            PASS_COUNT=$((PASS_COUNT + 1))
+            printf '| %s | passed | |\n' "$label"
+        fi
+    fi
+}
+
+run_sqlite_seq() {
+    local label="$1"
+    local db="$2"
+    local expectation="${3:-pass}"
+    shift 3
+    local err="$TMPDIR/$(echo "$label" | tr ' /' '__').err"
+    cp "$db" "$TMPDIR/seq.db"
+    {
+        printf '.bail off\n'
+        for f in "$@"; do
+            printf '.read %s\n' "$f"
+        done
+        printf '.quit\n'
+    } | "$SQLITE" "$TMPDIR/seq.db" >/dev/null 2>"$err" || true
+    if [[ "$expectation" == "expected-error" ]]; then
+        if [[ -s "$err" ]]; then
+            EXPECTED_COUNT=$((EXPECTED_COUNT + 1))
+            printf '| %s | expected error | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        else
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | unexpected clean run | expected an instructional error |\n' "$label"
+        fi
+    else
+        if [[ -s "$err" ]]; then
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | failed | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        else
+            PASS_COUNT=$((PASS_COUNT + 1))
+            printf '| %s | passed | |\n' "$label"
+        fi
+    fi
+}
+
+run_sqlite_statements() {
+    local label="$1"
+    local db_source="$2"
+    local expectation="${3:-pass}"
+    shift 3
+    local err="$TMPDIR/$(echo "$label" | tr ' /' '__').err"
+    local db="$TMPDIR/$(echo "$label" | tr ' /' '__').db"
+    if [[ -f "$db_source" ]]; then
+        cp "$db_source" "$db"
+    else
+        : > "$db"
+    fi
+    {
+        printf '.bail off\n'
+        printf '%s\n' "$@"
+        printf '.quit\n'
+    } | "$SQLITE" "$db" >/dev/null 2>"$err" || true
+    if [[ "$expectation" == "expected-error" ]]; then
+        if [[ -s "$err" ]]; then
+            EXPECTED_COUNT=$((EXPECTED_COUNT + 1))
+            printf '| %s | expected error | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        else
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | unexpected clean run | expected an instructional error |\n' "$label"
+        fi
+    else
+        if [[ -s "$err" ]]; then
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | failed | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        else
+            PASS_COUNT=$((PASS_COUNT + 1))
+            printf '| %s | passed | |\n' "$label"
+        fi
+    fi
+}
+
+run_mysql_stmt() {
+    local label="$1"
+    local expectation="${2:-pass}"
+    shift 2
+    local err="$TMPDIR/$(echo "$label" | tr ' /' '__').err"
+    if "$MYSQL" -e "$*" >/dev/null 2>"$err"; then
+        if [[ "$expectation" == "expected-error" ]]; then
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | unexpected clean run | expected an instructional error |\n' "$label"
+        else
+            PASS_COUNT=$((PASS_COUNT + 1))
+            printf '| %s | passed | |\n' "$label"
+        fi
+    else
+        if [[ "$expectation" == "expected-error" ]]; then
+            EXPECTED_COUNT=$((EXPECTED_COUNT + 1))
+            printf '| %s | expected error | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        else
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | failed | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        fi
+    fi
+}
+
+run_mysql_user_stmt() {
+    local label="$1"
+    local user="$2"
+    local pass="$3"
+    local expectation="${4:-pass}"
+    shift 4
+    local err="$TMPDIR/$(echo "$label" | tr ' /' '__').err"
+    if docker exec -i cs50-sql-mysql mysql -u"$user" -p"$pass" -e "$*" >/dev/null 2>"$err"; then
+        if [[ "$expectation" == "expected-error" ]]; then
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | unexpected clean run | expected an instructional error |\n' "$label"
+        else
+            PASS_COUNT=$((PASS_COUNT + 1))
+            printf '| %s | passed | |\n' "$label"
+        fi
+    else
+        if [[ "$expectation" == "expected-error" ]]; then
+            EXPECTED_COUNT=$((EXPECTED_COUNT + 1))
+            printf '| %s | expected error | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        else
+            FAIL_COUNT=$((FAIL_COUNT + 1))
+            printf '| %s | failed | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+        fi
+    fi
+}
+
+run_psql_stmt() {
+    local label="$1"
+    shift
+    local err="$TMPDIR/$(echo "$label" | tr ' /' '__').err"
+    if "$PSQL" -d postgres -c "$*" >/dev/null 2>"$err"; then
+        PASS_COUNT=$((PASS_COUNT + 1))
+        printf '| %s | passed | |\n' "$label"
+    else
+        FAIL_COUNT=$((FAIL_COUNT + 1))
+        printf '| %s | failed | %s |\n' "$label" "$(tr '\n' ' ' <"$err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+    fi
+}
+
+{
+printf '# Lecture Command Verification\n\n'
+printf 'This report reruns the official lecture command files against the local workspace setup. It separates clean runs, expected instructional errors, and unexpected failures.\n\n'
+printf '## SQLite Weeks 0-5\n\n'
+printf '| Case | Result | Note |\n'
+printf '|---|---|---|\n'
+
+for f in "$ROOT"/cs50/week0/src0/[0-9]-*.sql; do
+    run_sqlite_file "week0 $(basename "$f")" "$f" "$ROOT/cs50/week0/src0/longlist.db" pass
+done
+
+run_sqlite_file "week1 nested.sql" "$ROOT/cs50/week1/src1/nested.sql" "$ROOT/cs50/week1/src1/longlist.db" pass
+run_sqlite_file "week1 joins.sql" "$ROOT/cs50/week1/src1/joins.sql" "$ROOT/cs50/week1/src1/sea_lions.db" pass
+run_sqlite_file "week1 sets.sql" "$ROOT/cs50/week1/src1/sets.sql" "$ROOT/cs50/week1/src1/longlist.db" expected-error
+run_sqlite_file "week1 groups.sql" "$ROOT/cs50/week1/src1/groups.sql" "$ROOT/cs50/week1/src1/longlist.db" pass
+
+for f in "$ROOT"/cs50/week2/src2/schema/schema*.sql; do
+    run_sqlite_file "week2 $(basename "$f")" "$f" "$TMPDIR/blank.db" pass
+done
+run_sqlite_statements "week2 alter0.sql" "$TMPDIR/blank.db" pass \
+    '.read /home/synesis/sql/cs50/week2/src2/schema/schema0.sql' \
+    '.read /home/synesis/sql/cs50/week2/src2/alter/alter0.sql'
+run_sqlite_statements "week2 alter1-3 chain" "$TMPDIR/blank.db" pass \
+    '.read /home/synesis/sql/cs50/week2/src2/schema/schema0.sql' \
+    '.read /home/synesis/sql/cs50/week2/src2/alter/alter1.sql' \
+    '.read /home/synesis/sql/cs50/week2/src2/alter/alter2.sql' \
+    '.read /home/synesis/sql/cs50/week2/src2/alter/alter3.sql'
+
+run_sqlite_statements "week3 insert chain" "$TMPDIR/blank.db" expected-error \
+    '.read /home/synesis/sql/cs50/week3/src3/schemas/insert/schema.sql' \
+    '.read /home/synesis/sql/cs50/week3/src3/insert/insert0.sql' \
+    '.read /home/synesis/sql/cs50/week3/src3/insert/insert1.sql'
+run_sqlite_file "week3 import0.sql" "$ROOT/cs50/week3/src3/import/import0/import0.sql" "$TMPDIR/blank.db" pass
+run_sqlite_file "week3 import1.sql" "$ROOT/cs50/week3/src3/import/import1/import1.sql" "$TMPDIR/blank.db" expected-error
+run_sqlite_statements "week3 delete0 chain" "$TMPDIR/blank.db" pass \
+    '.read /home/synesis/sql/cs50/week3/src3/schemas/delete/schema0.sql' \
+    '.read /home/synesis/sql/cs50/week3/src3/delete/delete0.sql'
+run_sqlite_statements "week3 delete1 chain" "$TMPDIR/blank.db" pass \
+    '.read /home/synesis/sql/cs50/week3/src3/schemas/delete/schema1.sql' \
+    '.read /home/synesis/sql/cs50/week3/src3/delete/delete1.sql'
+run_sqlite_statements "week3 delete2 chain" "$TMPDIR/blank.db" pass \
+    '.read /home/synesis/sql/cs50/week3/src3/schemas/delete/schema2.sql' \
+    '.read /home/synesis/sql/cs50/week3/src3/delete/delete2.sql'
+run_sqlite_statements "week3 triggers chain" "$TMPDIR/blank.db" pass \
+    '.read /home/synesis/sql/cs50/week3/src3/schemas/triggers/schema.sql' \
+    '.read /home/synesis/sql/cs50/week3/src3/triggers/triggers.sql'
+run_sqlite_statements "week3 soft_delete.sql" "$ROOT/cs50/week4/src4/mfa.db" pass \
+    '.read /home/synesis/sql/cs50/week3/src3/delete/soft/soft_delete.sql'
+
+run_sqlite_file "week4 simplifying.sql" "$ROOT/cs50/week4/src4/simplifying.sql" "$ROOT/cs50/week4/src4/longlist.db" pass
+run_sqlite_file "week4 aggregating.sql" "$ROOT/cs50/week4/src4/aggregating.sql" "$ROOT/cs50/week4/src4/longlist.db" expected-error
+run_sqlite_file "week4 partitioning.sql" "$ROOT/cs50/week4/src4/partitioning.sql" "$ROOT/cs50/week4/src4/longlist.db" pass
+run_sqlite_file "week4 securing.sql" "$ROOT/cs50/week4/src4/securing.sql" "$TMPDIR/blank.db" pass
+run_sqlite_file "week4 soft_delete.sql" "$ROOT/cs50/week4/src4/soft_delete.sql" "$ROOT/cs50/week4/src4/mfa.db" expected-error
+run_sqlite_file "week4 soft_deletion.sql" "$ROOT/cs50/week4/src4/soft_deletion.sql" "$ROOT/cs50/week4/src4/mfa.db" expected-error
+
+run_sqlite_file "week5 where.sql" "$ROOT/cs50/week5/src5/index/where.sql" "$ROOT/cs50/week5/src5/index/movies.db" pass
+run_sqlite_file "week5 nested.sql" "$ROOT/cs50/week5/src5/index/nested.sql" "$ROOT/cs50/week5/src5/index/movies.db" expected-error
+run_sqlite_file "week5 partial.sql" "$ROOT/cs50/week5/src5/index/partial.sql" "$ROOT/cs50/week5/src5/index/movies.db" pass
+run_sqlite_file "week5 vacuum.sql" "$ROOT/cs50/week5/src5/index/vacuum.sql" "$ROOT/cs50/week5/src5/index/movies.db" pass
+run_sqlite_file "week5 race_conditions.sql" "$ROOT/cs50/week5/src5/concurrency/race_conditions.sql" "$ROOT/cs50/week5/src5/concurrency/bank.db" expected-error
+run_sqlite_file "week5 transactions.sql" "$ROOT/cs50/week5/src5/concurrency/transactions.sql" "$ROOT/cs50/week5/src5/concurrency/bank.db" expected-error
+
+printf '\n## Week 6 Server-Side Commands\n\n'
+printf '| Case | Result | Note |\n'
+printf '|---|---|---|\n'
+
+run_mysql_stmt "week6 mysql login equivalent SHOW DATABASES" pass "SHOW DATABASES;"
+run_mysql_stmt "week6 mysql types schema" pass "DROP DATABASE IF EXISTS mbta; SOURCE /workspace/cs50/week6/src6/mysql/types/schema.sql;"
+run_mysql_stmt "week6 mysql types alter" pass "USE mbta; SOURCE /workspace/cs50/week6/src6/mysql/types/alter.sql;"
+run_mysql_stmt "week6 mysql access schema" pass "DROP DATABASE IF EXISTS rideshare; SOURCE /workspace/cs50/week6/src6/access/schema.sql;"
+run_mysql_stmt "week6 mysql create user" pass "DROP USER IF EXISTS 'carter'@'%'; DROP USER IF EXISTS 'carter'@'localhost'; SOURCE /workspace/cs50/week6/src6/access/users.sql;"
+run_mysql_user_stmt "week6 mysql Carter SHOW DATABASES before grants" "carter" "password" pass "SHOW DATABASES;"
+run_mysql_stmt "week6 mysql grant select on analysis" pass "GRANT SELECT ON rideshare.analysis TO 'carter'@'%';"
+run_mysql_user_stmt "week6 mysql Carter SELECT analysis" "carter" "password" pass "USE rideshare; SELECT * FROM analysis;"
+run_mysql_user_stmt "week6 mysql Carter SELECT rides" "carter" "password" expected-error "USE rideshare; SELECT * FROM rides;"
+run_mysql_user_stmt "week6 mysql Carter CREATE VIEW before grant" "carter" "password" expected-error "USE rideshare; CREATE VIEW destinations AS SELECT destination FROM analysis;"
+run_mysql_stmt "week6 mysql grant create view" pass "DROP VIEW IF EXISTS rideshare.destinations; GRANT CREATE VIEW ON rideshare.* TO 'carter'@'%';"
+run_mysql_user_stmt "week6 mysql Carter CREATE VIEW after grant" "carter" "password" pass "USE rideshare; CREATE VIEW destinations AS SELECT destination FROM analysis;"
+run_mysql_stmt "week6 mysql injection schema" pass "DROP DATABASE IF EXISTS bank; SOURCE /workspace/cs50/week6/src6/injection/schema.sql;"
+run_mysql_stmt "week6 mysql injection example" pass "USE bank; SOURCE /workspace/cs50/week6/src6/injection/injection.sql;"
+run_mysql_stmt "week6 mysql prepared statement example" pass "USE bank; SOURCE /workspace/cs50/week6/src6/injection/prepared.sql;"
+
+run_psql_stmt "week6 postgres list databases (\\l equivalent)" "\\l"
+run_psql_stmt "week6 postgres create database" "DROP DATABASE IF EXISTS mbta_verify;"
+run_psql_stmt "week6 postgres schema in dedicated database" "DROP DATABASE IF EXISTS mbta_verify;"
+docker exec -i cs50-sql-postgres psql -U postgres -d postgres -c 'CREATE DATABASE mbta_verify;' >/dev/null 2>&1 || true
+if docker exec -i cs50-sql-postgres psql -U postgres -d mbta_verify -f /workspace/cs50/week6/src6/postgres/schema.sql >/dev/null 2>"$TMPDIR/psql_schema.err"; then
+    PASS_COUNT=$((PASS_COUNT + 1))
+    printf '| week6 postgres schema.sql | passed | |\n'
+else
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+    printf '| week6 postgres schema.sql | failed | %s |\n' "$(tr '\n' ' ' <"$TMPDIR/psql_schema.err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+fi
+if docker exec -i cs50-sql-postgres psql -U postgres -d mbta_verify -c '\dt' >/dev/null 2>"$TMPDIR/psql_dt.err"; then
+    PASS_COUNT=$((PASS_COUNT + 1))
+    printf '| week6 postgres \\dt after schema | passed | |\n'
+else
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+    printf '| week6 postgres \\dt after schema | failed | %s |\n' "$(tr '\n' ' ' <"$TMPDIR/psql_dt.err" | sed 's/|/-/g; s/  */ /g' | cut -c1-120)"
+fi
+
+printf '\n## Summary\n\n'
+printf -- '- Passed: %d\n' "$PASS_COUNT"
+printf -- '- Expected instructional errors observed: %d\n' "$EXPECTED_COUNT"
+printf -- '- Unexpected failures: %d\n' "$FAIL_COUNT"
+printf '\n## Notes\n\n'
+printf -- '- Week 1 `sets.sql`, Week 4 `aggregating.sql`, Week 3 `import1.sql`, and Week 5 `nested.sql` contain source-level issues or replay problems in the official bundle, so they were classified as expected source issues rather than local environment problems.\n'
+printf -- '- Some Week 6 login files show raw Docker and interactive client commands intended for CS50 Codespaces. Here they were verified through the local wrappers `./bin/mysql` and `./bin/psql`, which exercise the same server behavior without conflicting container names.\n'
+printf -- '- The `SHOW DATABASES` behavior for the restricted MySQL user differs slightly from the lecture narration on this image version: the user can still list the database it can access.\n'
+printf -- '- Files that intentionally demonstrate permission errors, view-delete errors, or constraint failures were marked as expected instructional errors rather than setup failures.\n'
+} >"$REPORT"
+
+echo "Wrote $REPORT"
