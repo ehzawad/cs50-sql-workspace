@@ -22,7 +22,7 @@ Source tree:
 The lecture uses multiple mini-scenarios instead of one permanent database. Open a scratch database and read one file at a time:
 
 ```bash
-cd /home/synesis/sql
+cd "$(git rev-parse --show-toplevel)"
 ./bin/sqlite3 cs50/week3/src3/week3.db
 ```
 

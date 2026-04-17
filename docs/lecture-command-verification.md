@@ -18,7 +18,7 @@ This report reruns the official lecture command files against the local workspac
 | week0 9-aggregate.sql | passed | |
 | week1 nested.sql | passed | |
 | week1 joins.sql | passed | |
-| week1 sets.sql | expected error | Parse error near line 13 of sets.sql: near "UNION": syntax error UNION SELECT 'translator' AS "profession", "name" FROM  |
+| week1 sets.sql | expected error | Parse error near line 13: near "UNION": syntax error UNION SELECT 'translator' AS "profession", "name" FROM "translators |
 | week1 groups.sql | passed | |
 | week2 schema0.sql | passed | |
 | week2 schema1.sql | passed | |
@@ -30,26 +30,26 @@ This report reruns the official lecture command files against the local workspac
 | week2 schema7.sql | passed | |
 | week2 alter0.sql | passed | |
 | week2 alter1-3 chain | passed | |
-| week3 insert chain | expected error | Error near line 17 of /home/synesis/sql/cs50/week3/src3/insert/insert0.sql: UNIQUE constraint failed: collections.access |
+| week3 insert chain | expected error | Runtime error near line 17: UNIQUE constraint failed: collections.accession_number (19) Runtime error near line 21: NOT  |
 | week3 import0.sql | passed | |
-| week3 import1.sql | expected error | Parse error near line 13 of import1.sql: near "IF": syntax error CREATE TABLE "collections" IF NOT EXISTS ( "id" INTEGER |
+| week3 import1.sql | expected error | Parse error near line 13: near "IF": syntax error CREATE TABLE "collections" IF NOT EXISTS ( "id" INTEGER, "title" TEXT  |
 | week3 delete0 chain | passed | |
 | week3 delete1 chain | passed | |
 | week3 delete2 chain | passed | |
 | week3 triggers chain | passed | |
 | week3 soft_delete.sql | passed | |
 | week4 simplifying.sql | passed | |
-| week4 aggregating.sql | expected error | Parse error near line 39 of aggregating.sql: near "SELECT": syntax error ."book_id" = "books"."id" GROUP BY "book_id" ), |
+| week4 aggregating.sql | expected error | Parse error near line 39: near "SELECT": syntax error ."book_id" = "books"."id" GROUP BY "book_id" ), SELECT "year" ROUN |
 | week4 partitioning.sql | passed | |
 | week4 securing.sql | passed | |
-| week4 soft_delete.sql | expected error | Parse error near line 33 of soft_delete.sql: cannot modify current_collections because it is a view  |
-| week4 soft_deletion.sql | expected error | Parse error near line 33 of soft_deletion.sql: cannot modify current_collections because it is a view  |
+| week4 soft_delete.sql | expected error | Parse error near line 33: cannot modify current_collections because it is a view  |
+| week4 soft_deletion.sql | expected error | Parse error near line 33: cannot modify current_collections because it is a view  |
 | week5 where.sql | passed | |
-| week5 nested.sql | expected error | Parse error near line 37 of nested.sql: index person_index already exists  |
+| week5 nested.sql | expected error | Parse error near line 37: index person_index already exists  |
 | week5 partial.sql | passed | |
 | week5 vacuum.sql | passed | |
-| week5 race_conditions.sql | expected error | Error near line 24 of race_conditions.sql: CHECK constraint failed: balance  |
-| week5 transactions.sql | expected error | Error near line 29 of transactions.sql: CHECK constraint failed: balance Error near line 37 of transactions.sql: CHECK c |
+| week5 race_conditions.sql | expected error | Runtime error near line 24: CHECK constraint failed: balance (19)  |
+| week5 transactions.sql | expected error | Runtime error near line 29: CHECK constraint failed: balance (19) Runtime error near line 37: CHECK constraint failed: b |
 
 ## Week 6 Server-Side Commands
 

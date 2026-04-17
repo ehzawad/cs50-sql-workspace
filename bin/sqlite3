@@ -8,9 +8,15 @@ if [[ -x "$TOOL" ]]; then
     exec "$TOOL" "$@"
 fi
 
-if command -v sqlite3 >/dev/null 2>&1; then
-    exec sqlite3 "$@"
-fi
+# Find a system sqlite3 without recursing into this wrapper if $ROOT/bin is on PATH.
+SELF="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+IFS=':' read -r -a PATH_ENTRIES <<< "$PATH"
+for d in "${PATH_ENTRIES[@]}"; do
+    candidate="$d/sqlite3"
+    if [[ -x "$candidate" && "$candidate" != "$SELF" ]]; then
+        exec "$candidate" "$@"
+    fi
+done
 
 echo "sqlite3 was not found in $TOOL and no system sqlite3 is available." >&2
 echo "Run ./bin/bootstrap-workspace from $ROOT, or install sqlite3 locally." >&2

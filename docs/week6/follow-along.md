@@ -15,7 +15,7 @@ Week 6 shifts from SQLite to database servers.
 Local wrappers:
 
 ```bash
-cd /home/synesis/sql
+cd "$(git rev-parse --show-toplevel)"
 ./bin/mysql
 ./bin/psql
 ```

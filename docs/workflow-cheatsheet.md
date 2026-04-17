@@ -14,7 +14,7 @@ No solution content is included here. This is only the environment and process l
 Start in the workspace root:
 
 ```bash
-cd /home/synesis/sql
+cd <repo-root>
 ```
 
 Useful index files:
@@ -47,7 +47,7 @@ The rule for lecture study is simple:
 Week 0:
 
 ```bash
-cd /home/synesis/sql
+cd <repo-root>
 ./bin/cs50-sql week0
 ```
 
@@ -105,8 +105,8 @@ SELECT * FROM "some_table" LIMIT 5;
 For lecture query files:
 
 ```sql
-.read /home/synesis/sql/cs50/week0/src0/0-SELECT.sql
-.read /home/synesis/sql/cs50/week1/src1/joins.sql
+.read <repo-root>/cs50/week0/src0/0-SELECT.sql
+.read <repo-root>/cs50/week1/src1/joins.sql
 ```
 
 For schema-building weeks, use a scratch database:
@@ -118,7 +118,7 @@ For schema-building weeks, use a scratch database:
 Then:
 
 ```sql
-.read /home/synesis/sql/cs50/week2/src2/schema/schema0.sql
+.read <repo-root>/cs50/week2/src2/schema/schema0.sql
 .schema
 ```
 
@@ -146,7 +146,7 @@ The rule for psets is also simple:
 Use:
 
 ```bash
-cd /home/synesis/sql
+cd <repo-root>
 sed -n '1,220p' docs/psets/index.md
 ```
 
@@ -155,8 +155,8 @@ sed -n '1,220p' docs/psets/index.md
 Typical flow:
 
 ```bash
-cd /home/synesis/sql/cs50/pset1/dese
-/home/synesis/sql/bin/sqlite3 dese.db
+cd <repo-root>/cs50/pset1/dese
+<repo-root>/bin/sqlite3 dese.db
 ```
 
 Inside SQLite:
@@ -170,7 +170,7 @@ Inside SQLite:
 If you want output redirected to a file while testing:
 
 ```bash
-/home/synesis/sql/bin/sqlite3 dese.db < 1.sql > output.txt
+<repo-root>/bin/sqlite3 dese.db < 1.sql > output.txt
 ```
 
 ### Schema Design Psets
@@ -178,8 +178,8 @@ If you want output redirected to a file while testing:
 Typical flow:
 
 ```bash
-cd /home/synesis/sql/cs50/pset2/atl
-/home/synesis/sql/bin/sqlite3 atl.db
+cd <repo-root>/cs50/pset2/atl
+<repo-root>/bin/sqlite3 atl.db
 ```
 
 Inside SQLite:
@@ -199,8 +199,8 @@ The same pattern works for:
 Typical flow:
 
 ```bash
-cd /home/synesis/sql/cs50/pset3/meteorites
-/home/synesis/sql/bin/sqlite3 meteorites.db
+cd <repo-root>/cs50/pset3/meteorites
+<repo-root>/bin/sqlite3 meteorites.db
 ```
 
 Then use the provided `import.sql` or your own test script as needed.
@@ -210,7 +210,7 @@ Then use the provided `import.sql` or your own test script as needed.
 For `sentimental-connect`:
 
 ```bash
-cd /home/synesis/sql
+cd <repo-root>
 ./bin/mysql
 ```
 
@@ -228,14 +228,14 @@ SHOW TABLES;
 For `dont-panic/python`:
 
 ```bash
-cd /home/synesis/sql/cs50/pset6/dont-panic/python
-/home/synesis/sql/bin/python hack.py
+cd <repo-root>/cs50/pset6/dont-panic/python
+<repo-root>/bin/python hack.py
 ```
 
 Reset the database if needed:
 
 ```bash
-/home/synesis/sql/bin/sqlite3 dont-panic.db < reset.sql
+<repo-root>/bin/sqlite3 dont-panic.db < reset.sql
 ```
 
 ### Java Pset
@@ -243,15 +243,15 @@ Reset the database if needed:
 For `dont-panic/java`:
 
 ```bash
-cd /home/synesis/sql/cs50/pset6/dont-panic/java
-/home/synesis/sql/bin/javac Hack.java
-/home/synesis/sql/bin/java -cp .:sqlite-jdbc-3.43.0.0.jar Hack
+cd <repo-root>/cs50/pset6/dont-panic/java
+<repo-root>/bin/javac Hack.java
+<repo-root>/bin/java -cp .:sqlite-jdbc-3.43.0.0.jar Hack
 ```
 
 Reset the database if needed:
 
 ```bash
-/home/synesis/sql/bin/sqlite3 dont-panic.db < reset.sql
+<repo-root>/bin/sqlite3 dont-panic.db < reset.sql
 ```
 
 ## 3. Checking and Submission
@@ -261,19 +261,19 @@ Always run these from the correct pset folder.
 Examples:
 
 ```bash
-cd /home/synesis/sql/cs50/pset1/packages
-/home/synesis/sql/bin/check50 cs50/problems/2024/sql/packages
+cd <repo-root>/cs50/pset1/packages
+<repo-root>/bin/check50 cs50/problems/2024/sql/packages
 ```
 
 ```bash
-cd /home/synesis/sql/cs50/pset6/sentimental-connect
-/home/synesis/sql/bin/check50 cs50/problems/2024/sql/sentimental/connect
+cd <repo-root>/cs50/pset6/sentimental-connect
+<repo-root>/bin/check50 cs50/problems/2024/sql/sentimental/connect
 ```
 
 Submission:
 
 ```bash
-/home/synesis/sql/bin/submit50 TARGET
+<repo-root>/bin/submit50 TARGET
 ```
 
 Use `docs/psets/index.md` to get the exact `TARGET`.
@@ -283,7 +283,7 @@ Use `docs/psets/index.md` to get the exact `TARGET`.
 List all local SQLite databases:
 
 ```bash
-cd /home/synesis/sql
+cd <repo-root>
 ./bin/cs50-sql --list
 ```
 

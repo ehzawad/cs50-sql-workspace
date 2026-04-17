@@ -62,12 +62,17 @@ case "$target" in
         db="$ROOT/cs50/pset0/players/players.db"
         ;;
     *)
+        matches=()
         if [[ -d "$target" ]]; then
-            mapfile -t matches < <(find -L "$target" -maxdepth 1 -type f -name '*.db' | sort)
+            while IFS= read -r line; do
+                [[ -n "$line" ]] && matches+=("$line")
+            done < <(find -L "$target" -maxdepth 1 -type f -name '*.db' | sort)
         elif [[ -f "$target" ]]; then
             matches=("$target")
         else
-            mapfile -t matches < <(find "$ROOT/cs50" -type f -name "${target}.db" | sort)
+            while IFS= read -r line; do
+                [[ -n "$line" ]] && matches+=("$line")
+            done < <(find "$ROOT/cs50" -type f -name "${target}.db" | sort)
         fi
 
         if [[ "${#matches[@]}" -eq 1 ]]; then

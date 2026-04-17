@@ -11,7 +11,7 @@ Fast workflow reference:
 SQLite problems:
 
 ```bash
-cd /home/synesis/sql
+cd <repo-root>
 ./bin/cs50-sql packages
 ./bin/cs50-sql snap
 ```
@@ -19,7 +19,7 @@ cd /home/synesis/sql
 MySQL problem:
 
 ```bash
-cd /home/synesis/sql
+cd <repo-root>
 ./bin/mysql
 ```
 
@@ -42,11 +42,17 @@ Course tools:
 ## PSet 0
 
 - `cyberchase`: `cs50/pset0/cyberchase/`
+  - check: `check50 cs50/problems/2024/sql/cyberchase`
+  - submit: `submit50 cs50/problems/2024/sql/cyberchase`
 - `views`: `cs50/pset0/views/`
+  - check: `check50 cs50/problems/2024/sql/views`
+  - submit: `submit50 cs50/problems/2024/sql/views`
 - `normals`: `cs50/pset0/normals/`
+  - check: `check50 cs50/problems/2024/sql/normals`
+  - submit: `submit50 cs50/problems/2024/sql/normals`
 - `players`: `cs50/pset0/players/`
-
-PSet 0 does not use the same check50/submit50 flow as the later SQL psets, so only the local folders are listed here.
+  - check: `check50 cs50/problems/2024/sql/players`
+  - submit: `submit50 cs50/problems/2024/sql/players`
 
 ## PSet 1
 
@@ -122,12 +128,12 @@ These are scaffold-only problems. CS50 expects you to create the folders yoursel
 If you want to stay inside the local course toolchain, use the wrappers:
 
 ```bash
-cd /home/synesis/sql/cs50/pset6/dont-panic/python
-/home/synesis/sql/bin/python hack.py
+cd <repo-root>/cs50/pset6/dont-panic/python
+<repo-root>/bin/python hack.py
 
-cd /home/synesis/sql/cs50/pset6/dont-panic/java
-/home/synesis/sql/bin/javac Hack.java
-/home/synesis/sql/bin/java -cp .:sqlite-jdbc-3.43.0.0.jar Hack
+cd <repo-root>/cs50/pset6/dont-panic/java
+<repo-root>/bin/javac Hack.java
+<repo-root>/bin/java -cp .:sqlite-jdbc-3.43.0.0.jar Hack
 ```
 
 ## Local Raw Sources

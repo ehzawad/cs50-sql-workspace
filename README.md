@@ -15,7 +15,9 @@ This workspace is now prepared for the full CS50 SQL course: lecture materials, 
 
 ## Local Tools
 
-From `/home/synesis/sql`:
+`<repo-root>` in the snippets below is whichever directory you cloned this repo into. On macOS and Linux you can jump there with `cd "$(git rev-parse --show-toplevel)"`.
+
+From `<repo-root>`:
 
 ```bash
 ./bin/cs50-sql --list

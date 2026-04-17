@@ -20,7 +20,7 @@ Source directories:
 Quick interactive loop:
 
 ```bash
-cd /home/synesis/sql
+cd "$(git rev-parse --show-toplevel)"
 ./bin/sqlite3 cs50/week2/src2/mbta.db
 ```
 

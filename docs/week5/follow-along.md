@@ -13,7 +13,7 @@ Raw sources:
 Open the lecture databases:
 
 ```bash
-cd /home/synesis/sql
+cd "$(git rev-parse --show-toplevel)"
 ./bin/cs50-sql cs50/week5/src5/index/movies.db
 ./bin/cs50-sql cs50/week5/src5/concurrency/bank.db
 ```

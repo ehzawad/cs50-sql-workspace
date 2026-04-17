@@ -23,7 +23,12 @@ case "$ARCH_NAME" in
         ;;
 esac
 
-SQLITE_TOOLS_URL="${CS50_SQL_SQLITE_TOOLS_URL:-https://www.sqlite.org/2026/sqlite-tools-linux-x64-3530000.zip}"
+case "${OS_NAME}-${JDK_ARCH}" in
+    Linux-x64)     SQLITE_TOOLS_DEFAULT="https://www.sqlite.org/2026/sqlite-tools-linux-x64-3530000.zip" ;;
+    Linux-aarch64) SQLITE_TOOLS_DEFAULT="" ;;  # no prebuilt linux-arm64 tools zip from sqlite.org; rely on system sqlite3
+    *)             SQLITE_TOOLS_DEFAULT="" ;;
+esac
+SQLITE_TOOLS_URL="${CS50_SQL_SQLITE_TOOLS_URL:-$SQLITE_TOOLS_DEFAULT}"
 JDK_URL="${CS50_SQL_JDK_URL:-https://api.adoptium.net/v3/binary/latest/21/ga/${JDK_OS}/${JDK_ARCH}/jdk/hotspot/normal/eclipse}"
 
 fetch_url() {
@@ -78,6 +83,16 @@ download_sqlite_tools() {
         exit 1
     fi
 
+    if [[ -z "$SQLITE_TOOLS_URL" ]]; then
+        if command -v sqlite3 >/dev/null 2>&1; then
+            echo "No prebuilt sqlite-tools archive is configured for ${OS_NAME}-${ARCH_NAME}; using system sqlite3."
+            return 0
+        fi
+        echo "No prebuilt sqlite-tools archive is configured for ${OS_NAME}-${ARCH_NAME}, and no system sqlite3 was found." >&2
+        echo "Install sqlite3 through your package manager, or set CS50_SQL_SQLITE_TOOLS_URL to a matching archive." >&2
+        exit 1
+    fi
+
     mkdir -p "$ROOT/downloads" "$ROOT/vendor/sqlite-tools"
     local zip="$ROOT/downloads/sqlite-tools-linux-x64-3530000.zip"
     fetch_zip "$SQLITE_TOOLS_URL" "$zip"
@@ -93,7 +108,27 @@ download_jdk() {
     mkdir -p "$ROOT/downloads" "$ROOT/vendor/jdk"
     local tarball="$ROOT/downloads/temurin-21-jdk-${JDK_OS}-${JDK_ARCH}.tar.gz"
     fetch_tgz "$JDK_URL" "$tarball"
-    tar -xzf "$tarball" -C "$ROOT/vendor/jdk" --strip-components=1
+    local extract_dir="$ROOT/vendor/jdk.extract"
+    rm -rf "$extract_dir"
+    mkdir -p "$extract_dir"
+    tar -xzf "$tarball" -C "$extract_dir" --strip-components=1
+    # Temurin tarballs differ by OS:
+    #   Linux:  <root>/bin/java
+    #   macOS:  <root>/Contents/Home/bin/java
+    local java_dir
+    if [[ -x "$extract_dir/bin/java" ]]; then
+        java_dir="$extract_dir"
+    elif [[ -x "$extract_dir/Contents/Home/bin/java" ]]; then
+        java_dir="$extract_dir/Contents/Home"
+    else
+        echo "Could not locate bin/java inside extracted JDK at $extract_dir" >&2
+        exit 1
+    fi
+    rm -rf "$ROOT/vendor/jdk"
+    mkdir -p "$ROOT/vendor/jdk"
+    # Move the resolved Home directory contents into vendor/jdk so bin/java lives at vendor/jdk/bin/java on every OS.
+    (cd "$java_dir" && tar -cf - .) | (cd "$ROOT/vendor/jdk" && tar -xf -)
+    rm -rf "$extract_dir"
 }
 
 install_python_tools() {
@@ -141,25 +176,25 @@ download_pset_assets() {
 6/dont-panic-java.zip
 EOF
 
-    unzip -oq "$ROOT/downloads/psets/cyberchase.zip" -d "$ROOT/cs50/pset0"
-    unzip -oq "$ROOT/downloads/psets/views.zip" -d "$ROOT/cs50/pset0"
-    unzip -oq "$ROOT/downloads/psets/normals.zip" -d "$ROOT/cs50/pset0"
-    unzip -oq "$ROOT/downloads/psets/players.zip" -d "$ROOT/cs50/pset0"
+    unzip -nq "$ROOT/downloads/psets/cyberchase.zip" -d "$ROOT/cs50/pset0"
+    unzip -nq "$ROOT/downloads/psets/views.zip" -d "$ROOT/cs50/pset0"
+    unzip -nq "$ROOT/downloads/psets/normals.zip" -d "$ROOT/cs50/pset0"
+    unzip -nq "$ROOT/downloads/psets/players.zip" -d "$ROOT/cs50/pset0"
 
     mkdir -p "$ROOT/cs50/pset1" "$ROOT/cs50/pset3" "$ROOT/cs50/pset4" "$ROOT/cs50/pset5" "$ROOT/cs50/pset6"
-    unzip -oq "$ROOT/downloads/psets/packages.zip" -d "$ROOT/cs50/pset1"
-    unzip -oq "$ROOT/downloads/psets/dese.zip" -d "$ROOT/cs50/pset1"
-    unzip -oq "$ROOT/downloads/psets/moneyball.zip" -d "$ROOT/cs50/pset1"
-    unzip -oq "$ROOT/downloads/psets/dont-panic.zip" -d "$ROOT/cs50/pset3"
-    unzip -oq "$ROOT/downloads/psets/meteorites.zip" -d "$ROOT/cs50/pset3"
-    unzip -oq "$ROOT/downloads/psets/census.zip" -d "$ROOT/cs50/pset4"
-    unzip -oq "$ROOT/downloads/psets/private.zip" -d "$ROOT/cs50/pset4"
-    unzip -oq "$ROOT/downloads/psets/bnb.zip" -d "$ROOT/cs50/pset4"
-    unzip -oq "$ROOT/downloads/psets/snap.zip" -d "$ROOT/cs50/pset5"
-    unzip -oq "$ROOT/downloads/psets/harvard.zip" -d "$ROOT/cs50/pset5"
-    unzip -oq "$ROOT/downloads/psets/deep.zip" -d "$ROOT/cs50/pset6"
-    unzip -oq "$ROOT/downloads/psets/dont-panic-python.zip" -d "$ROOT/cs50/pset6"
-    unzip -oq "$ROOT/downloads/psets/dont-panic-java.zip" -d "$ROOT/cs50/pset6"
+    unzip -nq "$ROOT/downloads/psets/packages.zip" -d "$ROOT/cs50/pset1"
+    unzip -nq "$ROOT/downloads/psets/dese.zip" -d "$ROOT/cs50/pset1"
+    unzip -nq "$ROOT/downloads/psets/moneyball.zip" -d "$ROOT/cs50/pset1"
+    unzip -nq "$ROOT/downloads/psets/dont-panic.zip" -d "$ROOT/cs50/pset3"
+    unzip -nq "$ROOT/downloads/psets/meteorites.zip" -d "$ROOT/cs50/pset3"
+    unzip -nq "$ROOT/downloads/psets/census.zip" -d "$ROOT/cs50/pset4"
+    unzip -nq "$ROOT/downloads/psets/private.zip" -d "$ROOT/cs50/pset4"
+    unzip -nq "$ROOT/downloads/psets/bnb.zip" -d "$ROOT/cs50/pset4"
+    unzip -nq "$ROOT/downloads/psets/snap.zip" -d "$ROOT/cs50/pset5"
+    unzip -nq "$ROOT/downloads/psets/harvard.zip" -d "$ROOT/cs50/pset5"
+    unzip -nq "$ROOT/downloads/psets/deep.zip" -d "$ROOT/cs50/pset6"
+    unzip -nq "$ROOT/downloads/psets/dont-panic-python.zip" -d "$ROOT/cs50/pset6"
+    unzip -nq "$ROOT/downloads/psets/dont-panic-java.zip" -d "$ROOT/cs50/pset6"
 
     # PSet 2 is design-from-scratch, so bootstrap only guarantees blank schema scaffolds.
     for p in atl connect donuts; do

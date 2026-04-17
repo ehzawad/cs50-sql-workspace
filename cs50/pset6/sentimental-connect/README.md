@@ -9,7 +9,7 @@ Starter file:
 Local MySQL wrapper:
 
 ```bash
-cd /home/synesis/sql
+cd "$(git rev-parse --show-toplevel)"
 ./bin/mysql
 ```
 

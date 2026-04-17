@@ -19,7 +19,7 @@ Official source files saved locally:
 Open the lecture database:
 
 ```bash
-cd /home/synesis/sql
+cd "$(git rev-parse --show-toplevel)"
 ./bin/cs50-sql week0
 ```
 

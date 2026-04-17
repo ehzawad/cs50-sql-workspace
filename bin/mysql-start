@@ -14,34 +14,35 @@ fi
 
 mkdir -p "$DATA_DIR"
 
+wait_for_mysql() {
+    for _ in $(seq 1 60); do
+        if docker exec "$CONTAINER_NAME" mysqladmin ping -uroot -p"$MYSQL_ROOT_PASSWORD" --silent >/dev/null 2>&1; then
+            return 0
+        fi
+        sleep 1
+    done
+    echo "MySQL container did not become ready in time." >&2
+    return 1
+}
+
 if docker ps --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
-    exit 0
+    # Already running; still wait for the server to answer in case it is mid-startup.
+    wait_for_mysql
+    exit $?
 fi
 
 if docker ps -a --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
     docker start "$CONTAINER_NAME" >/dev/null
-    exit 0
+    wait_for_mysql
+    exit $?
 fi
 
 docker run \
     --name "$CONTAINER_NAME" \
-    -e MYSQL_ROOT_PASSWORD=crimson \
+    -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
     -v "$DATA_DIR:/var/lib/mysql" \
     -v "$ROOT:/workspace" \
     -d \
     "$MYSQL_IMAGE" >/dev/null
 
-# Wait until the server is accepting connections.
-for _ in $(seq 1 60); do
-    if docker exec "$CONTAINER_NAME" mysqladmin ping -uroot -p"$MYSQL_ROOT_PASSWORD" --silent >/dev/null 2>&1; then
-        exit 0
-    fi
-    if docker exec "$CONTAINER_NAME" mysqladmin ping -uroot --silent >/dev/null 2>&1; then
-        docker exec "$CONTAINER_NAME" mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}'; FLUSH PRIVILEGES;" >/dev/null 2>&1 || true
-        exit 0
-    fi
-    sleep 1
-done
-
-echo "MySQL container did not become ready in time." >&2
-exit 1
+wait_for_mysql

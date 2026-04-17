@@ -14,8 +14,20 @@ fi
 
 mkdir -p "$DATA_DIR"
 
+wait_for_postgres() {
+    for _ in $(seq 1 60); do
+        if docker exec "$CONTAINER_NAME" pg_isready -U postgres >/dev/null 2>&1; then
+            return 0
+        fi
+        sleep 1
+    done
+    echo "PostgreSQL container did not become ready in time." >&2
+    return 1
+}
+
 if docker ps --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
-    exit 0
+    wait_for_postgres
+    exit $?
 fi
 
 if docker ps -a --format '{{.Names}}' | grep -Fxq "$CONTAINER_NAME"; then
@@ -31,12 +43,4 @@ else
         "$POSTGRES_IMAGE" >/dev/null
 fi
 
-for _ in $(seq 1 60); do
-    if docker exec "$CONTAINER_NAME" pg_isready -U postgres >/dev/null 2>&1; then
-        exit 0
-    fi
-    sleep 1
-done
-
-echo "PostgreSQL container did not become ready in time." >&2
-exit 1
+wait_for_postgres

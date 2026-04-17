@@ -8,7 +8,7 @@ This workspace is set up around the official CS50 SQL materials:
 
 ## Quick Start
 
-From `/home/synesis/sql`:
+From `<repo-root>`:
 
 ```bash
 ./bin/bootstrap-workspace

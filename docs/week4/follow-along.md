@@ -15,7 +15,7 @@ Week 4 is about shaping access to data with views and related abstractions.
 Useful databases:
 
 ```bash
-cd /home/synesis/sql
+cd "$(git rev-parse --show-toplevel)"
 ./bin/cs50-sql cs50/week4/src4/longlist.db
 ./bin/cs50-sql cs50/week4/src4/rideshare.db
 ./bin/cs50-sql cs50/week4/src4/network.db
