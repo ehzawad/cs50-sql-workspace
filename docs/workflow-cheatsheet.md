@@ -9,12 +9,14 @@ It is split into two modes:
 
 No solution content is included here. This is only the environment and process layer.
 
+`<repo-root>` in the snippets below is whichever directory you cloned this repo into. Inside the repo, `cd "$(git rev-parse --show-toplevel)"` takes you there.
+
 ## 0. One-Time Orientation
 
 Start in the workspace root:
 
 ```bash
-cd <repo-root>
+cd "$(git rev-parse --show-toplevel)"
 ```
 
 Useful index files:
@@ -47,7 +49,7 @@ The rule for lecture study is simple:
 Week 0:
 
 ```bash
-cd <repo-root>
+cd "$(git rev-parse --show-toplevel)"
 ./bin/cs50-sql week0
 ```
 
@@ -146,7 +148,7 @@ The rule for psets is also simple:
 Use:
 
 ```bash
-cd <repo-root>
+cd "$(git rev-parse --show-toplevel)"
 sed -n '1,220p' docs/psets/index.md
 ```
 
@@ -210,7 +212,7 @@ Then use the provided `import.sql` or your own test script as needed.
 For `sentimental-connect`:
 
 ```bash
-cd <repo-root>
+cd "$(git rev-parse --show-toplevel)"
 ./bin/mysql
 ```
 
@@ -283,7 +285,7 @@ Use `docs/psets/index.md` to get the exact `TARGET`.
 List all local SQLite databases:
 
 ```bash
-cd <repo-root>
+cd "$(git rev-parse --show-toplevel)"
 ./bin/cs50-sql --list
 ```
 

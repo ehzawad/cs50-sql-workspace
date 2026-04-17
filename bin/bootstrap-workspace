@@ -73,9 +73,26 @@ fetch_tgz() {
     tar -tzf "$out" >/dev/null
 }
 
+# Locate a non-wrapper sqlite3 on PATH. The repo's bin/ may be on PATH; the
+# wrapper in $ROOT/bin/sqlite3 would satisfy `command -v sqlite3` but defeats
+# the point of asking "does the system have sqlite3".
+system_sqlite3_path() {
+    local self="$ROOT/bin/sqlite3"
+    local IFS=':'
+    local dir
+    for dir in $PATH; do
+        local candidate="$dir/sqlite3"
+        if [[ -x "$candidate" && "$candidate" != "$self" ]]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
 download_sqlite_tools() {
     if [[ "$OS_NAME" == "Darwin" ]]; then
-        if command -v sqlite3 >/dev/null 2>&1; then
+        if system_sqlite3_path >/dev/null; then
             echo "Using system sqlite3 on macOS."
             return 0
         fi
@@ -84,7 +101,7 @@ download_sqlite_tools() {
     fi
 
     if [[ -z "$SQLITE_TOOLS_URL" ]]; then
-        if command -v sqlite3 >/dev/null 2>&1; then
+        if system_sqlite3_path >/dev/null; then
             echo "No prebuilt sqlite-tools archive is configured for ${OS_NAME}-${ARCH_NAME}; using system sqlite3."
             return 0
         fi
@@ -146,7 +163,7 @@ download_lecture_assets() {
         fetch_if_missing_or_empty "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.txt" "$ROOT/docs/week${w}/raw/lecture${w}-transcript.txt"
         fetch_if_missing_or_empty "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.srt" "$ROOT/docs/week${w}/raw/lecture${w}-subtitles.srt"
         fetch_zip "https://cdn.cs50.net/sql/2023/x/lectures/${w}/src${w}.zip" "$ROOT/downloads/lectures/src${w}.zip"
-        unzip -oq "$ROOT/downloads/lectures/src${w}.zip" -d "$ROOT/cs50/week${w}"
+        unzip -nq "$ROOT/downloads/lectures/src${w}.zip" -d "$ROOT/cs50/week${w}"
     done
 }
 

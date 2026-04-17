@@ -6,12 +6,14 @@ Fast workflow reference:
 
 - `docs/workflow-cheatsheet.md`
 
+`<repo-root>` in the snippets below is whichever directory you cloned this repo into. Inside the repo, run `cd "$(git rev-parse --show-toplevel)"` to jump there.
+
 ## Shared Commands
 
 SQLite problems:
 
 ```bash
-cd <repo-root>
+cd "$(git rev-parse --show-toplevel)"
 ./bin/cs50-sql packages
 ./bin/cs50-sql snap
 ```
@@ -19,7 +21,7 @@ cd <repo-root>
 MySQL problem:
 
 ```bash
-cd <repo-root>
+cd "$(git rev-parse --show-toplevel)"
 ./bin/mysql
 ```
 

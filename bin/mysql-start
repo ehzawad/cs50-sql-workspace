@@ -15,13 +15,27 @@ fi
 mkdir -p "$DATA_DIR"
 
 wait_for_mysql() {
+    # Use a real authenticated query, not just `mysqladmin ping`, so the wait
+    # loop fails loudly when the configured password does not match the
+    # already-initialized data directory (i.e. password drift across
+    # CS50_SQL_MYSQL_ROOT_PASSWORD changes).
+    local pinged=false
     for _ in $(seq 1 60); do
         if docker exec "$CONTAINER_NAME" mysqladmin ping -uroot -p"$MYSQL_ROOT_PASSWORD" --silent >/dev/null 2>&1; then
-            return 0
+            pinged=true
+            if docker exec "$CONTAINER_NAME" mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e 'SELECT 1;' >/dev/null 2>&1; then
+                return 0
+            fi
         fi
         sleep 1
     done
-    echo "MySQL container did not become ready in time." >&2
+    if "$pinged"; then
+        echo "MySQL is responding but rejected the configured root password." >&2
+        echo "If the data directory at $DATA_DIR was initialized under a different CS50_SQL_MYSQL_ROOT_PASSWORD," >&2
+        echo "either export that same value or remove the directory and the '$CONTAINER_NAME' container, then retry." >&2
+    else
+        echo "MySQL container did not become ready in time." >&2
+    fi
     return 1
 }
 
