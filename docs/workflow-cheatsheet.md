@@ -104,11 +104,11 @@ For a normal SQLite lecture week:
 SELECT * FROM "some_table" LIMIT 5;
 ```
 
-For lecture query files:
+For lecture query files, launch `./bin/cs50-sql week0` (or any other alias) from the repo root so `.read` can use relative paths:
 
 ```sql
-.read <repo-root>/cs50/week0/src0/0-SELECT.sql
-.read <repo-root>/cs50/week1/src1/joins.sql
+.read cs50/week0/src0/0-SELECT.sql
+.read cs50/week1/src1/joins.sql
 ```
 
 For schema-building weeks, use a scratch database:
@@ -117,10 +117,10 @@ For schema-building weeks, use a scratch database:
 ./bin/sqlite3 scratch.db
 ```
 
-Then:
+Then (still launched from the repo root so relative `.read` resolves):
 
 ```sql
-.read <repo-root>/cs50/week2/src2/schema/schema0.sql
+.read cs50/week2/src2/schema/schema0.sql
 .schema
 ```
 
@@ -157,8 +157,9 @@ sed -n '1,220p' docs/psets/index.md
 Typical flow:
 
 ```bash
-cd <repo-root>/cs50/pset1/dese
-<repo-root>/bin/sqlite3 dese.db
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT/cs50/pset1/dese"
+"$ROOT/bin/sqlite3" dese.db
 ```
 
 Inside SQLite:
@@ -172,7 +173,7 @@ Inside SQLite:
 If you want output redirected to a file while testing:
 
 ```bash
-<repo-root>/bin/sqlite3 dese.db < 1.sql > output.txt
+"$ROOT/bin/sqlite3" dese.db < 1.sql > output.txt
 ```
 
 ### Schema Design Psets
@@ -180,8 +181,9 @@ If you want output redirected to a file while testing:
 Typical flow:
 
 ```bash
-cd <repo-root>/cs50/pset2/atl
-<repo-root>/bin/sqlite3 atl.db
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT/cs50/pset2/atl"
+"$ROOT/bin/sqlite3" atl.db
 ```
 
 Inside SQLite:
@@ -201,8 +203,9 @@ The same pattern works for:
 Typical flow:
 
 ```bash
-cd <repo-root>/cs50/pset3/meteorites
-<repo-root>/bin/sqlite3 meteorites.db
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT/cs50/pset3/meteorites"
+"$ROOT/bin/sqlite3" meteorites.db
 ```
 
 Then use the provided `import.sql` or your own test script as needed.
@@ -230,14 +233,15 @@ SHOW TABLES;
 For `dont-panic/python`:
 
 ```bash
-cd <repo-root>/cs50/pset6/dont-panic/python
-<repo-root>/bin/python hack.py
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT/cs50/pset6/dont-panic/python"
+"$ROOT/bin/python" hack.py
 ```
 
 Reset the database if needed:
 
 ```bash
-<repo-root>/bin/sqlite3 dont-panic.db < reset.sql
+"$ROOT/bin/sqlite3" dont-panic.db < reset.sql
 ```
 
 ### Java Pset
@@ -245,15 +249,16 @@ Reset the database if needed:
 For `dont-panic/java`:
 
 ```bash
-cd <repo-root>/cs50/pset6/dont-panic/java
-<repo-root>/bin/javac Hack.java
-<repo-root>/bin/java -cp .:sqlite-jdbc-3.43.0.0.jar Hack
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT/cs50/pset6/dont-panic/java"
+"$ROOT/bin/javac" Hack.java
+"$ROOT/bin/java" -cp .:sqlite-jdbc-3.43.0.0.jar Hack
 ```
 
 Reset the database if needed:
 
 ```bash
-<repo-root>/bin/sqlite3 dont-panic.db < reset.sql
+"$ROOT/bin/sqlite3" dont-panic.db < reset.sql
 ```
 
 ## 3. Checking and Submission
@@ -263,19 +268,21 @@ Always run these from the correct pset folder.
 Examples:
 
 ```bash
-cd <repo-root>/cs50/pset1/packages
-<repo-root>/bin/check50 cs50/problems/2024/sql/packages
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT/cs50/pset1/packages"
+"$ROOT/bin/check50" cs50/problems/2024/sql/packages
 ```
 
 ```bash
-cd <repo-root>/cs50/pset6/sentimental-connect
-<repo-root>/bin/check50 cs50/problems/2024/sql/sentimental/connect
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT/cs50/pset6/sentimental-connect"
+"$ROOT/bin/check50" cs50/problems/2024/sql/sentimental/connect
 ```
 
 Submission:
 
 ```bash
-<repo-root>/bin/submit50 TARGET
+"$ROOT/bin/submit50" TARGET
 ```
 
 Use `docs/psets/index.md` to get the exact `TARGET`.

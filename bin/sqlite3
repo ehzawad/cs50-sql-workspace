@@ -8,13 +8,19 @@ if [[ -x "$TOOL" ]]; then
     exec "$TOOL" "$@"
 fi
 
-# Find a system sqlite3 without recursing into this wrapper if $ROOT/bin is on PATH.
+# Find a system sqlite3 without recursing into this wrapper. We must normalize
+# each PATH entry before comparing — a user with PATH=bin:... or PATH=./bin:...
+# would otherwise make $candidate="bin/sqlite3", which is not equal to the
+# absolute self path, and we'd exec ourselves.
 SELF="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
 IFS=':' read -r -a PATH_ENTRIES <<< "$PATH"
 for d in "${PATH_ENTRIES[@]}"; do
-    candidate="$d/sqlite3"
-    if [[ -x "$candidate" && "$candidate" != "$SELF" ]]; then
-        exec "$candidate" "$@"
+    [[ -z "$d" ]] && continue
+    if abs_d="$(cd "$d" 2>/dev/null && pwd -P)"; then
+        candidate="$abs_d/sqlite3"
+        if [[ -x "$candidate" && "$candidate" != "$SELF" ]]; then
+            exec "$candidate" "$@"
+        fi
     fi
 done
 

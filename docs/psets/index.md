@@ -130,12 +130,14 @@ These are scaffold-only problems. CS50 expects you to create the folders yoursel
 If you want to stay inside the local course toolchain, use the wrappers:
 
 ```bash
-cd <repo-root>/cs50/pset6/dont-panic/python
-<repo-root>/bin/python hack.py
+ROOT="$(git rev-parse --show-toplevel)"
 
-cd <repo-root>/cs50/pset6/dont-panic/java
-<repo-root>/bin/javac Hack.java
-<repo-root>/bin/java -cp .:sqlite-jdbc-3.43.0.0.jar Hack
+cd "$ROOT/cs50/pset6/dont-panic/python"
+"$ROOT/bin/python" hack.py
+
+cd "$ROOT/cs50/pset6/dont-panic/java"
+"$ROOT/bin/javac" Hack.java
+"$ROOT/bin/java" -cp .:sqlite-jdbc-3.43.0.0.jar Hack
 ```
 
 ## Local Raw Sources

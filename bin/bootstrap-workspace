@@ -76,12 +76,18 @@ fetch_tgz() {
 # Locate a non-wrapper sqlite3 on PATH. The repo's bin/ may be on PATH; the
 # wrapper in $ROOT/bin/sqlite3 would satisfy `command -v sqlite3` but defeats
 # the point of asking "does the system have sqlite3".
+#
+# Normalize each PATH entry to an absolute path before comparing so that
+# relative entries like `bin`, `./bin`, or `../cs50-sql-workspace/bin` do not
+# slip past the self-check.
 system_sqlite3_path() {
     local self="$ROOT/bin/sqlite3"
     local IFS=':'
-    local dir
+    local dir abs_dir candidate
     for dir in $PATH; do
-        local candidate="$dir/sqlite3"
+        [[ -z "$dir" ]] && continue
+        abs_dir="$(cd "$dir" 2>/dev/null && pwd -P)" || continue
+        candidate="$abs_dir/sqlite3"
         if [[ -x "$candidate" && "$candidate" != "$self" ]]; then
             printf '%s\n' "$candidate"
             return 0

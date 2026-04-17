@@ -57,3 +57,14 @@ Most macOS setups already have `/usr/bin/sqlite3`. If yours does not, install on
 ```bash
 brew install sqlite
 ```
+
+## Shell note
+
+macOS defaults to `zsh` as the interactive login shell; the wrappers under `bin/` run Bash via their shebang, so you can invoke them directly from zsh:
+
+```bash
+./bin/cs50-sql week0
+./bin/mysql
+```
+
+Do **not** invoke them with an explicit `zsh ./bin/...` — that bypasses the shebang and runs Bash-specific syntax through zsh, which breaks. Just run `./bin/<thing>` and zsh will hand off to Bash automatically.
