@@ -49,7 +49,7 @@ What each tool does:
 - `cs50/week0` through `cs50/week6`
   - lecture source bundles
 - `docs/week0` through `docs/week6`
-  - follow-along guides plus raw notes, transcript, and subtitles
+  - follow-along guides plus raw notes and transcripts
 - `cs50/pset0` through `cs50/pset6`
   - starter files, extracted distributions, and scaffold folders
 - `docs/psets/raw`

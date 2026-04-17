@@ -31,7 +31,7 @@ cd cs50-sql-workspace
 - uses system `sqlite3` if it already exists
 - downloads a macOS-compatible Temurin JDK 21 into `vendor/jdk`
 - creates the Python virtualenv for `cs50`, `check50`, and `submit50`
-- downloads lecture notes, transcripts, subtitles, source bundles, and pset archives
+- downloads lecture notes, transcripts, source bundles, and pset archives
 - leaves MySQL and PostgreSQL to the Docker wrappers
 
 ## What you need installed yourself

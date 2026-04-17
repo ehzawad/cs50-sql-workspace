@@ -12,7 +12,6 @@ Official source files saved locally:
 
 - `docs/week0/raw/lecture0-notes.html`
 - `docs/week0/raw/lecture0-transcript.txt`
-- `docs/week0/raw/lecture0-subtitles.srt`
 
 ## Start here
 

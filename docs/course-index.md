@@ -45,7 +45,7 @@ Local helper tools:
 - Week 5: `docs/week5/follow-along.md`
 - Week 6: `docs/week6/follow-along.md`
 
-Each week folder also contains the raw official notes, transcript, and subtitles used to build the guide.
+Each week folder also contains the raw official notes and transcript used to build the guide.
 
 ## Problem Sets
 

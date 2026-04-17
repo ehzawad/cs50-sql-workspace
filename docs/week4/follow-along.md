@@ -6,7 +6,6 @@ Raw sources:
 
 - `docs/week4/raw/lecture4-notes.html`
 - `docs/week4/raw/lecture4-transcript.txt`
-- `docs/week4/raw/lecture4-subtitles.srt`
 
 ## Start Here
 

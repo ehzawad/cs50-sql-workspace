@@ -167,7 +167,6 @@ download_lecture_assets() {
         mkdir -p "$ROOT/docs/week${w}/raw" "$ROOT/cs50/week${w}"
         fetch_if_missing_or_empty "https://cs50.harvard.edu/sql/notes/${w}/" "$ROOT/docs/week${w}/raw/lecture${w}-notes.html"
         fetch_if_missing_or_empty "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.txt" "$ROOT/docs/week${w}/raw/lecture${w}-transcript.txt"
-        fetch_if_missing_or_empty "https://cdn.cs50.net/sql/2023/x/lectures/${w}/lang/en/lecture${w}.srt" "$ROOT/docs/week${w}/raw/lecture${w}-subtitles.srt"
         fetch_zip "https://cdn.cs50.net/sql/2023/x/lectures/${w}/src${w}.zip" "$ROOT/downloads/lectures/src${w}.zip"
         unzip -nq "$ROOT/downloads/lectures/src${w}.zip" -d "$ROOT/cs50/week${w}"
     done
